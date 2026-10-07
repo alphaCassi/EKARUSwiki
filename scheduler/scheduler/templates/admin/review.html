@@ -1,0 +1,59 @@
+{% extends "base.html" %}{% from "_macros.html" import status_badge, proposal_body, csrf %}
+{% block title %}Review {{ p.code }}{% endblock %}
+{% block content %}
+{% include "admin/_tabs.html" %}
+<div class="page-head">
+  <div>
+    <p class="code">{{ p.code }} · submitted {{ p.created_at|shortdate }} UTC</p>
+    <h1>{{ p.title }}</h1>
+  </div>
+  {{ status_badge(p.status) }}
+</div>
+
+{% if p.status == 'submitted' %}
+<form method="post" class="card decision" data-decision-form>
+  {{ csrf() }}
+  <h2>Decision</h2>
+  <fieldset>
+    <legend>Nights to allocate <span class="hint">Requested {{ nights|length }}, minimum useful {{ p.min_nights }}</span></legend>
+    <ul class="night-list">
+    {% for n in nights %}
+      <li>
+        <label class="check">
+          <input type="checkbox" name="allocate" value="{{ n.id }}" {% if n.status == 'open' %}checked{% else %}disabled{% endif %}>
+          {{ n.date|nicedate }}
+        </label>
+        {% if n.status == 'booked' %}<span class="badge badge-withdrawn">Already booked</span>
+        {% elif n.status == 'closed' %}<span class="badge badge-withdrawn">Closed</span>{% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+  </fieldset>
+  <label class="field">Message to the PI <span class="hint">Required when rejecting; optional when accepting</span>
+    <textarea name="message" rows="3" maxlength="2000"></textarea></label>
+  <div class="form-actions">
+    <button class="btn" type="submit" name="decision" value="accept">Accept selected nights</button>
+    <button class="btn btn-danger" type="submit" name="decision" value="reject" data-confirm="Reject {{ p.code }}? The PI will be notified.">Reject</button>
+  </div>
+  <p class="muted small">The PI is e-mailed automatically. Accepted nights become booked in the calendar.</p>
+</form>
+{% elif p.status == 'accepted' %}
+<section class="card">
+  <h2>Allocated nights</h2>
+  <ul class="night-list">
+    {% for n in nights if n.proposal_id == p.id %}<li>{{ n.date|nicedate }}</li>{% endfor %}
+  </ul>
+  {% if p.admin_message %}<p class="prewrap muted">Your message: {{ p.admin_message }}</p>{% endif %}
+  <details class="mt">
+    <summary>Cancel this allocation</summary>
+    <form method="post" action="{{ url_for('admin.cancel', pid=p.id) }}" class="form" data-confirm="Cancel the allocation of {{ p.code }}? Its nights will reopen and the PI will be notified.">
+      {{ csrf() }}
+      <label class="field">Reason for the PI <textarea name="message" rows="2" required></textarea></label>
+      <button class="btn btn-danger" type="submit">Cancel allocation</button>
+    </form>
+  </details>
+</section>
+{% endif %}
+
+{{ proposal_body(p, targets, nights, events, show_pi=true) }}
+{% endblock %}

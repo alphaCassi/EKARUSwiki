@@ -1,0 +1,9 @@
+Hello {{ name }},
+
+Use this link to choose a new password for the EKARUS scheduler:
+
+{{ base_url }}{{ link }}
+
+The link works for 2 hours and only once. If you didn't ask for it, ignore this message; your password stays the same.
+
+EKARUS observation schedule

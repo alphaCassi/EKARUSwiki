@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" data-root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="EKARUS bench layout, specifications and subsystems">
+  <title>Bench Architecture – EKARUS wiki</title>
+  <link rel="icon" href="../assets/img/favicon.png" type="image/png">
+  <link rel="preload" href="../assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/gate.js"></script>
+  <script src="../assets/js/config.js" defer></script>
+  <script src="../assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <a class="logo" href="../home.html"><img src="../assets/img/ekarus-logo.webp" width="480" height="480" alt="EKARUS home"></a>
+    <p class="happening">Upcoming: OAO 2026 school with EKARUS, Asiago, 25–30 October</p>
+    <button class="signout" type="button" data-signout>Sign out</button>
+  </header>
+
+  <div class="shell">
+    <nav class="side-nav nav-left" aria-label="Instrument">
+      <ul>
+        <li><a href="../pages/team.html">Team</a></li>
+        <li><a href="../pages/telescope.html">Telescope</a></li>
+        <li><a href="../pages/bench.html" aria-current="page">Bench Architecture</a></li>
+        <li><a href="http://193.206.244.171/index.html" target="_blank" rel="noopener" class="ext">DAO-EKARUS<span class="visually-hidden"> (opens the DAO server in a new tab)</span></a></li>
+        <li><a href="../pages/observation-schedule.html" target="_blank" rel="noopener" class="ext" data-scheduler-link>Observation Schedule<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+      </ul>
+    </nav>
+
+    <main class="main" id="main">
+      <h1>Bench architecture</h1>
+      <figure class="bench-overview figure-frame">
+        <img src="../assets/img/bench-schematic.webp" width="1346" height="1051"
+             alt="EKARUS bench layout: Coudé relay from the Copernico telescope, common path with deformable mirror and fast tip-tilt, VIS path (WFS sensing and imager), IR path, and the calibration unit and telescope simulator">
+        <figcaption>EKARUS is a single-conjugate AO (SCAO) bench at the Coudé focus of the Copernico telescope. Choose a subsystem below for details.</figcaption>
+      </figure>
+      <figure class="bench-photo">
+        <img src="../assets/img/bench-photo.webp" width="1600" height="739" loading="lazy"
+             alt="Photo of the EKARUS optical bench: mirrors, cameras and mounts on breadboards on the optical table">
+        <figcaption>The EKARUS bench.</figcaption>
+      </figure>
+
+      <div class="bench-detail">
+        <nav class="subsystems" aria-labelledby="subs-title" data-subsystems>
+          <h2 id="subs-title">Subsystems</h2>
+          <ul>
+            <li><button type="button" data-target="common-path" aria-controls="common-path" aria-pressed="false">Common Path</button></li>
+            <li><button type="button" data-target="wfs-channel" aria-controls="wfs-channel" aria-pressed="false">WFS Channel</button></li>
+            <li><button type="button" data-target="vis-imager" aria-controls="vis-imager" aria-pressed="false">VIS Imager</button></li>
+            <li><button type="button" data-target="ir-channel" aria-controls="ir-channel" aria-pressed="false">IR Channel</button></li>
+            <li><button type="button" data-target="calibration-unit" aria-controls="calibration-unit" aria-pressed="false">Dual Calibration Unit</button></li>
+          </ul>
+        </nav>
+        <div class="subsystem-panels">
+          <section class="panel subsystem-panel" id="specifications" aria-labelledby="specs-title">
+            <h2 id="specs-title">Specifications</h2>
+            <div class="table-wrap">
+              <table>
+                <caption>Optical specifications</caption>
+                <tbody>
+                  <tr><th scope="row">Input beam</th><td>F/20.5 from the Coudé focus</td></tr>
+                  <tr><th scope="row">VIS / NIR split</th><td>Long-pass dichroic: &lt;900 nm reflected to VIS, NIR transmitted (via FM7)</td></tr>
+                  <tr><th scope="row">VIS science port</th><td>Telecentric F/20.5, 1′ unvignetted FoV, 5.53″/mm, optimized for 600–900 nm</td></tr>
+                  <tr><th scope="row">WFS and GSC focal plane</th><td>F/45</td></tr>
+                  <tr><th scope="row">Common path</th><td>Selector to dichroic on one 600 × 450 mm breadboard</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <caption>AO specifications</caption>
+                <tbody>
+                  <tr><th scope="row">Deformable mirror</th><td>ALPAO DM468: 468 actuators (24×24), 33 mm clear aperture</td></tr>
+                  <tr><th scope="row">Pupil on DM</th><td>31.6 mm unprojected; 31.6 × 32.3 mm at 12° AOI (±0.4 mm margin)</td></tr>
+                  <tr><th scope="row">Wavefront sensor</th><td>Double pyramid (N-BK7, 3.05°), OCAM2K camera (24 µm pixels)</td></tr>
+                  <tr><th scope="row">Pupil sampling</th><td>42 px pupils, 2.49 mm (104 px) separation</td></tr>
+                  <tr><th scope="row">Modulator</th><td>PI-E727 tip-tilt, 7.3 mm pupil, 14° AOI</td></tr>
+                  <tr><th scope="row">Fast tip-tilt</th><td>130 mm upstream of the DM; 0.008° per arcsec on sky</td></tr>
+                  <tr><th scope="row">Pupil stabiliser</th><td>Step &lt;0.01° (goal &lt;0.001°)</td></tr>
+                  <tr><th scope="row">Operational range</th><td>Guide star mag 0–11.2</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <caption>Instrument characteristics</caption>
+                <tbody>
+                  <tr><th scope="row">Wavelength</th><td>VIS 500–900 nm · NIR 1000–1700 nm</td></tr>
+                  <tr><th scope="row">Science FoV</th><td>VIS 1 arcmin · NIR 1 arcmin</td></tr>
+                  <tr><th scope="row">PWFS FoV</th><td>8 arcsec</td></tr>
+                  <tr><th scope="row">Throughput</th><td>Science 4–8% · PWFS 6–12%</td></tr>
+                  <tr><th scope="row">Cameras</th><td>VIS ORCA · NIR CRED2</td></tr>
+                </tbody>
+              </table>
+            </div>
+              <p class="source">Sources: Design Description Document (EKARUS VIS); OAO 2026 tutorials.</p>
+          </section>
+          <section class="panel subsystem-panel" id="common-path" aria-labelledby="common-path-title">
+            <h2 id="common-path-title">Common Path</h2>
+            <p>The selector mirror, just after the Coudé focal plane, also works as pupil stabiliser. OAP1 images the pupil on the DM, with a fast tip-tilt mirror upstream to offload tip-tilt from the DM. OAP2, identical to OAP1, forms an intermediate focal plane. FM5 and FM6 fold the beam so everything from OAP1 to the dichroic fits on one breadboard.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Components</caption>
+                <tbody>
+                  <tr><th scope="row">Pupil stabiliser</th><td>30 mm after the F/20.5 focus. 1° tilt: PSF shift 1.05 mm (5.8″ on sky), pupil shift 73% of diameter. Max needed ≈ 0.33° for 25% pupil drift (FoV drift ≈ 1.9″).</td></tr>
+                  <tr><th scope="row">Fast tip-tilt</th><td>130 mm upstream of the DM. 1″ on sky = 0.008° rotation = 0.11% pupil shift on the DM.</td></tr>
+                  <tr><th scope="row">DM468</th><td>Pupil 31.6 mm, 12° AOI → 31.6 × 32.3 mm on a 33 mm clear aperture. Measured flat ≈ 6 nm RMS, TT stroke ≈ 15 µm surface.</td></tr>
+                  <tr><th scope="row">Dichroic</th><td>Long-pass, AOI 15°. Custom part with 0.1° wedge on the second face to reduce astigmatism and NCPA; quotations pending.</td></tr>
+                  <tr><th scope="row">Status</th><td>Aligned in Padova (June 2026), transmitted WFE ≈ 55 nm RMS over 33 mm.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <h3 class="mt">Documents</h3>
+            <ul class="doc-links">
+              <li>Design Description Document (EKARUS VIS): common path, pupil stabiliser, tip-tilt, DM, dichroic (link to add)</li>
+              <li><a href="http://docs.google.com/document/d/1-VrgN3xVxW5k9SAMOnQDpDM2Jba-WhSM5BFiy24CCkY/edit?tab=t.0" target="_blank" rel="noopener" class="ext">Common path AIT logbook (Padova)</a></li>
+              <li><a href="#">Interferometry of the common-path alignment (link to add)</a></li>
+            </ul>
+          </section>
+          <section class="panel subsystem-panel" id="wfs-channel" aria-labelledby="wfs-channel-title">
+            <h2 id="wfs-channel-title">WFS Channel</h2>
+            <figure class="figure-frame">
+              <img src="../assets/img/wfs-channel.webp" width="1466" height="833" loading="lazy"
+                   alt="Optical layout of the WFS channel: deformable mirror, OAP2, dichroic, focusing lens, tip-tilt modulator, double pyramid and WFS camera, CBLUE camera">
+            </figure>
+            <p class="mt">BS1 sends about 30% of the visible light to the VIS port. A re-imaging lens puts the pupil on the modulator and makes an F/45 focus. BS2 sends about 10% to the Gain Scheduling Camera (GSC) and 90% to the pyramid. A fold mirror before the pyramid focus can feed visiting WFSs.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Components</caption>
+                <tbody>
+                  <tr><th scope="row">BS1</th><td>Thorlabs BSS10 (30:70) or BSN10 (10:90), UV fused silica, 30′ wedge, used at 20° AOI</td></tr>
+                  <tr><th scope="row">BS2</th><td>Same options as BS1, 10:90 to the GSC</td></tr>
+                  <tr><th scope="row">Modulator (PI-E727)</th><td>Pupil 7.3 mm (unprojected), AOI 14° (28° deflection). 1 λ/D at 800 nm = 0.003° on one axis, 0.003°/cos 14° on the other.</td></tr>
+                  <tr><th scope="row">Double pyramid</th><td>Arcetri, two glued N-BK7 pyramids, face angle 3.05°, F/45. Cone angle 0.64°, deviation 1.577°. Average RMS WFE at tip 56 nm; 90% EE within ≈ 93 µm.</td></tr>
+                  <tr><th scope="row">Pupil re-imager</th><td>AC254-045-B: 42 px pupils, 2.49 mm (104 px) separation. (AC254-060-B would give 55.5 px and 3.32 mm / 138 px.)</td></tr>
+                  <tr><th scope="row">WFS camera</th><td>OCAM2K, 24 µm pixels</td></tr>
+                  <tr><th scope="row">GSC camera</th><td>C-Blue, F/45, 30″ FoV, 2.52″/mm, exit pupil 330 mm before focus. 18.4 × 13.9″ field, 23 mas/px, λ/D at 600 nm = 68 mas (3 px).</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <caption>Removing a beam splitter</caption>
+                <tbody>
+                  <tr><th scope="row">BS1 out</th><td>Defocus 123 nm RMS (focus shift 6.9 mm at F/45), astigmatism 19 nm RMS. 4.4 mrad deviation: PSF shift ≈ 700 mas, pupil shift ≈ 10%.</td></tr>
+                  <tr><th scope="row">BS2 out</th><td>Defocus 21 nm RMS (focus shift 1.2 mm at pyramid), astigmatism 10 nm RMS. PSF shift ≈ 380 mas, pupil shift ≈ 18%.</td></tr>
+                </tbody>
+              </table>
+            </div>
+              <p class="source">Source: Design Description Document (EKARUS VIS). Values from the nominal design, without manufacturing tolerances.</p>
+            <h3 class="mt">Documents</h3>
+            <ul class="doc-links">
+              <li>Design Description Document (EKARUS VIS): BS1, BS2, modulator, pyramid, pupil re-imager (link to add)</li>
+              <li><a href="#">Pyramid WFS characterization (link to add)</a></li>
+            </ul>
+          </section>
+          <section class="panel subsystem-panel" id="vis-imager" aria-labelledby="vis-imager-title">
+            <h2 id="vis-imager-title">VIS Imager</h2>
+            <p>The VIS science port receives about 30% of the visible light reflected by BS1. It initially hosts a visible camera.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Characteristics</caption>
+                <tbody>
+                  <tr><th scope="row">Beam</th><td>Telecentric F/20.5</td></tr>
+                  <tr><th scope="row">Field of view</th><td>1′ diameter, unvignetted</td></tr>
+                  <tr><th scope="row">Plate scale</th><td>5.53″/mm</td></tr>
+                  <tr><th scope="row">Wavelength</th><td>Optimized for 600–900 nm; shorter wavelengths possible with reduced performance (uncorrected differential chromatic focus)</td></tr>
+                  <tr><th scope="row">With a C-Blue camera</th><td>9 µm pixels, 812 × 612 px → 40.4 × 30.5″ field</td></tr>
+                </tbody>
+              </table>
+            </div>
+              <p class="source">Source: Design Description Document (EKARUS VIS). Spot diagrams and RMS WFE vs FoV are in the document.</p>
+          </section>
+          <section class="panel subsystem-panel" id="ir-channel" aria-labelledby="ir-channel-title">
+            <h2 id="ir-channel-title">IR Channel</h2>
+            <p>Light above 900 nm passes through the dichroic and is folded by FM7 toward the NIR channel.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Characteristics</caption>
+                <tbody>
+                  <tr><th scope="row">Wavelength</th><td>1000–1700 nm</td></tr>
+                  <tr><th scope="row">Field of view</th><td>1 arcmin</td></tr>
+                  <tr><th scope="row">Camera</th><td>CRED2</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="empty mt">Optical design and documents to add.</p>
+          </section>
+          <section class="panel subsystem-panel" id="calibration-unit" aria-labelledby="calibration-unit-title">
+            <h2 id="calibration-unit-title">Dual Calibration Unit</h2>
+            <p>The calibration unit and telescope simulator feed the bench with artificial sources and turbulence, through a flip mirror into the common path.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Components</caption>
+                <tbody>
+                  <tr><th scope="row">Sources</th><td>VIS 635 nm, IR 1550 nm, through a pinhole</td></tr>
+                  <tr><th scope="row">Turbulence</th><td>Phase screens</td></tr>
+                  <tr><th scope="row">Status</th><td>Hardware received in Teramo; alignment planned for July 2026, then transport to Asiago and commissioning</td></tr>
+                </tbody>
+              </table>
+            </div>
+              <p class="source">Sources: bench schematic; <a href="https://sites.google.com/inaf.it/adoni-coude/ekarus" target="_blank" rel="noopener" class="ext">Newsletter April–May 2026</a>.</p>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <nav class="side-nav nav-right" aria-label="Operations">
+      <ul>
+        <li><a href="../pages/schedule.html">Schedule</a></li>
+        <li><a href="../pages/logbook.html">Logs</a></li>
+        <li><a href="../pages/user-guide.html">User Guide</a></li>
+        <li><a href="../pages/todo.html">To do’s</a></li>
+      </ul>
+    </nav>
+  </div>
+  <footer class="partners" aria-labelledby="partners-title">
+    <h2 id="partners-title">Partners</h2>
+    <ul>
+      <li><img src="../assets/img/partners/inaf-oapd.webp" width="240" height="127" loading="lazy" alt="INAF – Osservatorio Astronomico di Padova"></li>
+      <li><img src="../assets/img/partners/onera.webp" width="240" height="69" loading="lazy" alt="ONERA – The French Aerospace Lab"></li>
+      <li><img src="../assets/img/partners/lam.webp" width="240" height="77" loading="lazy" alt="LAM – Laboratoire d’Astrophysique de Marseille"></li>
+      <li class="on-dark"><img src="../assets/img/partners/adoni.webp" width="200" height="120" loading="lazy" alt="ADONI – Laboratorio Nazionale di Ottica Adattiva"></li>
+      <li><img src="../assets/img/partners/durham.webp" width="340" height="160" loading="lazy" alt="Durham University"></li>
+      <li><img src="../assets/img/partners/unige.webp" width="480" height="139" loading="lazy" alt="Université de Genève"></li>
+      <li><img src="../assets/img/partners/ipag.webp" width="142" height="160" loading="lazy" alt="IPAG – Institut de Planétologie et d’Astrophysique de Grenoble"></li>
+    </ul>
+    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory</p>
+  </footer>
+</body>
+</html>

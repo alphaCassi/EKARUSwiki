@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% from "_macros.html" import csrf %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+<div class="narrow">
+  <h1>Your profile</h1>
+  <form method="post" class="form card">
+    {{ csrf() }}
+    <label class="field">Name <input name="name" value="{{ g.user.name }}" autocomplete="name" required></label>
+    <label class="field">E-mail <input value="{{ g.user.email }}" disabled></label>
+    <label class="field">Institute <input name="institute" value="{{ g.user.institute }}" autocomplete="organization"></label>
+    <button class="btn" type="submit">Save profile</button>
+  </form>
+  <p><a href="{{ url_for('auth.forgot') }}">Change password</a></p>
+</div>
+{% endblock %}

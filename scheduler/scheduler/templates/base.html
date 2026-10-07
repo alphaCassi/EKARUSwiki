@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <title>{% block title %}Observation schedule{% endblock %} – EKARUS</title>
+  <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/png">
+  <link rel="preload" href="{{ url_for('static', filename='fonts/barlow-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/scheduler.css') }}">
+  <script src="{{ url_for('static', filename='js/scheduler.js') }}" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('main.calendar') }}">
+      <img src="{{ url_for('static', filename='img/ekarus-logo.webp') }}" width="480" height="480" alt="">
+      <span>EKARUS<br><small>Observation schedule</small></span>
+    </a>
+    <nav class="topnav" aria-label="Main">
+      <a href="{{ url_for('main.calendar') }}" {% if request.endpoint == 'main.calendar' %}aria-current="page"{% endif %}>Calendar</a>
+      {% if g.user %}
+        <a href="{{ url_for('main.my_proposals') }}" {% if request.endpoint in ('main.my_proposals', 'main.view_proposal') %}aria-current="page"{% endif %}>My proposals</a>
+        <a class="nav-cta" href="{{ url_for('main.new_proposal') }}" {% if request.endpoint == 'main.new_proposal' %}aria-current="page"{% endif %}>New proposal</a>
+        {% if g.user.is_admin %}
+          <a href="{{ url_for('admin.dashboard') }}" {% if request.endpoint and request.endpoint.startswith('admin.') %}aria-current="page"{% endif %}>Admin</a>
+        {% endif %}
+      {% endif %}
+    </nav>
+    <div class="account">
+      {% if g.user %}
+        <a href="{{ url_for('auth.profile') }}">{{ g.user.name }}</a>
+        <form method="post" action="{{ url_for('auth.logout') }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="link-button">Sign out</button>
+        </form>
+      {% else %}
+        <a href="{{ url_for('auth.login') }}">Sign in</a>
+        <a class="btn btn-small" href="{{ url_for('auth.register') }}">Register</a>
+      {% endif %}
+    </div>
+  </header>
+
+  <main id="main" class="page">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes" role="status">
+          {% for cat, msg in messages %}<li class="flash flash-{{ cat }}">{{ msg }}</li>{% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    EKARUS – INAF Asiago Astrophysical Observatory
+    {% if config.WIKI_URL %} · <a href="{{ config.WIKI_URL }}">EKARUS wiki</a>{% endif %}
+  </footer>
+</body>
+</html>

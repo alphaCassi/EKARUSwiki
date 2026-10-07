@@ -1,0 +1,3 @@
+{{ p.code }} ("{{ p.title }}") was withdrawn by {{ p.pi_name }}. No action needed.
+
+{{ base_url }}{{ link }}

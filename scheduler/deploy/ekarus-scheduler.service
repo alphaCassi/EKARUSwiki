@@ -1,0 +1,15 @@
+# systemd unit — copy to /etc/systemd/system/, adjust paths and user, then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now ekarus-scheduler
+[Unit]
+Description=EKARUS observation scheduler
+After=network.target
+
+[Service]
+User=ekarus
+WorkingDirectory=/opt/ekarus-scheduler
+EnvironmentFile=/opt/ekarus-scheduler/.env
+ExecStart=/opt/ekarus-scheduler/.venv/bin/gunicorn --workers 2 --bind 127.0.0.1:8000 wsgi:app
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

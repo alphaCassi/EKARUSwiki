@@ -1,0 +1,46 @@
+{% macro status_badge(status) -%}
+  {% set labels = {'submitted': 'Waiting for review', 'accepted': 'Accepted', 'rejected': 'Not accepted', 'withdrawn': 'Withdrawn'} %}
+  <span class="badge badge-{{ status }}">{{ labels.get(status, status) }}</span>
+{%- endmacro %}
+
+{% macro csrf() -%}
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+{%- endmacro %}
+
+{% macro proposal_body(p, targets, nights, events, show_pi=false) %}
+  <section class="card">
+    <h2>Summary</h2>
+    <p>{{ p.summary }}</p>
+    <dl class="facts">
+      {% if show_pi %}<div><dt>PI</dt><dd>{{ p.pi_name }} · <a href="mailto:{{ p.pi_email }}">{{ p.pi_email }}</a>{% if p.pi_institute %} · {{ p.pi_institute }}{% endif %}</dd></div>{% endif %}
+      <div><dt>Mode</dt><dd>{{ p.mode }}</dd></div>
+      <div><dt>Observers on site</dt><dd>{{ p.observers or '—' }}</dd></div>
+      <div><dt>Minimum useful nights</dt><dd>{{ p.min_nights }}</dd></div>
+      <div><dt>Constraints</dt><dd>{{ p.constraints or '—' }}</dd></div>
+    </dl>
+  </section>
+  <section class="card">
+    <h2>Science or technical case</h2>
+    <p class="prewrap">{{ p.science_case }}</p>
+  </section>
+  <section class="card">
+    <h2>Targets</h2>
+    {% if targets %}
+      <div class="table-wrap"><table>
+        <thead><tr><th scope="col">Name</th><th scope="col">RA</th><th scope="col">Dec</th><th scope="col">Mag</th></tr></thead>
+        <tbody>{% for t in targets %}<tr><td>{{ t.name }}</td><td>{{ t.ra }}</td><td>{{ t.dec }}</td><td>{{ t.mag }}</td></tr>{% endfor %}</tbody>
+      </table></div>
+    {% else %}<p class="muted">No targets (engineering / calibration).</p>{% endif %}
+  </section>
+  {% if p.notes %}
+  <section class="card"><h2>Notes</h2><p class="prewrap">{{ p.notes }}</p></section>
+  {% endif %}
+  <section class="card">
+    <h2>History</h2>
+    <ol class="timeline">
+      {% for e in events %}
+        <li><time>{{ e.created_at|shortdate }} UTC</time> <strong>{{ e.action|capitalize }}</strong>{% if e.actor %} by {{ e.actor }}{% endif %}{% if e.message %}<span class="prewrap">{{ e.message }}</span>{% endif %}</li>
+      {% endfor %}
+    </ol>
+  </section>
+{% endmacro %}

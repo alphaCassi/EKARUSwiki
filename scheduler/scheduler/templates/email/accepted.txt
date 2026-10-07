@@ -1,0 +1,13 @@
+Hello {{ p.pi_name }},
+
+Good news: your proposal {{ p.code }} "{{ p.title }}" has been accepted.
+
+Allocated nights:
+{% for n in allocated %}  - {{ n.date|nicedate }}
+{% endfor %}{% if message %}
+Message from the admin:
+{{ message }}
+{% endif %}
+Details: {{ base_url }}{{ link }}
+
+EKARUS observation schedule

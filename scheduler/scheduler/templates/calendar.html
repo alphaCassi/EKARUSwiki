@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Calendar{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Observing nights</h1>
+    <p class="lede">{{ upcoming_open }} night{{ 's' if upcoming_open != 1 }} open for proposals. Pick the ones you need when you submit a proposal.</p>
+  </div>
+  {% if g.user %}
+    <a class="btn" href="{{ url_for('main.new_proposal') }}">New proposal</a>
+  {% else %}
+    <a class="btn" href="{{ url_for('auth.register') }}">Register to submit a proposal</a>
+  {% endif %}
+</div>
+
+<section class="card calendar-card" aria-labelledby="month-title">
+  <div class="month-nav">
+    <a href="{{ url_for('main.calendar', y=prev_m.year, m=prev_m.month) }}" aria-label="Previous month">‹</a>
+    <h2 id="month-title">{{ first.strftime('%B %Y') }}</h2>
+    <a href="{{ url_for('main.calendar', y=next_m.year, m=next_m.month) }}" aria-label="Next month">›</a>
+  </div>
+  <ul class="legend" aria-label="Legend">
+    <li><span class="dot dot-open"></span>Open for proposals</li>
+    <li><span class="dot dot-booked"></span>Booked</li>
+    <li><span class="dot dot-closed"></span>Not available</li>
+  </ul>
+  <div class="table-wrap">
+    <table class="month">
+      <thead><tr>{% for d in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}<th scope="col">{{ d }}</th>{% endfor %}</tr></thead>
+      <tbody>
+      {% for week in weeks %}
+        <tr>
+        {% for d, n in week %}
+          {% if d is none %}<td class="pad"></td>
+          {% else %}
+            <td class="day {{ 'night-' ~ n.status if n else 'no-night' }}{% if d == today %} today{% endif %}{% if d < today %} past{% endif %}">
+              <span class="num">{{ d.day }}</span>
+              {% if n %}
+                <span class="state">{{ {'open': 'Open', 'booked': 'Booked', 'closed': 'Closed'}[n.status] }}</span>
+                {% if n.note %}<span class="note">{{ n.note }}</span>{% endif %}
+              {% endif %}
+            </td>
+          {% endif %}
+        {% endfor %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p class="muted small">A date is the evening on which the night starts.</p>
+</section>
+
+<section class="card how">
+  <h2>How it works</h2>
+  <ol class="steps-line">
+    <li><strong>Register</strong> and confirm your e-mail.</li>
+    <li><strong>Submit a proposal</strong>: case, targets, and the open nights you want.</li>
+    <li><strong>Get the decision by e-mail.</strong> Accepted nights appear as booked here.</li>
+  </ol>
+</section>
+{% endblock %}

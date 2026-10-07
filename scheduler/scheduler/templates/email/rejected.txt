@@ -1,0 +1,13 @@
+Hello {{ p.pi_name }},
+
+Your proposal {{ p.code }} "{{ p.title }}" was not accepted this time.
+
+Reason:
+{{ message }}
+
+You're welcome to submit a new proposal for other open nights:
+{{ base_url }}/
+
+Details: {{ base_url }}{{ link }}
+
+EKARUS observation schedule

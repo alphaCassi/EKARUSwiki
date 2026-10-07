@@ -1,0 +1,10 @@
+Hello {{ p.pi_name }},
+
+The nights allocated to your proposal {{ p.code }} "{{ p.title }}" have been cancelled.
+
+Reason:
+{{ message }}
+
+Details: {{ base_url }}{{ link }}
+
+EKARUS observation schedule

@@ -1,0 +1,54 @@
+{% extends "base.html" %}{% from "_macros.html" import csrf %}
+{% block title %}Admin · nights{% endblock %}
+{% block content %}
+<h1>Admin</h1>
+{% include "admin/_tabs.html" %}
+
+<form method="post" class="card form add-nights">
+  {{ csrf() }}
+  <input type="hidden" name="action" value="add">
+  <h2>Open nights for proposals</h2>
+  <div class="row">
+    <label class="field">From <input type="date" name="start" required></label>
+    <label class="field">To <span class="hint">Leave empty for one night</span><input type="date" name="end"></label>
+    <label class="field grow">Note <span class="hint">Optional, shown in the calendar</span><input name="note" maxlength="80" placeholder="e.g. engineering priority"></label>
+  </div>
+  <button class="btn" type="submit">Open nights</button>
+</form>
+
+<nav class="filters" aria-label="Which nights">
+  <a href="{{ url_for('admin.nights', show='upcoming') }}" {% if show != 'all' %}aria-current="true"{% endif %}>Upcoming</a>
+  <a href="{{ url_for('admin.nights', show='all') }}" {% if show == 'all' %}aria-current="true"{% endif %}>All</a>
+</nav>
+
+{% if nights %}
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th scope="col">Night</th><th scope="col">Status</th><th scope="col">Pending requests</th><th scope="col">Note</th><th scope="col"><span class="visually-hidden">Actions</span></th></tr></thead>
+    <tbody>
+    {% for n in nights %}
+      <tr>
+        <td>{{ n.date|nicedate }}</td>
+        <td>{% if n.status == 'booked' %}<span class="badge badge-accepted">Booked · {{ n.booked_code }}</span>
+            {% elif n.status == 'open' %}<span class="badge badge-submitted">Open</span>
+            {% else %}<span class="badge badge-withdrawn">Closed</span>{% endif %}</td>
+        <td>{{ n.pending or '—' }}</td>
+        <td>{{ n.note }}</td>
+        <td class="actions">
+          {% if n.status != 'booked' %}
+          <form method="post">{{ csrf() }}<input type="hidden" name="night_id" value="{{ n.id }}">
+            {% if n.status == 'open' %}<button class="link-button" name="action" value="close">Close</button>
+            {% else %}<button class="link-button" name="action" value="open">Reopen</button>{% endif %}
+            <button class="link-button danger" name="action" value="remove" data-confirm="Remove {{ n.date }} from the calendar?">Remove</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+  <div class="card empty"><p>No nights yet. Open some with the form above.</p></div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,5 @@
+<nav class="tabs" aria-label="Admin sections">
+  <a href="{{ url_for('admin.dashboard') }}" {% if request.endpoint in ('admin.dashboard', 'admin.review') %}aria-current="page"{% endif %}>Proposals</a>
+  <a href="{{ url_for('admin.nights') }}" {% if request.endpoint == 'admin.nights' %}aria-current="page"{% endif %}>Nights</a>
+  <a href="{{ url_for('admin.users') }}" {% if request.endpoint == 'admin.users' %}aria-current="page"{% endif %}>Users</a>
+</nav>

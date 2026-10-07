@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Admin · users{% endblock %}
+{% block content %}
+<h1>Admin</h1>
+{% include "admin/_tabs.html" %}
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th scope="col">Name</th><th scope="col">E-mail</th><th scope="col">Institute</th><th scope="col">Proposals</th><th scope="col">Registered</th><th scope="col">Status</th></tr></thead>
+    <tbody>
+    {% for u in users %}
+      <tr>
+        <td>{{ u.name }}</td>
+        <td><a href="mailto:{{ u.email }}">{{ u.email }}</a></td>
+        <td>{{ u.institute or '—' }}</td>
+        <td>{{ u.n_prop }}</td>
+        <td>{{ u.created_at[:10] }}</td>
+        <td>{% if u.is_admin %}Admin{% elif u.verified %}Active{% else %}E-mail not confirmed{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

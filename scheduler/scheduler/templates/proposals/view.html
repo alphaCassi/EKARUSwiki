@@ -1,0 +1,46 @@
+{% extends "base.html" %}{% from "_macros.html" import status_badge, proposal_body, csrf %}
+{% block title %}{{ p.code }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <p class="code">{{ p.code }}</p>
+    <h1>{{ p.title }}</h1>
+  </div>
+  {{ status_badge(p.status) }}
+</div>
+
+<section class="card status-card status-{{ p.status }}">
+  {% if p.status == 'submitted' %}
+    <p><strong>Waiting for review.</strong> You'll get an e-mail as soon as the admin decides.</p>
+  {% elif p.status == 'accepted' %}
+    <p><strong>Accepted.</strong> Your allocated nights are listed below and marked as booked in the calendar.</p>
+  {% elif p.status == 'rejected' %}
+    <p><strong>Not accepted.</strong></p>
+  {% else %}
+    <p><strong>Withdrawn.</strong></p>
+  {% endif %}
+  {% if p.admin_message %}<p class="prewrap">Message from the admin: {{ p.admin_message }}</p>{% endif %}
+</section>
+
+<section class="card">
+  <h2>Nights</h2>
+  <ul class="night-list">
+  {% for n in nights %}
+    <li>{{ n.date|nicedate }}
+      {% if n.proposal_id == p.id %}<span class="badge badge-accepted">Allocated</span>
+      {% elif n.status == 'booked' %}<span class="badge badge-withdrawn">Booked by another proposal</span>
+      {% elif p.status == 'submitted' %}<span class="badge badge-submitted">Requested</span>{% endif %}
+    </li>
+  {% endfor %}
+  </ul>
+</section>
+
+{{ proposal_body(p, targets, nights, events) }}
+
+{% if p.status == 'submitted' and p.user_id == g.user.id %}
+<form method="post" action="{{ url_for('main.withdraw', pid=p.id) }}" class="danger-zone" data-confirm="Withdraw {{ p.code }}? This can't be undone.">
+  {{ csrf() }}
+  <button type="submit" class="btn btn-danger">Withdraw proposal</button>
+</form>
+{% endif %}
+{% endblock %}

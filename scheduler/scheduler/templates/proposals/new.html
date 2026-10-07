@@ -1,0 +1,84 @@
+{% extends "base.html" %}{% from "_macros.html" import csrf %}
+{% block title %}New proposal{% endblock %}
+{% block content %}
+<h1>New observing proposal</h1>
+<p class="lede">Three parts: what you want to do, what you'll observe, and when. Fields marked * are required.</p>
+
+{% if not by_month %}
+  <div class="card empty">
+    <p>No nights are open for proposals right now. Check the <a href="{{ url_for('main.calendar') }}">calendar</a> later.</p>
+  </div>
+{% else %}
+<form method="post" class="form proposal-form" data-proposal-form>
+  {{ csrf() }}
+
+  <section class="card">
+    <h2><span class="step">1</span>Your project</h2>
+    <label class="field">Title *<input name="title" value="{{ form.title }}" maxlength="200" required></label>
+    <label class="field">Summary * <span class="hint">One paragraph, shown first to the reviewer</span>
+      <textarea name="summary" rows="3" maxlength="1200" required>{{ form.summary }}</textarea></label>
+    <label class="field">Science or technical case * <span class="hint">Goals, why EKARUS, expected results</span>
+      <textarea name="science_case" rows="8" maxlength="8000" required>{{ form.science_case }}</textarea></label>
+    <label class="field">Observing mode *
+      <select name="mode" required>
+        <option value="">Choose…</option>
+        {% for m in modes %}<option {% if form.mode == m %}selected{% endif %}>{{ m }}</option>{% endfor %}
+      </select></label>
+  </section>
+
+  <section class="card">
+    <h2><span class="step">2</span>Targets</h2>
+    <p class="muted small">One row per target. Coordinates as you prefer (e.g. 12:34:56.7 / +45:12:34). EKARUS works for guide stars of mag 0–11.2.</p>
+    <div class="table-wrap">
+      <table class="targets" data-targets data-max="{{ max_targets }}">
+        <thead><tr><th scope="col">Name</th><th scope="col">RA</th><th scope="col">Dec</th><th scope="col">Mag</th><th scope="col"><span class="visually-hidden">Remove</span></th></tr></thead>
+        <tbody>
+        {% for t in targets %}
+          <tr>
+            <td><input name="t_name" value="{{ t.name }}" aria-label="Target name"></td>
+            <td><input name="t_ra" value="{{ t.ra }}" aria-label="Right ascension"></td>
+            <td><input name="t_dec" value="{{ t.dec }}" aria-label="Declination"></td>
+            <td><input name="t_mag" value="{{ t.mag }}" aria-label="Magnitude" class="short"></td>
+            <td><button type="button" class="link-button" data-remove-row>Remove</button></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <button type="button" class="btn btn-secondary btn-small" data-add-row>Add target</button>
+  </section>
+
+  <section class="card">
+    <h2><span class="step">3</span>Nights</h2>
+    <p class="muted small">Select every night that would work for you. The admin allocates nights from your selection.</p>
+    {% for month, nights in by_month.items() %}
+      <fieldset class="nights">
+        <legend>{{ month|monthname }}</legend>
+        <div class="night-grid">
+        {% for n in nights %}
+          <label class="night-option">
+            <input type="checkbox" name="nights" value="{{ n.id }}" {% if n.id in chosen %}checked{% endif %}>
+            <span>{{ n.date|nicedate }}{% if n.note %}<small>{{ n.note }}</small>{% endif %}</span>
+          </label>
+        {% endfor %}
+        </div>
+      </fieldset>
+    {% endfor %}
+    <p class="selected-count" data-night-count aria-live="polite"></p>
+    <label class="field field-inline">Minimum number of useful nights
+      <input name="min_nights" type="number" min="1" value="{{ form.min_nights or 1 }}" class="short"></label>
+    <label class="field">Observers on site <span class="hint">Who will be at the telescope</span>
+      <input name="observers" value="{{ form.observers }}" maxlength="500"></label>
+    <label class="field">Constraints <span class="hint">Seeing, Moon, time-critical windows…</span>
+      <input name="constraints" value="{{ form.constraints }}" maxlength="500"></label>
+    <label class="field">Notes for the admin
+      <textarea name="notes" rows="3" maxlength="2000">{{ form.notes }}</textarea></label>
+  </section>
+
+  <div class="form-actions">
+    <button class="btn" type="submit">Submit proposal</button>
+    <span class="muted small">You'll receive a confirmation e-mail, and another when the proposal is reviewed.</span>
+  </div>
+</form>
+{% endif %}
+{% endblock %}

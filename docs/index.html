@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" data-root="">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Internal wiki of the EKARUS adaptive optics bench">
+  <title>EKARUS wiki – sign in</title>
+  <link rel="icon" href="assets/img/favicon.png" type="image/png">
+  <link rel="preload" href="assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/main.css">
+  <script src="assets/js/config.js" defer></script>
+  <script src="assets/js/users.js" defer></script>
+  <script src="assets/js/main.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <span class="logo"><img src="assets/img/ekarus-logo.webp" width="480" height="480" alt="EKARUS"></span>
+  </header>
+
+  <main class="access" id="main">
+    <p class="lede">This is an internal webpage to gain easy access to relevant and timely information on the bench.</p>
+
+    <form id="signin-form" novalidate>
+      <div class="field">
+        <label for="signin-email">Registered e-mail address</label>
+        <input id="signin-email" name="email" type="email" autocomplete="email" required>
+      </div>
+      <button class="btn" type="submit">Sign in</button>
+      <p class="form-message" id="signin-message" role="status" aria-live="polite"></p>
+    </form>
+
+    <details class="request-access">
+      <summary>Not registered? Request access</summary>
+      <form id="request-form" novalidate>
+        <div class="field">
+          <label for="req-name">Name</label>
+          <input id="req-name" name="name" type="text" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="req-email">E-mail address</label>
+          <input id="req-email" name="email" type="email" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="req-institute">Institute</label>
+          <input id="req-institute" name="institute" type="text" autocomplete="organization">
+        </div>
+        <div class="field">
+          <label for="req-role">Role on EKARUS</label>
+          <textarea id="req-role" name="role"></textarea>
+        </div>
+        <button class="btn btn-secondary" type="submit">Send request by e-mail</button>
+        <p class="form-message" id="request-message" role="status" aria-live="polite"></p>
+      </form>
+    </details>
+
+    <noscript><p class="form-message" data-state="error">Sign-in needs JavaScript enabled.</p></noscript>
+  </main>
+
+  <footer class="partners" aria-labelledby="partners-title">
+    <h2 id="partners-title">Partners</h2>
+    <ul>
+      <li><img src="assets/img/partners/inaf-oapd.webp" width="240" height="127" loading="lazy" alt="INAF – Osservatorio Astronomico di Padova"></li>
+      <li><img src="assets/img/partners/onera.webp" width="240" height="69" loading="lazy" alt="ONERA – The French Aerospace Lab"></li>
+      <li><img src="assets/img/partners/lam.webp" width="240" height="77" loading="lazy" alt="LAM – Laboratoire d’Astrophysique de Marseille"></li>
+      <li class="on-dark"><img src="assets/img/partners/adoni.webp" width="200" height="120" loading="lazy" alt="ADONI – Laboratorio Nazionale di Ottica Adattiva"></li>
+      <li><img src="assets/img/partners/durham.webp" width="340" height="160" loading="lazy" alt="Durham University"></li>
+      <li><img src="assets/img/partners/unige.webp" width="480" height="139" loading="lazy" alt="Université de Genève"></li>
+      <li><img src="assets/img/partners/ipag.webp" width="142" height="160" loading="lazy" alt="IPAG – Institut de Planétologie et d’Astrophysique de Grenoble"></li>
+    </ul>
+    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory</p>
+  </footer>
+</body>
+</html>

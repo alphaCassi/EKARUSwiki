@@ -1,0 +1,14 @@
+New proposal to review: {{ p.code }}
+
+Title:   {{ p.title }}
+PI:      {{ p.pi_name }} <{{ p.pi_email }}>{% if p.pi_institute %}, {{ p.pi_institute }}{% endif %}
+Mode:    {{ p.mode }}
+Targets: {{ targets|length }}
+Nights requested ({{ nights|length }}, minimum useful {{ p.min_nights }}):
+{% for n in nights %}  - {{ n.date|nicedate }}
+{% endfor %}
+Summary:
+{{ p.summary }}
+
+Review and decide:
+{{ base_url }}{{ link }}

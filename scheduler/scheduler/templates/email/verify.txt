@@ -1,0 +1,9 @@
+Hello {{ name }},
+
+Confirm your e-mail address to activate your EKARUS scheduler account:
+
+{{ base_url }}{{ link }}
+
+The link works for 3 days. If you didn't register, ignore this message.
+
+EKARUS observation schedule

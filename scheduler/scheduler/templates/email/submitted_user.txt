@@ -1,0 +1,11 @@
+Hello {{ p.pi_name }},
+
+We received your proposal {{ p.code }}: "{{ p.title }}".
+
+Nights requested:
+{% for n in nights %}  - {{ n.date|nicedate }}
+{% endfor %}
+You'll receive another e-mail when it has been reviewed. You can follow its status here:
+{{ base_url }}/proposals/{{ p.id }}
+
+EKARUS observation schedule
