@@ -10,4 +10,5 @@
 window.EKARUS_USERS = [
   // "<sha256-hex>",  // <optional note, e.g. initials>
   "7eb5a7820761a8952c4384cc23c5775780e66b8faa77287b529b4fc03275115b",
+  "915aa61e46e57226c8eca9dd629642016a9956ef336ab5ab27bce329f0db95ff",
 ];
