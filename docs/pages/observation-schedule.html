@@ -18,7 +18,7 @@
 
   <header class="site-header">
     <a class="logo" href="../home.html"><img src="../assets/img/ekarus-logo.webp" width="480" height="480" alt="EKARUS home"></a>
-    <p class="happening">Upcoming: OAO 2026 school with EKARUS, Asiago, 25–30 October</p>
+    <p class="happening" data-site-banner></p>
     <button class="signout" type="button" data-signout>Sign out</button>
   </header>
 
@@ -30,6 +30,15 @@
         <li><a href="../pages/bench.html">Bench Architecture</a></li>
         <li><a href="http://193.206.244.171/index.html" target="_blank" rel="noopener" class="ext">DAO-EKARUS<span class="visually-hidden"> (opens the DAO server in a new tab)</span></a></li>
         <li><a href="../pages/observation-schedule.html" target="_blank" rel="noopener" class="ext" data-scheduler-link>Observation Schedule<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+        <li>
+          <details class="nav-group">
+            <summary>OAO school</summary>
+            <ul class="sub-nav">
+              <li><a href="https://indico.ict.inaf.it/event/3554/overview" target="_blank" rel="noopener" class="ext">Main webpage<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+              <li><a href="https://oao2026tutorials.netlify.app/#tutorials" target="_blank" rel="noopener" class="ext">Tutorials<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            </ul>
+          </details>
+        </li>
       </ul>
     </nav>
 
@@ -47,6 +56,7 @@
         <li><a href="../pages/logbook.html">Logs</a></li>
         <li><a href="../pages/user-guide.html">User Guide</a></li>
         <li><a href="../pages/todo.html">To do’s</a></li>
+        <li><a href="../pages/contact.html">Contact us</a></li>
       </ul>
     </nav>
   </div>
@@ -61,7 +71,7 @@
       <li><img src="../assets/img/partners/unige.webp" width="480" height="139" loading="lazy" alt="Université de Genève"></li>
       <li><img src="../assets/img/partners/ipag.webp" width="142" height="160" loading="lazy" alt="IPAG – Institut de Planétologie et d’Astrophysique de Grenoble"></li>
     </ul>
-    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory</p>
+    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory<span data-admin-wrap hidden><br><a href="#" data-admin-link>Admin</a></span></p>
   </footer>
 </body>
 </html>

@@ -4,7 +4,7 @@
 {% include "admin/_tabs.html" %}
 <div class="page-head">
   <div>
-    <p class="code">{{ p.code }} · submitted {{ p.created_at|shortdate }} UTC</p>
+    <p class="code">{{ p.code }}, submitted {{ p.created_at|shortdate }} UTC</p>
     <h1>{{ p.title }}</h1>
   </div>
   {{ status_badge(p.status) }}

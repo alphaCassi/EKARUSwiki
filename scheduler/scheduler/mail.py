@@ -18,7 +18,7 @@ def admin_addresses():
     return [a.strip().lower() for a in current_app.config["ADMIN_EMAILS"].split(",") if a.strip()]
 
 
-def send(to, subject, template, **context):
+def send(to, subject, template, reply_to=None, **context):
     """Render templates/email/<template>.txt and send it to one address or a list."""
     if isinstance(to, str):
         to = [to]
@@ -31,6 +31,8 @@ def send(to, subject, template, **context):
     msg["To"] = ", ".join(to)
     msg["Subject"] = f"[EKARUS] {subject}"
     msg["Message-ID"] = make_msgid(domain="ekarus")
+    if reply_to:
+        msg["Reply-To"] = reply_to
     msg.set_content(body)
 
     if cfg["SMTP_HOST"]:

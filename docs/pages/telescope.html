@@ -18,7 +18,7 @@
 
   <header class="site-header">
     <a class="logo" href="../home.html"><img src="../assets/img/ekarus-logo.webp" width="480" height="480" alt="EKARUS home"></a>
-    <p class="happening">Upcoming: OAO 2026 school with EKARUS, Asiago, 25–30 October</p>
+    <p class="happening" data-site-banner></p>
     <button class="signout" type="button" data-signout>Sign out</button>
   </header>
 
@@ -30,6 +30,15 @@
         <li><a href="../pages/bench.html">Bench Architecture</a></li>
         <li><a href="http://193.206.244.171/index.html" target="_blank" rel="noopener" class="ext">DAO-EKARUS<span class="visually-hidden"> (opens the DAO server in a new tab)</span></a></li>
         <li><a href="../pages/observation-schedule.html" target="_blank" rel="noopener" class="ext" data-scheduler-link>Observation Schedule<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+        <li>
+          <details class="nav-group">
+            <summary>OAO school</summary>
+            <ul class="sub-nav">
+              <li><a href="https://indico.ict.inaf.it/event/3554/overview" target="_blank" rel="noopener" class="ext">Main webpage<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+              <li><a href="https://oao2026tutorials.netlify.app/#tutorials" target="_blank" rel="noopener" class="ext">Tutorials<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            </ul>
+          </details>
+        </li>
       </ul>
     </nav>
 
@@ -51,7 +60,7 @@
           <table>
             <tbody>
               <tr><th scope="row">Location</th><td>Mt. Ekar, Asiago (INAF – Asiago Astrophysical Observatory)</td></tr>
-              <tr><th scope="row">Coordinates</th><td>Lat. 45° 50′ 54.894″ N · Long. 11° 34′ 08.397″ E · Alt. 1376.2 m</td></tr>
+              <tr><th scope="row">Coordinates</th><td>45° 50′ 54.894″ N, 11° 34′ 08.397″ E, altitude 1376.2 m</td></tr>
               <tr><th scope="row">Optical design</th><td>Classic Cassegrain, f/9</td></tr>
               <tr><th scope="row">Primary mirror (M1)</th><td>182 cm, Schott Duran 50; re-aluminized periodically in the vacuum chamber at Mt. Ekar</td></tr>
               <tr><th scope="row">Secondary mirror (M2)</th><td>Moves in focus (Z axis) only</td></tr>
@@ -63,7 +72,7 @@
             </tbody>
           </table>
         </div>
-        <p class="mt"><a href="https://drive.google.com/file/d/1HzmjrbGtDefltRQDNybmxOK-sf40gIny/view?usp=sharing" target="_blank" rel="noopener" class="ext">Telescope manual (PDF)</a> · <a href="https://drive.google.com/file/d/1xF5TrhGLqY7a51NERxkGRacoOGmUueg1/view?usp=drive_link" target="_blank" rel="noopener" class="ext">Brief TPS tutorial (PDF)</a></p>
+        <p class="mt"><a href="https://drive.google.com/file/d/1HzmjrbGtDefltRQDNybmxOK-sf40gIny/view?usp=sharing" target="_blank" rel="noopener" class="ext">Telescope manual (PDF)</a> and <a href="https://drive.google.com/file/d/1xF5TrhGLqY7a51NERxkGRacoOGmUueg1/view?usp=drive_link" target="_blank" rel="noopener" class="ext">Brief TPS tutorial (PDF)</a></p>
       </section>
       <section class="panel" aria-labelledby="tel-limits">
         <h2 id="tel-limits">Operating limits</h2>
@@ -86,6 +95,7 @@
         <li><a href="../pages/logbook.html">Logs</a></li>
         <li><a href="../pages/user-guide.html">User Guide</a></li>
         <li><a href="../pages/todo.html">To do’s</a></li>
+        <li><a href="../pages/contact.html">Contact us</a></li>
       </ul>
     </nav>
   </div>
@@ -100,7 +110,7 @@
       <li><img src="../assets/img/partners/unige.webp" width="480" height="139" loading="lazy" alt="Université de Genève"></li>
       <li><img src="../assets/img/partners/ipag.webp" width="142" height="160" loading="lazy" alt="IPAG – Institut de Planétologie et d’Astrophysique de Grenoble"></li>
     </ul>
-    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory</p>
+    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory<span data-admin-wrap hidden><br><a href="#" data-admin-link>Admin</a></span></p>
   </footer>
 </body>
 </html>

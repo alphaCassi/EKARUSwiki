@@ -245,3 +245,13 @@ table.month td.pad { border: 0; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
 .proposal-form .card > .btn { justify-self: start; }
+
+/* ---------- Admin: messages and wiki tools */
+.count-badge {
+  display: inline-block; min-width: 1.3rem; padding: 0 0.35rem;
+  border-radius: 999px; background: var(--bad); color: #0b1128;
+  font-size: 0.8rem; text-align: center;
+}
+tr.unread td { font-weight: 600; }
+.highlight-row { border-top: 1px solid var(--line); padding-top: 0.9rem; margin-top: 0.9rem; display: grid; gap: 0.6rem; }
+.highlight-row legend { color: var(--muted); font-size: 0.85rem; }

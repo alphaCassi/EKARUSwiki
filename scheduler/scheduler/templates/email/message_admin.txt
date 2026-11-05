@@ -1,0 +1,14 @@
+{% if m.kind == 'access' %}{{ m.name }} <{{ m.email }}> asks to be registered on the EKARUS wiki.
+
+Register them with one click:{% else %}New change request for the EKARUS wiki.
+
+From:  {{ m.name }} <{{ m.email }}>
+Topic: {{ m.topic }}{% if m.page %}
+Page:  {{ m.page }}{% endif %}
+
+{{ m.body }}
+
+Open it in the admin page:{% endif %}
+{{ base_url }}{{ link }}
+
+Reply to this e-mail to answer {{ m.name }} directly.

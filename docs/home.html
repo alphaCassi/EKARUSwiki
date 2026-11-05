@@ -18,7 +18,7 @@
 
   <header class="site-header">
     <a class="logo" href="home.html"><img src="assets/img/ekarus-logo.webp" width="480" height="480" alt="EKARUS home"></a>
-    <p class="happening">Upcoming: OAO 2026 school with EKARUS, Asiago, 25–30 October</p>
+    <p class="happening" data-site-banner></p>
     <button class="signout" type="button" data-signout>Sign out</button>
   </header>
 
@@ -30,28 +30,25 @@
         <li><a href="pages/bench.html">Bench Architecture</a></li>
         <li><a href="http://193.206.244.171/index.html" target="_blank" rel="noopener" class="ext">DAO-EKARUS<span class="visually-hidden"> (opens the DAO server in a new tab)</span></a></li>
         <li><a href="pages/observation-schedule.html" target="_blank" rel="noopener" class="ext" data-scheduler-link>Observation Schedule<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+        <li>
+          <details class="nav-group">
+            <summary>OAO school</summary>
+            <ul class="sub-nav">
+              <li><a href="https://indico.ict.inaf.it/event/3554/overview" target="_blank" rel="noopener" class="ext">Main webpage<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+              <li><a href="https://oao2026tutorials.netlify.app/#tutorials" target="_blank" rel="noopener" class="ext">Tutorials<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            </ul>
+          </details>
+        </li>
       </ul>
     </nav>
 
     <main class="main" id="main">
-      <section class="feature" aria-labelledby="school-feature">
-        <span class="feature-when">Upcoming · 25–30 October 2026 · Asiago</span>
-        <h1 id="school-feature">OAO 2026 school: Observing with Adaptive Optics</h1>
-        <p>The 3rd edition of the Observing with AO school. Now with EKARUS in Asiago, Italy. Get full End-to-End experience with the on-sky SCAO system.</p>
-        <figure class="feature-photo">
-          <img src="assets/img/ekarus-team.webp" width="1118" height="837" loading="lazy" alt="The EKARUS team in the Copernico telescope control room during the daytime calibrations for first light">
-          <figcaption>The EKARUS team in the Copernico control room during first-light calibrations. Credit: Angelie Alagao/LAM, via Media INAF.</figcaption>
-        </figure>
-        <div class="feature-actions">
-          <a href="https://indico.ict.inaf.it/event/3554/overview" target="_blank" rel="noopener" class="ext">School webpage</a>
-          <a href="https://oao2026tutorials.netlify.app/#tutorials" target="_blank" rel="noopener" class="ext">Tutorials</a>
-        </div>
-      </section>
-
       <section class="panel" aria-labelledby="hl-title">
         <h2 id="hl-title">Highlights</h2>
         <p class="lede">News, recent results from observations, and anything the whole team should know.</p>
-        <!-- Add the newest item at the top of the first list; move the oldest visible one into "See more". -->
+        <!-- Edited from the admin page ("Wiki home page"), stored in data/site.json.
+             The list below is the fallback shown if that file can't be loaded. -->
+        <div data-highlights>
         <ul class="highlights">
           <li>
             <time>31 August – 1 September 2026</time>
@@ -79,6 +76,7 @@
           </li>
           </ul>
         </details>
+        </div>
         <p class="source">Source: <a href="https://sites.google.com/inaf.it/adoni-coude/ekarus" target="_blank" rel="noopener" class="ext">EKARUS Newsletter</a>.</p>
       </section>
       <section class="panel" aria-labelledby="press-title">
@@ -87,7 +85,7 @@
         <ul class="news-grid">
           <li class="news-card">
             <a href="https://www.media.inaf.it/2026/09/17/prima-luce-ekarus/" target="_blank" rel="noopener">
-              <span class="news-source">Media INAF · 17 Sep 2026<span class="news-lang">IT</span></span>
+              <span class="news-source">Media INAF, 17 Sep 2026<span class="news-lang">IT</span></span>
               <span class="news-title">Le stelle di Cassiopea nella prima luce di Ekarus</span>
             </a>
           </li>
@@ -105,13 +103,13 @@
           </li>
           <li class="news-card">
             <a href="https://www.cronacalive.it/2026/09/17/ekarus-primo-strumento-ottica-adattiva-italiano-azione-asiago/" target="_blank" rel="noopener">
-              <span class="news-source">CronacaLive · 17 Sep 2026<span class="news-lang">IT</span></span>
+              <span class="news-source">CronacaLive, 17 Sep 2026<span class="news-lang">IT</span></span>
               <span class="news-title">Ekarus, primo strumento di ottica adattiva italiano in azione ad Asiago</span>
             </a>
           </li>
           <li class="news-card">
             <a href="https://www.linkedin.com/posts/marseille-adaptive-optics_adaptiveoptics-ekarus-adaptiveoptics-activity-7501547144173215744-CzET" target="_blank" rel="noopener">
-              <span class="news-source">LinkedIn · Marseille Adaptive Optics<span class="news-lang">EN</span></span>
+              <span class="news-source">Marseille Adaptive Optics on LinkedIn<span class="news-lang">EN</span></span>
               <span class="news-title">EKARUS post by the Marseille Adaptive Optics group</span>
             </a>
           </li>
@@ -131,6 +129,7 @@
         <li><a href="pages/logbook.html">Logs</a></li>
         <li><a href="pages/user-guide.html">User Guide</a></li>
         <li><a href="pages/todo.html">To do’s</a></li>
+        <li><a href="pages/contact.html">Contact us</a></li>
       </ul>
     </nav>
   </div>
@@ -145,7 +144,7 @@
       <li><img src="assets/img/partners/unige.webp" width="480" height="139" loading="lazy" alt="Université de Genève"></li>
       <li><img src="assets/img/partners/ipag.webp" width="142" height="160" loading="lazy" alt="IPAG – Institut de Planétologie et d’Astrophysique de Grenoble"></li>
     </ul>
-    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory</p>
+    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory<span data-admin-wrap hidden><br><a href="#" data-admin-link>Admin</a></span></p>
   </footer>
 </body>
 </html>

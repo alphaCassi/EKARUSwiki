@@ -70,3 +70,18 @@ CREATE TABLE IF NOT EXISTS events (
 CREATE INDEX IF NOT EXISTS idx_proposals_user ON proposals(user_id);
 CREATE INDEX IF NOT EXISTS idx_proposals_status ON proposals(status);
 CREATE INDEX IF NOT EXISTS idx_nights_date ON nights(date);
+
+-- Messages sent from the wiki: "contact" (change requests) and "access" (wiki sign-in requests)
+CREATE TABLE IF NOT EXISTS messages (
+    id         INTEGER PRIMARY KEY,
+    created_at TEXT NOT NULL,
+    kind       TEXT NOT NULL CHECK (kind IN ('contact', 'access')),
+    name       TEXT NOT NULL,
+    email      TEXT NOT NULL,
+    topic      TEXT NOT NULL DEFAULT '',
+    page       TEXT NOT NULL DEFAULT '',
+    body       TEXT NOT NULL DEFAULT '',
+    status     TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'read', 'done')),
+    ip_hash    TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX IF NOT EXISTS idx_messages_status ON messages(status);

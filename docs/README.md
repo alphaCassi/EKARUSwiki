@@ -27,10 +27,12 @@ tools/manage_users.py Add / remove / list registered users
   rename a page, update the nav in all HTML files. The current page is marked with
   `aria-current="page"`, which highlights its button.
 - **Observation Schedule** button opens the scheduler app in a new tab; set its address in `schedulerUrl` (`assets/js/config.js`). Until then it shows `pages/observation-schedule.html`.
+- **OAO school** button: opens two sub-buttons (Main webpage, Tutorials); the links are in the left `<nav>` of every page.
+- **RTC & ICS** (`pages/bench.html`, panel `id="rtc-ics"`): replace the placeholder text, schematic and latency values.
 - **DAO-EKARUS** button links straight to the DAO server; `pages/dao-ekarus.html` is kept but not linked.
 - **Team photos** (`pages/team.html`): save each photo as `assets/img/team/<first-last>.webp` (about 300 px wide) and replace that person's `<span class="photo" ...></span>` with `<img class="photo" src="../assets/img/team/<first-last>.webp" width="300" height="360" alt="">`. The members table is below the diagram.
 - **Partner logos**: the `<footer class="partners">` block at the bottom of every page.
-- **"Happening" banner**: the `<p class="happening">` line in each page's header.
+- **Banner** (empty = hidden): edit it on the admin page ("Wiki home page"); it's stored in `data/site.json`.
 - **Highlights**: add a new `<li>` at the top of the list in `home.html`.
 - **Bench subsystems** (`pages/bench.html`): each subsystem is a
   `<section class="subsystem-panel" id="...">` with a matching
@@ -38,6 +40,17 @@ tools/manage_users.py Add / remove / list registered users
   `pages/bench.html#wfs-channel`.
 - **Images**: put them in `assets/img/` (WebP or JPEG, ideally under ~200 KB) and always
   set `width`, `height` and `alt`.
+
+## Admin, contact form and editable content
+
+These need the EKARUS server (the scheduler app) to be running and `schedulerUrl` set in
+`assets/js/config.js`; see `scheduler/README.md`, "Connect the wiki".
+
+- **Contact us** (`pages/contact.html`) and **Request access** (`index.html`) send their message to
+  the server, which stores it on the admin page and e-mails the admins. No mail program is used.
+- The footer shows an **Admin** link to the server's admin pages.
+- The banner and the Highlights come from `data/site.json`, which the admin page edits. The text
+  written in the HTML pages is only a fallback (e.g. when a page is opened from disk).
 
 ## To-do list
 

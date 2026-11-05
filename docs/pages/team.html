@@ -18,7 +18,7 @@
 
   <header class="site-header">
     <a class="logo" href="../home.html"><img src="../assets/img/ekarus-logo.webp" width="480" height="480" alt="EKARUS home"></a>
-    <p class="happening">Upcoming: OAO 2026 school with EKARUS, Asiago, 25–30 October</p>
+    <p class="happening" data-site-banner></p>
     <button class="signout" type="button" data-signout>Sign out</button>
   </header>
 
@@ -30,11 +30,24 @@
         <li><a href="../pages/bench.html">Bench Architecture</a></li>
         <li><a href="http://193.206.244.171/index.html" target="_blank" rel="noopener" class="ext">DAO-EKARUS<span class="visually-hidden"> (opens the DAO server in a new tab)</span></a></li>
         <li><a href="../pages/observation-schedule.html" target="_blank" rel="noopener" class="ext" data-scheduler-link>Observation Schedule<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+        <li>
+          <details class="nav-group">
+            <summary>OAO school</summary>
+            <ul class="sub-nav">
+              <li><a href="https://indico.ict.inaf.it/event/3554/overview" target="_blank" rel="noopener" class="ext">Main webpage<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+              <li><a href="https://oao2026tutorials.netlify.app/#tutorials" target="_blank" rel="noopener" class="ext">Tutorials<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            </ul>
+          </details>
+        </li>
       </ul>
     </nav>
 
     <main class="main" id="main">
       <h1>Team</h1>
+      <figure class="panel team-photo">
+        <img src="../assets/img/ekarus-team.webp" width="1118" height="837" loading="lazy" alt="The EKARUS team in the Copernico telescope control room during the daytime calibrations for first light">
+        <figcaption>The EKARUS team in the Copernico control room during first-light calibrations. Credit: Angelie Alagao/LAM, via Media INAF.</figcaption>
+      </figure>
       <section class="panel org" aria-label="Project organisation">
         <!-- Photos: put a square-ish image in assets/img/team/ (e.g. benoit-neichel.webp, about 300 px wide)
              and replace that person's <span class="photo" aria-hidden="true"></span> with
@@ -105,7 +118,7 @@
             <ul class="wp-people">
               <li class="person">
                 <span class="photo" aria-hidden="true"></span>
-                <span class="name">Taïssir Cedric Heritier</span><span class="role">WP leader</span>
+                <span class="name">Alessandro Ballone</span><span class="role">WP leader</span>
               </li>
             </ul>
           </li>
@@ -114,7 +127,7 @@
             <ul class="wp-people">
               <li class="person">
                 <span class="photo" aria-hidden="true"></span>
-                <span class="name">Alessandro Ballone</span><span class="role">WP leader</span>
+                <span class="name">Elena Carolo</span><span class="role">WP leader</span>
               </li>
             </ul>
           </li>
@@ -131,8 +144,8 @@
       </section>
 
       <details class="panel members">
-        <summary>Members <span class="count">37</span></summary>
-        <p class="muted small">WP0 Management &amp; organisation · WP1 AO analysis · WP2 System engineering · WP3 Telescope simulator &amp; calibration · WP4 Opto-mechanical design · WP5 Software · WP6 Assembly, integration &amp; tests · WP7 Outreach &amp; communication</p>
+        <summary>Members <span class="count">36</span></summary>
+        <p class="muted small">Work packages: WP0 Management and organisation, WP1 AO analysis, WP2 System engineering, WP3 Telescope simulator and calibration, WP4 Opto-mechanical design, WP5 Software, WP6 Assembly, integration and tests, WP7 Outreach and communication.</p>
         <div class="table-wrap">
           <table>
             <thead><tr><th scope="col">Name</th><th scope="col">Institute</th><th scope="col">Work packages</th></tr></thead>
@@ -143,7 +156,6 @@
               <tr><td>Andrea Baruffolo</td><td>INAF Padova</td><td>WP5</td></tr>
               <tr><td>Edoardo Bellone de Grecis</td><td>INAF Arcetri</td><td>—</td></tr>
               <tr><td>Mohamed Yahia Bournane</td><td>INAF Padova</td><td>WP4, WP6</td></tr>
-              <tr><td>Elena Carolo</td><td>INAF Padova</td><td>WP0, WP4, WP6</td></tr>
               <tr><td>Paolo Cerpelloni</td><td>INAF</td><td>WP6</td></tr>
               <tr><td>Vincent Chambouleyron</td><td>LAM</td><td>WP1, WP3</td></tr>
               <tr><td>Luca Cortese</td><td>INAF Padova / UniPD</td><td>WP5</td></tr>
@@ -186,6 +198,7 @@
         <li><a href="../pages/logbook.html">Logs</a></li>
         <li><a href="../pages/user-guide.html">User Guide</a></li>
         <li><a href="../pages/todo.html">To do’s</a></li>
+        <li><a href="../pages/contact.html">Contact us</a></li>
       </ul>
     </nav>
   </div>
@@ -200,7 +213,7 @@
       <li><img src="../assets/img/partners/unige.webp" width="480" height="139" loading="lazy" alt="Université de Genève"></li>
       <li><img src="../assets/img/partners/ipag.webp" width="142" height="160" loading="lazy" alt="IPAG – Institut de Planétologie et d’Astrophysique de Grenoble"></li>
     </ul>
-    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory</p>
+    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory<span data-admin-wrap hidden><br><a href="#" data-admin-link>Admin</a></span></p>
   </footer>
 </body>
 </html>

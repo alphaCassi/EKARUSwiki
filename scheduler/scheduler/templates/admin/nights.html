@@ -1,5 +1,5 @@
 {% extends "base.html" %}{% from "_macros.html" import csrf %}
-{% block title %}Admin · nights{% endblock %}
+{% block title %}Admin: nights{% endblock %}
 {% block content %}
 <h1>Admin</h1>
 {% include "admin/_tabs.html" %}
@@ -29,7 +29,7 @@
     {% for n in nights %}
       <tr>
         <td>{{ n.date|nicedate }}</td>
-        <td>{% if n.status == 'booked' %}<span class="badge badge-accepted">Booked · {{ n.booked_code }}</span>
+        <td>{% if n.status == 'booked' %}<span class="badge badge-accepted">Booked by {{ n.booked_code }}</span>
             {% elif n.status == 'open' %}<span class="badge badge-submitted">Open</span>
             {% else %}<span class="badge badge-withdrawn">Closed</span>{% endif %}</td>
         <td>{{ n.pending or '—' }}</td>

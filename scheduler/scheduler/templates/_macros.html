@@ -12,7 +12,7 @@
     <h2>Summary</h2>
     <p>{{ p.summary }}</p>
     <dl class="facts">
-      {% if show_pi %}<div><dt>PI</dt><dd>{{ p.pi_name }} · <a href="mailto:{{ p.pi_email }}">{{ p.pi_email }}</a>{% if p.pi_institute %} · {{ p.pi_institute }}{% endif %}</dd></div>{% endif %}
+      {% if show_pi %}<div><dt>PI</dt><dd>{{ p.pi_name }}{% if p.pi_institute %}, {{ p.pi_institute }}{% endif %} (<a href="mailto:{{ p.pi_email }}">{{ p.pi_email }}</a>)</dd></div>{% endif %}
       <div><dt>Mode</dt><dd>{{ p.mode }}</dd></div>
       <div><dt>Observers on site</dt><dd>{{ p.observers or '—' }}</dd></div>
       <div><dt>Minimum useful nights</dt><dd>{{ p.min_nights }}</dd></div>

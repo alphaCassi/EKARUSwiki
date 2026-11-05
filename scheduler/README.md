@@ -12,6 +12,31 @@ A small web app for requesting EKARUS observing nights.
 It needs a server that runs Python. GitHub Pages can't host it, because it stores accounts and
 proposals and sends e-mail. The wiki's "Observation Schedule" button opens it in a new tab.
 
+## Admin pages for the wiki
+
+Under **Admin** (for the addresses in `ADMIN_EMAILS`):
+
+- **Messages**: change requests from the wiki's *Contact us* page and access requests from its
+  sign-in page. Each one is also e-mailed to the admins (reply to that e-mail to answer the sender).
+  Access requests have a one-click **Register on the wiki** button, which also e-mails the person.
+- **Wiki users**: register or remove wiki sign-in addresses.
+- **Wiki home page**: edit the banner and the Highlights.
+
+The last two change files in the wiki repository through the GitHub API (one commit per change);
+GitHub Pages publishes them within a minute or two.
+
+### Connect the wiki
+
+1. On GitHub: profile picture → Settings → Developer settings → Personal access tokens →
+   **Fine-grained tokens** → Generate new token. Repository access: *Only select repositories* →
+   `EKARUSwiki`. Permissions → Repository → **Contents: Read and write**. Copy the token.
+2. In `.env`: `GITHUB_TOKEN=<the token>`, `GITHUB_REPO=alphaCassi/EKARUSwiki`,
+   `WIKI_URL=https://alphacassi.github.io/EKARUSwiki/`. Restart the app.
+3. In the wiki, set `schedulerUrl` in `docs/assets/js/config.js` to this server's address and push.
+   The wiki then shows the Observation Schedule, the footer **Admin** link and working forms.
+
+The token gives write access to the wiki repository only: keep it in `.env`, never in git.
+
 ## Folder layout
 
 ```
@@ -23,9 +48,13 @@ scheduler/mail.py         Sending e-mail (SMTP), or saving it to instance/outbox
 scheduler/auth.py         Register, confirm e-mail, sign in/out, reset password, profile
 scheduler/main.py         Public calendar, new proposal, my proposals, withdraw
 scheduler/admin.py        Review and decide, cancel an allocation, open/close nights, users
+scheduler/wiki_admin.py   Messages from the wiki, wiki users, wiki home page content
+scheduler/api.py          /api/contact: contact form and access requests from the wiki (CORS)
+scheduler/github.py       Reading and committing wiki files through the GitHub API
+scheduler/wiki_users.py   Format of the wiki's users.js (hashed e-mails)
 scheduler/templates/      Page templates; templates/email/ holds the e-mail texts
 scheduler/static/         CSS, JS, fonts and logo (same style as the wiki)
-tests/test_flow.py        End-to-end tests (no server needed)
+tests/                   End-to-end tests (no server needed; GitHub is faked)
 wsgi.py                   Production entry point (gunicorn)
 deploy/                   systemd service and nginx (HTTPS) examples
 .env.example              All settings, with explanations

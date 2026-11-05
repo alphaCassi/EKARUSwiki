@@ -62,7 +62,31 @@
     });
   }
 
-  /* ---------- Access page: request access (opens the visitor's mail app) */
+  /* ---------- Sending to the admins (contact form, access requests) via the scheduler server.
+     No mail program is involved: the server stores the message for the admin page and
+     e-mails it to the admins. */
+  function sendToAdmins(payload, button, msgEl, onDone) {
+    if (!config.schedulerUrl) {
+      setMessage(msgEl, "error", "Sending isn't available yet: the EKARUS server isn't connected to the wiki.");
+      return;
+    }
+    button.disabled = true;
+    setMessage(msgEl, "", "Sending…");
+    fetch(config.schedulerUrl.replace(/\/$/, "") + "/api/contact", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+      .then(function (r) { return r.json().catch(function () { return { ok: false }; }); })
+      .then(function (res) {
+        if (res.ok) { onDone(); }
+        else { setMessage(msgEl, "error", res.error || "Sending failed. Please try again later."); }
+      })
+      .catch(function () { setMessage(msgEl, "error", "The server can't be reached. Please try again later."); })
+      .then(function () { button.disabled = false; });
+  }
+
+  /* ---------- Access page: request access */
   var requestForm = document.getElementById("request-form");
   if (requestForm) {
     var rmsg = document.getElementById("request-message");
@@ -72,24 +96,94 @@
       var name = f.name.value.trim();
       var email = f.email.value.trim().toLowerCase();
       if (!name || !email) { setMessage(rmsg, "error", "Enter your name and e-mail address."); return; }
-
-      var body = [
-        "Please register me for the EKARUS wiki.",
-        "",
-        "Name: " + name,
-        "E-mail: " + email,
-        "Institute: " + f.institute.value.trim(),
-        "Role on EKARUS: " + f.role.value.trim(),
-        "",
-        "Admin: python tools/manage_users.py add " + email
-      ].join("\n");
-
-      var href = "mailto:" + encodeURIComponent(config.adminEmail || "") +
-        "?subject=" + encodeURIComponent(config.requestSubject || "EKARUS wiki: access request") +
-        "&body=" + encodeURIComponent(body);
-      window.location.href = href;
-      setMessage(rmsg, "ok", "Your mail app should open with the request ready to send. If nothing opens, write to " + (config.adminEmail || "the wiki admin") + ".");
+      sendToAdmins({
+        kind: "access", name: name, email: email,
+        message: "Institute: " + f.institute.value.trim() + "\nRole on EKARUS: " + f.role.value.trim(),
+        website: f.website ? f.website.value : ""
+      }, requestForm.querySelector("button"), rmsg, function () {
+        requestForm.reset();
+        setMessage(rmsg, "ok", "Request sent. You'll get an e-mail when you're registered.");
+      });
     });
+  }
+
+  /* ---------- Contact page: change requests */
+  var contactForm = document.getElementById("contact-form");
+  if (contactForm) {
+    var cmsg = document.getElementById("contact-message");
+    contactForm.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var f = contactForm.elements;
+      var data = {
+        kind: "contact",
+        name: f.name.value.trim(),
+        email: f.email.value.trim(),
+        topic: f.topic.value,
+        page: f.page.value,
+        message: f.message.value.trim(),
+        website: f.website.value
+      };
+      if (!data.name || !data.email || !data.message) {
+        setMessage(cmsg, "error", "Fill in your name, e-mail and request.");
+        return;
+      }
+      sendToAdmins(data, contactForm.querySelector("button[type=submit]"), cmsg, function () {
+        contactForm.reset();
+        setMessage(cmsg, "ok", "Thank you! Your request has been sent to the wiki admins.");
+      });
+    });
+  }
+
+  /* ---------- Footer "Admin" link: the admin pages live on the scheduler server */
+  if (config.schedulerUrl) {
+    document.querySelectorAll("[data-admin-link]").forEach(function (a) {
+      a.href = config.schedulerUrl.replace(/\/$/, "") + "/admin/messages";
+      a.closest("[data-admin-wrap]").hidden = false;
+    });
+  }
+
+  /* ---------- Banner and highlights from data/site.json (edited on the admin page).
+     If the file can't be loaded (e.g. page opened from disk), the HTML version stays. */
+  var bannerEl = document.querySelector("[data-site-banner]");
+  var highlightsEl = document.querySelector("[data-highlights]");
+  if ((bannerEl || highlightsEl) && window.fetch && location.protocol !== "file:") {
+    fetch(root + "data/site.json", { cache: "no-cache" })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (site) {
+        if (bannerEl && site.banner) bannerEl.textContent = site.banner;
+        if (highlightsEl && Array.isArray(site.highlights) && site.highlights.length) {
+          renderHighlights(highlightsEl, site.highlights);
+        }
+      })
+      .catch(function () { /* keep the HTML version */ });
+  }
+
+  function renderHighlights(container, items) {
+    var VISIBLE = 3;
+    function list(part) {
+      var ul = document.createElement("ul");
+      ul.className = "highlights";
+      part.forEach(function (h) {
+        var li = document.createElement("li");
+        if (h.date) { var t = document.createElement("time"); t.textContent = h.date; li.appendChild(t); }
+        if (h.title) { var b = document.createElement("strong"); b.textContent = h.title; li.appendChild(b); }
+        if (h.text) li.appendChild(document.createTextNode(" " + h.text));
+        if (h.done) { var tag = document.createElement("span"); tag.className = "tag"; tag.textContent = "Done"; li.appendChild(tag); }
+        ul.appendChild(li);
+      });
+      return ul;
+    }
+    container.textContent = "";
+    container.appendChild(list(items.slice(0, VISIBLE)));
+    if (items.length > VISIBLE) {
+      var more = document.createElement("details");
+      more.className = "more";
+      var sum = document.createElement("summary");
+      sum.textContent = "See more";
+      more.appendChild(sum);
+      more.appendChild(list(items.slice(VISIBLE)));
+      container.appendChild(more);
+    }
   }
 
   /* ---------- Bench page: switch the detail panel by subsystem */

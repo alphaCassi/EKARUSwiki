@@ -1,5 +1,8 @@
 <nav class="tabs" aria-label="Admin sections">
   <a href="{{ url_for('admin.dashboard') }}" {% if request.endpoint in ('admin.dashboard', 'admin.review') %}aria-current="page"{% endif %}>Proposals</a>
   <a href="{{ url_for('admin.nights') }}" {% if request.endpoint == 'admin.nights' %}aria-current="page"{% endif %}>Nights</a>
-  <a href="{{ url_for('admin.users') }}" {% if request.endpoint == 'admin.users' %}aria-current="page"{% endif %}>Users</a>
+  <a href="{{ url_for('admin.users') }}" {% if request.endpoint == 'admin.users' %}aria-current="page"{% endif %}>Scheduler users</a>
+  <a href="{{ url_for('wiki_admin.messages') }}" {% if request.endpoint in ('wiki_admin.messages', 'wiki_admin.message') %}aria-current="page"{% endif %}>Messages{% if new_message_count %} <span class="count-badge">{{ new_message_count }}</span>{% endif %}</a>
+  <a href="{{ url_for('wiki_admin.wiki_user_list') }}" {% if request.endpoint == 'wiki_admin.wiki_user_list' %}aria-current="page"{% endif %}>Wiki users</a>
+  <a href="{{ url_for('wiki_admin.wiki_content') }}" {% if request.endpoint == 'wiki_admin.wiki_content' %}aria-current="page"{% endif %}>Wiki home page</a>
 </nav>

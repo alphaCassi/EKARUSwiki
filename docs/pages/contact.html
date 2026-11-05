@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" data-root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Request a change to the EKARUS wiki">
+  <title>Contact us – EKARUS wiki</title>
+  <link rel="icon" href="../assets/img/favicon.png" type="image/png">
+  <link rel="preload" href="../assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/gate.js"></script>
+  <script src="../assets/js/config.js" defer></script>
+  <script src="../assets/js/main.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <a class="logo" href="../home.html"><img src="../assets/img/ekarus-logo.webp" width="480" height="480" alt="EKARUS home"></a>
+    <p class="happening" data-site-banner></p>
+    <button class="signout" type="button" data-signout>Sign out</button>
+  </header>
+
+  <div class="shell">
+    <nav class="side-nav nav-left" aria-label="Instrument">
+      <ul>
+        <li><a href="../pages/team.html">Team</a></li>
+        <li><a href="../pages/telescope.html">Telescope</a></li>
+        <li><a href="../pages/bench.html">Bench Architecture</a></li>
+        <li><a href="http://193.206.244.171/index.html" target="_blank" rel="noopener" class="ext">DAO-EKARUS<span class="visually-hidden"> (opens the DAO server in a new tab)</span></a></li>
+        <li><a href="../pages/observation-schedule.html" target="_blank" rel="noopener" class="ext" data-scheduler-link>Observation Schedule<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+        <li>
+          <details class="nav-group">
+            <summary>OAO school</summary>
+            <ul class="sub-nav">
+              <li><a href="https://indico.ict.inaf.it/event/3554/overview" target="_blank" rel="noopener" class="ext">Main webpage<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+              <li><a href="https://oao2026tutorials.netlify.app/#tutorials" target="_blank" rel="noopener" class="ext">Tutorials<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            </ul>
+          </details>
+        </li>
+      </ul>
+    </nav>
+
+    <main class="main" id="main">
+      <h1>Contact us</h1>
+      <section class="panel">
+        <p class="lede">Something to fix, add or change on the wiki? Tell us here; the message goes straight to the wiki admins.</p>
+        <form class="contact-form" id="contact-form" novalidate>
+          <div class="field-row">
+            <div class="field">
+              <label for="c-name">Name</label>
+              <input id="c-name" name="name" type="text" autocomplete="name" maxlength="120" required>
+            </div>
+            <div class="field">
+              <label for="c-email">E-mail <span class="hint">so we can answer you</span></label>
+              <input id="c-email" name="email" type="email" autocomplete="email" maxlength="200" required>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label for="c-topic">What is it about?</label>
+              <select id="c-topic" name="topic">
+                <option>Content correction</option>
+                <option>New content</option>
+                <option>Design / layout</option>
+                <option>Broken link</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="c-page">Which page? <span class="hint">optional</span></label>
+              <select id="c-page" name="page">
+                <option value="">—</option>
+                <option>Home</option><option>Team</option><option>Telescope</option><option>Bench Architecture</option>
+                <option>Schedule</option><option>Logs</option><option>User Guide</option><option>To do’s</option><option>Whole site</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label for="c-message">Your request</label>
+            <textarea id="c-message" name="message" rows="7" maxlength="5000" required></textarea>
+          </div>
+          <!-- spam trap: hidden from people, bots fill it in -->
+          <div class="trap" aria-hidden="true">
+            <label for="c-website">Website</label>
+            <input id="c-website" name="website" type="text" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="form-actions">
+            <button class="btn" type="submit">Send</button>
+            <p class="form-message" id="contact-message" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </section>
+      <section class="panel" aria-labelledby="maintainers-title">
+        <h2 id="maintainers-title">Who runs the wiki</h2>
+        <ul class="maintainers">
+          <li>
+            <span class="name">Oleksandra Rebrysh</span>
+            <span class="role">Web developer and content manager</span>
+            <a href="mailto:oleksandra.rebrysh@inaf.it">oleksandra.rebrysh@inaf.it</a>
+          </li>
+          <li>
+            <span class="name">Angelie Mary Alagao</span>
+            <span class="role">Web designer and content manager</span>
+            <a href="mailto:angelie.alagao@lam.fr">angelie.alagao@lam.fr</a>
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <nav class="side-nav nav-right" aria-label="Operations">
+      <ul>
+        <li><a href="../pages/schedule.html">Schedule</a></li>
+        <li><a href="../pages/logbook.html">Logs</a></li>
+        <li><a href="../pages/user-guide.html">User Guide</a></li>
+        <li><a href="../pages/todo.html">To do’s</a></li>
+        <li><a href="../pages/contact.html" aria-current="page">Contact us</a></li>
+      </ul>
+    </nav>
+  </div>
+  <footer class="partners" aria-labelledby="partners-title">
+    <h2 id="partners-title">Partners</h2>
+    <ul>
+      <li><img src="../assets/img/partners/inaf-oapd.webp" width="240" height="127" loading="lazy" alt="INAF – Osservatorio Astronomico di Padova"></li>
+      <li><img src="../assets/img/partners/onera.webp" width="240" height="69" loading="lazy" alt="ONERA – The French Aerospace Lab"></li>
+      <li><img src="../assets/img/partners/lam.webp" width="240" height="77" loading="lazy" alt="LAM – Laboratoire d’Astrophysique de Marseille"></li>
+      <li class="on-dark"><img src="../assets/img/partners/adoni.webp" width="200" height="120" loading="lazy" alt="ADONI – Laboratorio Nazionale di Ottica Adattiva"></li>
+      <li><img src="../assets/img/partners/durham.webp" width="340" height="160" loading="lazy" alt="Durham University"></li>
+      <li><img src="../assets/img/partners/unige.webp" width="480" height="139" loading="lazy" alt="Université de Genève"></li>
+      <li><img src="../assets/img/partners/ipag.webp" width="142" height="160" loading="lazy" alt="IPAG – Institut de Planétologie et d’Astrophysique de Grenoble"></li>
+    </ul>
+    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory<span data-admin-wrap hidden><br><a href="#" data-admin-link>Admin</a></span></p>
+  </footer>
+</body>
+</html>

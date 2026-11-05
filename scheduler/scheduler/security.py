@@ -51,6 +51,9 @@ def csrf_token():
 
 
 def check_csrf():
+    # /api/ is called cross-site by the wiki without cookies; it has its own checks
+    if request.path.startswith("/api/"):
+        return
     if request.method == "POST" and not current_app.config.get("TESTING_NO_CSRF"):
         sent = request.form.get("csrf_token", "")
         if not sent or not secrets.compare_digest(sent, session.get("csrf", "")):

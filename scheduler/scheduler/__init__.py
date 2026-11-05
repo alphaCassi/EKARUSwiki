@@ -24,6 +24,15 @@ def create_app(test_config=None):
         SMTP_PASSWORD=os.environ.get("SMTP_PASSWORD", ""),
         SMTP_STARTTLS=os.environ.get("SMTP_STARTTLS", "1") == "1",
         MAIL_FROM=os.environ.get("MAIL_FROM", "EKARUS scheduler <no-reply@example.org>"),
+        # Wiki integration: the GitHub repository holding the wiki (docs/ folder) and a
+        # fine-grained token with "Contents: read and write" on that repository only.
+        GITHUB_REPO=os.environ.get("GITHUB_REPO", "alphaCassi/EKARUSwiki"),
+        GITHUB_BRANCH=os.environ.get("GITHUB_BRANCH", "main"),
+        GITHUB_TOKEN=os.environ.get("GITHUB_TOKEN", ""),
+        # Extra sites allowed to send the contact form (comma-separated), e.g. http://localhost:8000
+        CORS_ORIGINS=os.environ.get("CORS_ORIGINS", ""),
+        # Behind nginx: trust its X-Forwarded-For header for the visitor's address (rate limiting)
+        PROXY_FIX=os.environ.get("PROXY_FIX", "0") == "1",
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE", "1") == "1",
@@ -32,10 +41,16 @@ def create_app(test_config=None):
         app.config.update(test_config)
     os.makedirs(app.instance_path, exist_ok=True)
 
+    if app.config["PROXY_FIX"]:
+        from werkzeug.middleware.proxy_fix import ProxyFix
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
+
     db.init_app(app)
     security.init_app(app)
 
-    from . import auth, main, admin
+    from . import auth, main, admin, api, wiki_admin
+    app.register_blueprint(api.bp)
+    app.register_blueprint(wiki_admin.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(main.bp)
     app.register_blueprint(admin.bp)

@@ -711,3 +711,65 @@ tr.is-done td:first-child { text-decoration: line-through; }
 .members[open] > summary::after { content: " \25B4"; }
 .members[open] > summary { margin-bottom: 1rem; }
 .members .count { color: var(--muted); font-weight: 400; font-size: var(--fs-sm); }
+
+/* ---------- Contact form */
+.contact-form { display: grid; gap: 1rem; }
+.contact-form .field { display: grid; gap: 0.3rem; }
+.contact-form label { font-weight: 600; font-size: var(--fs-sm); }
+.contact-form .hint { font-weight: 400; color: var(--muted); }
+.field-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1rem; }
+.contact-form input, .contact-form select, .contact-form textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.55rem 0.7rem;
+}
+.contact-form textarea { resize: vertical; }
+.form-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1rem; }
+.form-actions .form-message { margin: 0; }
+
+/* spam trap: off-screen for people, still in the form for bots */
+.trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* ---------- Banner hides itself when there's nothing upcoming */
+.happening:empty { display: none; }
+
+/* ---------- Side nav: OAO school button with sub-buttons */
+.nav-group > summary {
+  display: block;
+  list-style: none;
+  text-align: center;
+  cursor: pointer;
+  color: var(--ink);
+  background: var(--nav-bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0.55rem 0.5rem;
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  line-height: 1.25;
+}
+.nav-group > summary::-webkit-details-marker { display: none; }
+.nav-group > summary::after { content: " \25BE"; color: var(--cyan); }
+.nav-group[open] > summary::after { content: " \25B4"; }
+.nav-group > summary:hover { border-color: var(--cyan); }
+.side-nav .sub-nav {
+  margin-top: 0.4rem;
+  padding-left: 0.9rem;
+  border-left: 2px solid var(--line);
+  gap: 0.4rem;
+}
+.side-nav .sub-nav a { font-weight: 400; padding: 0.4rem 0.5rem; }
+
+/* ---------- Team page photo */
+.team-photo { margin-bottom: var(--gap); }
+.team-photo img { width: 100%; max-height: 20rem; object-fit: cover; object-position: center 40%; border-radius: var(--radius); }
+
+/* ---------- Contact page: maintainers */
+.maintainers { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 0.75rem; }
+.maintainers li { display: grid; gap: 0.15rem; padding: 0.9rem 1rem; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); }
+.maintainers .name { font-weight: 600; }
+.maintainers .role { color: var(--gold); font-size: var(--fs-sm); }

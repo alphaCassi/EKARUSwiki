@@ -1,0 +1,35 @@
+{
+  "banner": "",
+  "highlights": [
+    {
+      "date": "31 August – 1 September 2026",
+      "title": "Official first light.",
+      "text": "EKARUS at the Copernico telescope.",
+      "done": true
+    },
+    {
+      "date": "June 2026",
+      "title": "Common path aligned in Padova.",
+      "text": "Transmitted wavefront error about 55 nm RMS over the 33 mm DM pupil, mostly coma and secondary astigmatism, to be corrected by the DM. Fast tip-tilt mirror tested and integrated.",
+      "done": false
+    },
+    {
+      "date": "Spring 2026",
+      "title": "DM468 characterized at Arcetri.",
+      "text": "Best flat about 6 nm RMS wavefront, small actuator print-through, tip-tilt stroke about 15 µm surface.",
+      "done": false
+    },
+    {
+      "date": "April 2026",
+      "title": "Coudé relay upgraded.",
+      "text": "New L1 and L3 lenses installed to correct the chromatic focus of the old relay. First seeing-limited PSFs (about 1.8″ seeing) show no strong aberrations from the new relay.",
+      "done": false
+    },
+    {
+      "date": "April 2026",
+      "title": "PAPYRUS decommissioned",
+      "text": "after reaching almost 65% Strehl at 1450 nm on the T152. Its components were shipped from LAM to Asiago for EKARUS.",
+      "done": false
+    }
+  ]
+}

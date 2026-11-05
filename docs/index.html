@@ -49,7 +49,11 @@
           <label for="req-role">Role on EKARUS</label>
           <textarea id="req-role" name="role"></textarea>
         </div>
-        <button class="btn btn-secondary" type="submit">Send request by e-mail</button>
+        <div class="trap" aria-hidden="true">
+          <label for="req-website">Website</label>
+          <input id="req-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+        <button class="btn btn-secondary" type="submit">Send request</button>
         <p class="form-message" id="request-message" role="status" aria-live="polite"></p>
       </form>
     </details>

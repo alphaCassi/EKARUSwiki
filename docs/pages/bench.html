@@ -18,7 +18,7 @@
 
   <header class="site-header">
     <a class="logo" href="../home.html"><img src="../assets/img/ekarus-logo.webp" width="480" height="480" alt="EKARUS home"></a>
-    <p class="happening">Upcoming: OAO 2026 school with EKARUS, Asiago, 25–30 October</p>
+    <p class="happening" data-site-banner></p>
     <button class="signout" type="button" data-signout>Sign out</button>
   </header>
 
@@ -30,6 +30,15 @@
         <li><a href="../pages/bench.html" aria-current="page">Bench Architecture</a></li>
         <li><a href="http://193.206.244.171/index.html" target="_blank" rel="noopener" class="ext">DAO-EKARUS<span class="visually-hidden"> (opens the DAO server in a new tab)</span></a></li>
         <li><a href="../pages/observation-schedule.html" target="_blank" rel="noopener" class="ext" data-scheduler-link>Observation Schedule<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+        <li>
+          <details class="nav-group">
+            <summary>OAO school</summary>
+            <ul class="sub-nav">
+              <li><a href="https://indico.ict.inaf.it/event/3554/overview" target="_blank" rel="noopener" class="ext">Main webpage<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+              <li><a href="https://oao2026tutorials.netlify.app/#tutorials" target="_blank" rel="noopener" class="ext">Tutorials<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            </ul>
+          </details>
+        </li>
       </ul>
     </nav>
 
@@ -55,6 +64,7 @@
             <li><button type="button" data-target="vis-imager" aria-controls="vis-imager" aria-pressed="false">VIS Imager</button></li>
             <li><button type="button" data-target="ir-channel" aria-controls="ir-channel" aria-pressed="false">IR Channel</button></li>
             <li><button type="button" data-target="calibration-unit" aria-controls="calibration-unit" aria-pressed="false">Dual Calibration Unit</button></li>
+            <li><button type="button" data-target="rtc-ics" aria-controls="rtc-ics" aria-pressed="false">RTC &amp; ICS</button></li>
           </ul>
         </nav>
         <div class="subsystem-panels">
@@ -91,11 +101,11 @@
               <table>
                 <caption>Instrument characteristics</caption>
                 <tbody>
-                  <tr><th scope="row">Wavelength</th><td>VIS 500–900 nm · NIR 1000–1700 nm</td></tr>
-                  <tr><th scope="row">Science FoV</th><td>VIS 1 arcmin · NIR 1 arcmin</td></tr>
+                  <tr><th scope="row">Wavelength</th><td>VIS 500–900 nm, NIR 1000–1700 nm</td></tr>
+                  <tr><th scope="row">Science FoV</th><td>1 arcmin for both VIS and NIR</td></tr>
                   <tr><th scope="row">PWFS FoV</th><td>8 arcsec</td></tr>
-                  <tr><th scope="row">Throughput</th><td>Science 4–8% · PWFS 6–12%</td></tr>
-                  <tr><th scope="row">Cameras</th><td>VIS ORCA · NIR CRED2</td></tr>
+                  <tr><th scope="row">Throughput</th><td>Science 4–8%, PWFS 6–12%</td></tr>
+                  <tr><th scope="row">Cameras</th><td>ORCA for VIS, CRED2 for NIR</td></tr>
                 </tbody>
               </table>
             </div>
@@ -207,6 +217,30 @@
             </div>
               <p class="source">Sources: bench schematic; <a href="https://sites.google.com/inaf.it/adoni-coude/ekarus" target="_blank" rel="noopener" class="ext">Newsletter April–May 2026</a>.</p>
           </section>
+          <section class="panel subsystem-panel" id="rtc-ics" aria-labelledby="rtc-ics-title">
+            <h2 id="rtc-ics-title">RTC &amp; ICS</h2>
+            <!-- Replace the placeholders: description text, schematic image, latency values. -->
+            <p class="empty">Short description of the real-time computer (RTC) and the instrument control software (ICS): to add.</p>
+            <figure class="mt">
+              <!-- <img src="../assets/img/rtc-schematic.webp" width="..." height="..." alt="RTC and ICS architecture"> -->
+              <div class="placeholder-figure">RTC / ICS schematic (to add)</div>
+            </figure>
+            <div class="table-wrap mt">
+              <table>
+                <caption>Latency budget</caption>
+                <thead><tr><th scope="col">Step</th><th scope="col">Time</th></tr></thead>
+                <tbody>
+                  <tr><td>WFS camera exposure and readout</td><td>TBD</td></tr>
+                  <tr><td>Frame transfer to the RTC</td><td>TBD</td></tr>
+                  <tr><td>Slope computation</td><td>TBD</td></tr>
+                  <tr><td>Wavefront reconstruction and control</td><td>TBD</td></tr>
+                  <tr><td>Command transfer to the DM</td><td>TBD</td></tr>
+                  <tr><td>DM response</td><td>TBD</td></tr>
+                  <tr><th scope="row">Total loop delay</th><td>TBD</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
         </div>
       </div>
     </main>
@@ -217,6 +251,7 @@
         <li><a href="../pages/logbook.html">Logs</a></li>
         <li><a href="../pages/user-guide.html">User Guide</a></li>
         <li><a href="../pages/todo.html">To do’s</a></li>
+        <li><a href="../pages/contact.html">Contact us</a></li>
       </ul>
     </nav>
   </div>
@@ -231,7 +266,7 @@
       <li><img src="../assets/img/partners/unige.webp" width="480" height="139" loading="lazy" alt="Université de Genève"></li>
       <li><img src="../assets/img/partners/ipag.webp" width="142" height="160" loading="lazy" alt="IPAG – Institut de Planétologie et d’Astrophysique de Grenoble"></li>
     </ul>
-    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory</p>
+    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory<span data-admin-wrap hidden><br><a href="#" data-admin-link>Admin</a></span></p>
   </footer>
 </body>
 </html>
