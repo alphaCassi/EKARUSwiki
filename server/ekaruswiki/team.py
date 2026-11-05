@@ -1,4 +1,4 @@
-"""Who belongs to the EKARUS team (and so may sign in with an e-mail link, no password).
+"""Who belongs to the EKARUS team (and so may sign in with their e-mail only, no password).
 
 A person is a team member if their address is
   - in ADMIN_EMAILS, or

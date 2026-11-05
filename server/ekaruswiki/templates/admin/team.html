@@ -4,7 +4,7 @@
 {% block content %}
 <h1>EKARUSwiki admin</h1>
 {% include "admin/_tabs.html" %}
-<p class="lede">Team members sign in to the wiki, the admin pages (admins only) and the observation schedule with an e-mail link, without a password.</p>
+<p class="lede">Team members sign in to the wiki and the observation schedule with their e-mail only. Admins (ADMIN_EMAILS) also enter the admin password for the admin pages.</p>
 <div class="row">
   <form method="post" class="card form grow">
     {{ csrf() }}<input type="hidden" name="action" value="add">

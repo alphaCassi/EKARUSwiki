@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS messages (
 );
 CREATE INDEX IF NOT EXISTS idx_messages_status ON messages(status);
 
--- EKARUS team members: sign in without a password (e-mail sign-in link) to the wiki,
+-- EKARUS team members: sign in with their e-mail only (no password) to the wiki,
 -- the admin pages (if admin) and the observation schedule.
 CREATE TABLE IF NOT EXISTS team (
     email    TEXT PRIMARY KEY,

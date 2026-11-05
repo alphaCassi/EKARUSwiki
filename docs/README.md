@@ -51,10 +51,10 @@ tools/manage_users.py Add / remove / list registered users
 
 ## Signing in
 
-With the server connected (`serverUrl`), team members type their e-mail on the sign-in page and
-receive a one-time **sign-in link** (no password); the link brings them back signed in for 30
-days. Admins (ADMIN_EMAILS on the server) then see **Admin** in the menu. If the server can't be
-reached, the sign-in falls back to the wiki's own list (`assets/js/users.js`).
+Team members type their e-mail on the sign-in page and they're in, for 30 days (no password).
+With the server connected (`serverUrl`), the server checks the team list; admins (ADMIN_EMAILS)
+then see **Admin** in the menu; the admin pages ask once for the admin password. If the
+server can't be reached, the wiki uses its own list (`assets/js/users.js`).
 
 ## Admin, contact form and editable content
 

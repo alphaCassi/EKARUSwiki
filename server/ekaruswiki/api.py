@@ -1,6 +1,6 @@
 """Endpoints called from the wiki (a different site), so they answer with CORS headers.
 
-POST /api/signin-link {email, next}  e-mail a sign-in link to a team member (see accounts.py)
+POST /api/signin  {email}   wiki sign-in: is this a team member (and an admin)?
 POST /api/contact   {kind: "contact"|"access", name, email, topic, page, message, website}
   - "contact": a change request for the wiki
   - "access":  a request to be registered on the wiki
@@ -96,14 +96,18 @@ def contact():
     return jsonify(ok=True)
 
 
-@bp.route("/signin-link", methods=["POST", "OPTIONS"])
-def signin_link():
-    """Wiki sign-in page: e-mail a one-time sign-in link to a team member (no password)."""
+@bp.route("/signin", methods=["POST", "OPTIONS"])
+def signin():
+    """Wiki sign-in page: is this e-mail on the team? Answers with the name and admin flag.
+    The wiki's Admin item opens the admin pages, which ask for the admin password."""
     if request.method == "OPTIONS":
         return "", 204
-    from .accounts import send_signin_link
-    data = request.get_json(silent=True) or {}
-    sent, error = send_signin_link(str(data.get("email", ""))[:200], str(data.get("next", ""))[:500])
-    if sent:
-        return jsonify(ok=True)
-    return fail(error, 429 if "minute ago" in error else 400)
+    from . import team
+    from .accounts import team_user
+    email = str((request.get_json(silent=True) or {}).get("email", "")).strip().lower()[:200]
+    if not EMAIL_RE.match(email):
+        return fail("Enter a valid e-mail address.")
+    if not team.is_team(email):
+        return fail("This address isn't on the team list. Request access below.", 403)
+    user = team_user(email)
+    return jsonify(ok=True, name=user["name"], admin=email in mail.admin_addresses())

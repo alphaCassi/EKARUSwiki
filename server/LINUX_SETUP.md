@@ -35,7 +35,7 @@ Copy from your Windows test setup into `~/EKARUSwiki/server/`:
 
 | What | Why |
 |---|---|
-| `.env` | Your settings: `SECRET_KEY`, SMTP (Gmail app password), `GITHUB_TOKEN` |
+| `.env` | Your settings: `SECRET_KEY`, `ADMIN_PASSWORD`, SMTP (Gmail app password), `GITHUB_TOKEN` |
 | `instance/` folder | Optional: keeps accounts, team list, nights, proposals and messages |
 
 Without them: `cp .env.example .env`, fill it in, and the database starts empty.
@@ -137,4 +137,3 @@ Put that address in `BASE_URL` (then `docker compose up -d`) and in the wiki's `
 | Links in e-mails point to the wrong address | `BASE_URL` in `.env`, then `docker compose up -d` |
 | The wiki says the server isn't connected | `serverUrl` in `docs/assets/js/config.js`, pushed, reloaded with Ctrl+F5 |
 
-Tell INAF IT that this PC serves a public address, before making it permanent.

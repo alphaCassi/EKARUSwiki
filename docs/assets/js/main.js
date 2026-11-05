@@ -32,21 +32,32 @@
     });
   });
 
-  /* ---------- Access page: sign in.
-     With the server connected, the team gets an e-mail sign-in link (no password); the link
-     brings them back here signed in (see gate.js). If the server can't be reached, the wiki
-     falls back to its own list (users.js), so it stays readable. */
+  /* ---------- Access page: sign in with your e-mail (no password).
+     With the server connected, the server checks the team list and says whether you're an
+     admin. If the server can't be reached, the wiki uses its own list (users.js). */
   var signinForm = document.getElementById("signin-form");
   if (signinForm) {
     var msg = document.getElementById("signin-message");
     var home = config.homePage || "home.html";
     var next = new URLSearchParams(window.location.search).get("next");
     var target = next && /^(home\.html|pages\/[a-z0-9-]+\.html)$/.test(next) ? next : home;
+    var DAYS30 = 30 * 24 * 3600;
 
     try {   // already signed in on this browser? go straight in
       var exp = parseInt(window.localStorage.getItem("ekarus.exp") || "0", 10);
       if (window.localStorage.getItem(KEY) && (!exp || exp * 1000 > Date.now())) { window.location.replace(target); return; }
     } catch (e) {}
+
+    var enter = function (email, name, admin) {
+      try {
+        window.localStorage.setItem(KEY, "1");
+        window.localStorage.setItem("ekarus.email", email);
+        window.localStorage.setItem("ekarus.name", name || "");
+        window.localStorage.setItem("ekarus.admin", admin ? "1" : "");
+        window.localStorage.setItem("ekarus.exp", String(Math.floor(Date.now() / 1000) + DAYS30));
+      } catch (e) {}
+      window.location.href = target;
+    };
 
     var localCheck = function (email) {
       if (!(window.crypto && window.crypto.subtle)) {
@@ -54,17 +65,8 @@
         return;
       }
       sha256(email).then(function (hash) {
-        if ((window.EKARUS_USERS || []).indexOf(hash) !== -1) {
-          try {
-            window.localStorage.setItem(KEY, "1");
-            window.localStorage.setItem("ekarus.email", email);
-            window.localStorage.setItem("ekarus.admin", "");
-            window.localStorage.setItem("ekarus.exp", "0");
-          } catch (e) {}
-          window.location.href = target;
-        } else {
-          setMessage(msg, "error", "This address isn't on the team list. Request access below.");
-        }
+        if ((window.EKARUS_USERS || []).indexOf(hash) !== -1) { enter(email, "", false); }
+        else { setMessage(msg, "error", "This address isn't on the team list. Request access below."); }
       });
     };
 
@@ -75,19 +77,15 @@
       if (!server) { localCheck(email); return; }
       var button = signinForm.querySelector("button");
       button.disabled = true;
-      setMessage(msg, "", "Sending your sign-in link…");
-      fetch(server + "/api/signin-link", {
+      fetch(server + "/api/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email, next: new URL(target, window.location.href).href })
+        body: JSON.stringify({ email: email })
       })
         .then(function (r) { return r.json(); })
         .then(function (res) {
-          if (res.ok) {
-            setMessage(msg, "ok", "Check your inbox: we sent a sign-in link to " + email + ". It works once, for 30 minutes.");
-          } else {
-            setMessage(msg, "error", res.error || "Sign-in failed. Please try again.");
-          }
+          if (res.ok) { enter(email, res.name, res.admin); }
+          else { setMessage(msg, "error", res.error || "Sign-in failed. Please try again."); }
         })
         .catch(function () { localCheck(email); })     // server off: use the wiki's own list
         .then(function () { button.disabled = false; });
@@ -166,11 +164,17 @@
     });
   }
 
-  /* ---------- Admin menu item: only for admins signed in with an e-mail link */
-  var isAdmin = false;
-  try { isAdmin = window.localStorage.getItem("ekarus.admin") === "1"; } catch (e) {}
-  if (server && isAdmin) {
-    document.querySelectorAll("[data-admin-link]").forEach(function (a) { a.href = server + "/admin/"; });
+  /* ---------- Admin menu item: only for admins. The server asks for the admin password
+     the first time, then remembers this browser for 30 days. */
+  var isAdmin = false, myEmail = "";
+  try {
+    isAdmin = window.localStorage.getItem("ekarus.admin") === "1";
+    myEmail = window.localStorage.getItem("ekarus.email") || "";
+  } catch (e) {}
+  if (server && isAdmin && myEmail) {
+    document.querySelectorAll("[data-admin-link]").forEach(function (a) {
+      a.href = server + "/account/admin-signin?next=%2Fadmin%2F&email=" + encodeURIComponent(myEmail);
+    });
     document.querySelectorAll("[data-admin-only]").forEach(function (el) { el.hidden = false; });
   }
 

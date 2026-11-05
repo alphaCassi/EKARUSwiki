@@ -15,7 +15,7 @@
         <td>{{ u.institute or '—' }}</td>
         <td>{{ u.n_prop }}</td>
         <td>{{ u.created_at[:10] }}</td>
-        <td>{% if u.is_admin %}Admin{% elif u.password_hash.startswith('!') %}Team (e-mail link){% elif u.verified %}Observer{% else %}E-mail not confirmed{% endif %}</td>
+        <td>{% if u.is_admin %}Admin{% elif u.password_hash.startswith('!') %}Team (e-mail only){% elif u.verified %}Observer{% else %}E-mail not confirmed{% endif %}</td>
       </tr>
     {% endfor %}
     </tbody>

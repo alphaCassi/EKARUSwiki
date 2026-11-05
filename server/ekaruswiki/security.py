@@ -34,11 +34,15 @@ def login_required(view):
 
 
 def admin_required(view):
+    """Admin pages: an address in ADMIN_EMAILS that entered the admin password in this browser."""
     @functools.wraps(view)
-    @login_required
     def wrapped(*args, **kwargs):
-        if not g.user["is_admin"]:
+        from . import mail
+        if g.user is not None and g.user["email"] not in mail.admin_addresses():
             abort(403)
+        if g.user is None or not session.get("admin_ok"):
+            return redirect(url_for("accounts.admin_signin", next=request.path,
+                                    email=g.user["email"] if g.user else ""))
         return view(*args, **kwargs)
     return wrapped
 

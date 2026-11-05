@@ -12,7 +12,7 @@ for the team; this server does everything else:
 | `/account/…` | Sign-in (see below), observer registration, password reset |
 | `/admin/` | **EKARUSwiki admin**: overview, messages, team members, wiki home page content, observer accounts |
 | `/admin/schedule/…` | Observation schedule, admin side: proposals to review, nights |
-| `/api/…` | Called by the wiki: sign-in links, contact form, access requests |
+| `/api/…` | Called by the wiki: team sign-in check, contact form, access requests |
 
 Old links to `/schedule/…` are redirected.
 
@@ -20,7 +20,8 @@ Old links to `/schedule/…` are redirected.
 
 | Who | How |
 |---|---|
-| **EKARUS team** (Admin → Team members, approved access requests, the wiki's `users.js`, and all `ADMIN_EMAILS`) | **No password.** They type their e-mail (on the wiki's sign-in page or this server's) and receive a one-time **sign-in link**, valid 30 minutes. It signs them in to the wiki and this server for 30 days. Admins then see **Admin** in the wiki menu. |
+| **EKARUS team** (Admin → Team members, approved access requests, the wiki's `users.js`, and all `ADMIN_EMAILS`) | **E-mail only, no password**, on the wiki's sign-in page or this server's. Signed in for 30 days. |
+| **Admins** (`ADMIN_EMAILS`) | Like the team, plus **Admin** in the wiki menu. The admin pages ask once for the **admin password** (`ADMIN_PASSWORD` in `.env`) and remember it for 30 days in that browser. |
 | **External observers** | **Register** on the schedule site with a password, confirm their e-mail, then use the calendar, dashboard, proposals and the Telescope / Bench / Team pages. |
 
 Approving a wiki **access request** (Admin → Messages) adds the person to the team list and

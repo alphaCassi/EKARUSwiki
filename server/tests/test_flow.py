@@ -28,6 +28,7 @@ class Flow(unittest.TestCase):
             "ADMIN_EMAILS": ADMIN,
             "BASE_URL": "https://sched.test",
             "SESSION_COOKIE_SECURE": False,
+            "ADMIN_PASSWORD": "admin-test-pass",
         })
         self.app.instance_path = self.tmp          # outbox goes to the temp dir
 
@@ -51,17 +52,16 @@ class Flow(unittest.TestCase):
         data["csrf_token"] = self.token(client, form_url or url)
         return client.post(url, data=data, follow_redirects=True)
 
-    def signin_link(self, mail, client=None, next_url=""):
-        """Team member: ask for an e-mail sign-in link and open it. Returns the client and the response."""
+    def admin_signin(self, mail, client=None):
+        """Admin: e-mail + admin password (ADMIN_PASSWORD)."""
         c = client or self.app.test_client()
-        self.post(c, "/account/email-link", {"email": mail, "next": next_url}, form_url="/account/login")
-        msg = [m for m in self.outbox() if m["To"] == mail][-1]
-        link = re.search(r"https://sched\.test(/account/magic/\S+)", msg.get_payload(decode=True).decode()).group(1)
-        return c, c.get(link)
+        r = self.post(c, "/account/admin-signin", {"email": mail, "password": "admin-test-pass", "next": ""},
+                      form_url="/account/admin-signin")
+        return c, r
 
     def register_and_verify(self, mail, name):
-        if mail == ADMIN:                      # admins are team members: e-mail link, no password
-            c, r = self.signin_link(mail)
+        if mail == ADMIN:                      # admins: e-mail + admin password
+            c, r = self.admin_signin(mail)
             self.assertIn("Sign out", c.get("/").get_data(as_text=True))
             return c
         c = self.app.test_client()

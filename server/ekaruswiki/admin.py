@@ -106,7 +106,7 @@ def _sync_wiki_list(email, add):
     Returns a short note for the admin; never raises."""
     if not github.configured():
         return ("The wiki's offline list wasn't updated (no GITHUB_TOKEN); "
-                "sign-in links work anyway while the server is on.")
+                "team sign-in works anyway while the server is on.")
     try:
         text, sha = github.read(wiki_users.PATH)
         header, entries = wiki_users.parse(text)

@@ -5,11 +5,11 @@ to receive, store or change something runs here:
 
   /, /dashboard, /proposals/..., /info/...
                         the EKARUS Observation Schedule site (its own address: this server's)
-  /account/...          sign-in: e-mail link for the EKARUS team (no password),
-                        registration with password for external observers
+  /account/...          sign-in: e-mail only for the EKARUS team, admin password for the
+                        admin pages, registration with password for external observers
   /admin/...            EKARUSwiki admin: overview, messages, team, wiki content, accounts
   /admin/schedule/...   observation schedule, admin side (proposals, nights)
-  /api/...              called by the wiki: sign-in links, contact form, access requests
+  /api/...              called by the wiki: team sign-in check, contact form, access requests
 """
 import os
 from datetime import date
@@ -33,6 +33,8 @@ def create_app(test_config=None):
         DATABASE=os.environ.get("DATABASE") or _default_database(app.instance_path),
         # Comma-separated list. These addresses become admins when they register or sign in.
         ADMIN_EMAILS=os.environ.get("ADMIN_EMAILS", "oleksandra.rebrysh@inaf.it"),
+        # Password for the admin pages (asked once per browser, remembered 30 days).
+        ADMIN_PASSWORD=os.environ.get("ADMIN_PASSWORD", ""),
         # Public address of this server, used in e-mail links.
         BASE_URL=os.environ.get("BASE_URL", "http://localhost:5000").rstrip("/"),
         # Address of the published wiki (GitHub Pages).

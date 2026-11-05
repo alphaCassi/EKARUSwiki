@@ -139,49 +139,56 @@ class TeamSignIn(Flow):
         from ekaruswiki import team
         team._cache.update(at=10**12, hashes=set())        # don't fetch the real wiki in tests
 
-    def api(self, path, payload):
-        return self.app.test_client().post(path, json=payload, headers={"Origin": "https://alphacassi.github.io"})
+    def api(self, payload):
+        return self.app.test_client().post("/api/signin", json=payload,
+                                           headers={"Origin": "https://alphacassi.github.io"})
 
-    def last_link(self, kind="magic"):
-        body = self.outbox()[-1].get_payload(decode=True).decode()
-        return re.search(r"https://sched\.test(/account/%s/\S+)" % kind, body).group(1)
-
-    def test_wiki_signin_link_for_admin_returns_to_wiki_with_admin_flag(self):
-        wiki_home = "https://alphacassi.github.io/EKARUSwiki/home.html"
-        r = self.api("/api/signin-link", {"email": ADMIN, "next": wiki_home})
-        self.assertEqual(r.get_json(), {"ok": True})
-        self.assertEqual(r.headers["Access-Control-Allow-Origin"], "https://alphacassi.github.io")
-        c = self.app.test_client()
-        r = c.get(self.last_link())
-        self.assertEqual(r.status_code, 302)
-        loc = r.headers["Location"]
-        self.assertTrue(loc.startswith(wiki_home + "#ekarus-auth="))
-        info = json.loads(base64.urlsafe_b64decode(loc.split("=", 1)[1] + "=="))
-        self.assertTrue(info["admin"])
-        self.assertEqual(c.get("/admin/").status_code, 200)          # server session is open too
-        r = c.get(self.last_link(), follow_redirects=True)           # second use refused
-        self.assertIn("already used", r.get_data(as_text=True))
-
-    def test_non_team_refused_team_member_from_list_accepted(self):
-        r = self.api("/api/signin-link", {"email": "stranger@x.org"})
-        self.assertEqual(r.status_code, 400)
-        self.assertIn("isn't on the EKARUS team list", r.get_json()["error"])
+    def add_member(self, email, name=""):
         with self.app.app_context():
             from ekaruswiki.db import get_db, now
-            get_db().execute("INSERT INTO team (email, name, added_at) VALUES (?, ?, ?)", ("member@x.org", "Mem Ber", now()))
+            get_db().execute("INSERT INTO team (email, name, added_at) VALUES (?, ?, ?)", (email, name, now()))
             get_db().commit()
-        self.assertTrue(self.api("/api/signin-link", {"email": "Member@x.org"}).get_json()["ok"])
-        self.assertEqual(self.api("/api/signin-link", {"email": "member@x.org"}).status_code, 429)  # 1 per minute
+
+    def test_wiki_signin_is_email_only(self):
+        r = self.api({"email": "stranger@x.org"})
+        self.assertEqual(r.status_code, 403)
+        self.add_member("member@x.org", "Mem Ber")
+        r = self.api({"email": "Member@x.org"})
+        self.assertEqual(r.get_json(), {"ok": True, "name": "Mem Ber", "admin": False})
+        self.assertEqual(r.headers["Access-Control-Allow-Origin"], "https://alphacassi.github.io")
+        self.assertTrue(self.api({"email": ADMIN}).get_json()["admin"])
+        self.assertEqual(len(self.outbox()), 0)                 # no e-mails, no links
+
+    def test_admin_pages_need_admin_password(self):
         c = self.app.test_client()
-        c.get(self.last_link())
-        page = c.get("/dashboard").get_data(as_text=True)
-        self.assertIn("Your dashboard", page)
-        self.assertEqual(c.get("/admin/").status_code, 403)          # team, but not admin
+        self.post(c, "/account/team-signin", {"email": ADMIN, "next": ""}, form_url="/account/login")
+        r = c.get("/admin/")                                    # e-mail only: not enough for admin
+        self.assertEqual(r.status_code, 302)
+        self.assertIn("/account/admin-signin", r.headers["Location"])
+        r = self.post(c, "/account/admin-signin", {"email": ADMIN, "password": "wrong", "next": "/admin/"},
+                      form_url="/account/admin-signin")
+        self.assertIn("Wrong e-mail or admin password", r.get_data(as_text=True))
+        r = self.post(c, "/account/admin-signin", {"email": ADMIN, "password": "admin-test-pass", "next": "/admin/"},
+                      form_url="/account/admin-signin")
+        self.assertIn("EKARUSwiki admin", r.get_data(as_text=True))
+        self.add_member("member@x.org")                         # the password alone isn't enough
+        r = self.post(self.app.test_client(), "/account/admin-signin",
+                      {"email": "member@x.org", "password": "admin-test-pass"}, form_url="/account/admin-signin")
+        self.assertIn("Wrong e-mail or admin password", r.get_data(as_text=True))
+
+    def test_team_member_signs_in_on_schedule_site_with_email(self):
+        self.add_member("member@x.org")
+        c = self.app.test_client()
+        r = self.post(c, "/account/team-signin", {"email": "member@x.org", "next": "/dashboard"}, form_url="/account/login")
+        self.assertIn("Your dashboard", r.get_data(as_text=True))
+        self.assertEqual(c.get("/admin/").status_code, 403)
+        r = self.post(self.app.test_client(), "/account/team-signin", {"email": "nobody@x.org"}, form_url="/account/login")
+        self.assertIn("on the EKARUS team list", r.get_data(as_text=True))
 
     def test_team_member_cannot_register_with_password(self):
         c = self.app.test_client()
         r = self.post(c, "/account/register", {"name": "O", "email": ADMIN, "password": PW, "password2": PW})
-        self.assertIn("sign in with an e-mail link", r.get_data(as_text=True))
+        self.assertIn("just sign in with your e-mail", r.get_data(as_text=True))
 
     def test_info_page_from_wiki(self):
         from ekaruswiki import wiki_pages
@@ -193,6 +200,14 @@ class TeamSignIn(Flow):
             page = user.get("/info/telescope").get_data(as_text=True)
             self.assertIn("Copernico telescope", page)
             self.assertIn('src="https://alphacassi.github.io/EKARUSwiki/assets/img/copernico.webp"', page)
-            self.assertEqual(self.app.test_client().get("/info/telescope").status_code, 302)   # sign-in needed
+            self.assertEqual(self.app.test_client().get("/info/telescope").status_code, 302)
         finally:
             wiki_pages._fetch = orig
+
+
+class AdminRemembered(Flow):
+    def test_admin_signin_page_skipped_when_remembered(self):
+        c, _ = self.admin_signin(ADMIN)
+        r = c.get("/account/admin-signin?next=%2Fadmin%2F&email=" + ADMIN)
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(r.headers["Location"].endswith("/admin/"))
