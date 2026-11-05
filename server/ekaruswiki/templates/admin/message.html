@@ -19,7 +19,7 @@
 <form method="post" class="form-actions">
   {{ csrf() }}
   {% if m.kind == 'access' and m.status != 'done' %}
-    <button class="btn" name="action" value="approve">Register on the wiki and tell them</button>
+    <button class="btn" name="action" value="approve">Add to the team and tell them</button>
   {% endif %}
   {% if m.status != 'done' %}
     <button class="btn btn-secondary" name="action" value="done">Mark as done</button>

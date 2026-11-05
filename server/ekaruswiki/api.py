@@ -1,5 +1,6 @@
 """Endpoints called from the wiki (a different site), so they answer with CORS headers.
 
+POST /api/signin-link {email, next}  e-mail a sign-in link to a team member (see accounts.py)
 POST /api/contact   {kind: "contact"|"access", name, email, topic, page, message, website}
   - "contact": a change request for the wiki
   - "access":  a request to be registered on the wiki
@@ -93,3 +94,16 @@ def contact():
     mail.send(mail.admin_addresses(), subject, "message_admin", reply_to=f["email"], m=msg,
               link=f"/admin/messages/{msg['id']}")
     return jsonify(ok=True)
+
+
+@bp.route("/signin-link", methods=["POST", "OPTIONS"])
+def signin_link():
+    """Wiki sign-in page: e-mail a one-time sign-in link to a team member (no password)."""
+    if request.method == "OPTIONS":
+        return "", 204
+    from .accounts import send_signin_link
+    data = request.get_json(silent=True) or {}
+    sent, error = send_signin_link(str(data.get("email", ""))[:200], str(data.get("next", ""))[:500])
+    if sent:
+        return jsonify(ok=True)
+    return fail(error, 429 if "minute ago" in error else 400)

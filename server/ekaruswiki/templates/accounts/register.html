@@ -3,8 +3,9 @@
 {% block title %}Register{% endblock %}
 {% block content %}
 <div class="narrow">
-  <h1>Create an account</h1>
-  <p class="lede">You need an account to submit observing proposals. We'll send a link to confirm your e-mail.</p>
+  <h1>Register as an observer</h1>
+  <p class="lede">Observers need an account to submit proposals and follow them on their dashboard. We'll send a link to confirm your e-mail.</p>
+  <p class="muted small">EKARUS team members don't register: <a href="{{ url_for('accounts.login') }}">sign in with an e-mail link</a>.</p>
   <form method="post" class="form card">
     {{ csrf() }}
     <label class="field">Name <input name="name" value="{{ form.name }}" autocomplete="name" required></label>

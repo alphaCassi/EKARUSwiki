@@ -1,8 +1,8 @@
 Hello {{ name }},
 
-You're now registered on the EKARUS wiki. Sign in with this e-mail address:
-{{ wiki_url or 'the EKARUS wiki' }}
+You now have access to the EKARUS wiki. No password is needed: on the wiki's sign-in page,
+enter this e-mail address and you'll receive a sign-in link.
 
-(It may take a minute or two before the sign-in accepts your address.)
+{{ wiki_url or 'the EKARUS wiki' }}
 
 EKARUS team

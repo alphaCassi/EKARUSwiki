@@ -23,29 +23,20 @@
   </header>
 
   <div class="shell">
-    <nav class="side-nav nav-left" aria-label="Instrument">
+    <nav class="side-nav nav-left" aria-label="Project">
       <ul>
         <li><a href="../pages/team.html">Team</a></li>
         <li><a href="../pages/telescope.html">Telescope</a></li>
         <li><a href="../pages/bench.html">Bench Architecture</a></li>
-        <li><a href="http://193.206.244.171/index.html" target="_blank" rel="noopener" class="ext">DAO-EKARUS<span class="visually-hidden"> (opens the DAO server in a new tab)</span></a></li>
-        <li><a href="../pages/observation-schedule.html" target="_blank" rel="noopener" class="ext" data-schedule-link>Observation Schedule<span class="visually-hidden"> (opens in a new tab)</span></a></li>
-        <li>
-          <details class="nav-group">
-            <summary>OAO school</summary>
-            <ul class="sub-nav">
-              <li><a href="https://indico.ict.inaf.it/event/3554/overview" target="_blank" rel="noopener" class="ext">Main webpage<span class="visually-hidden"> (opens in a new tab)</span></a></li>
-              <li><a href="https://oao2026tutorials.netlify.app/#tutorials" target="_blank" rel="noopener" class="ext">Tutorials<span class="visually-hidden"> (opens in a new tab)</span></a></li>
-            </ul>
-          </details>
-        </li>
+        <li><a href="http://193.206.244.171/index.html" target="_blank" rel="noopener" class="ext">DAO-EKARUS<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+        <li><a href="../pages/documentation.html">Documentation</a></li>
       </ul>
     </nav>
 
     <main class="main" id="main">
       <h1>Contact us</h1>
       <section class="panel">
-        <p class="lede">Something to fix, add or change on the wiki? Tell us here; the message goes straight to the wiki admins.</p>
+        <p class="lede">Something to fix, add or change on the wiki? Tell us here.</p>
         <form class="contact-form" id="contact-form" novalidate>
           <div class="field-row">
             <div class="field">
@@ -73,7 +64,7 @@
               <select id="c-page" name="page">
                 <option value="">—</option>
                 <option>Home</option><option>Team</option><option>Telescope</option><option>Bench Architecture</option>
-                <option>Schedule</option><option>Logs</option><option>User Guide</option><option>To do’s</option><option>Whole site</option>
+                <option>Documentation</option><option>Technical nights plan</option><option>To do’s</option><option>Whole site</option>
               </select>
             </div>
           </div>
@@ -92,30 +83,38 @@
           </div>
         </form>
       </section>
-      <section class="panel" aria-labelledby="maintainers-title">
-        <h2 id="maintainers-title">Who runs the wiki</h2>
-        <ul class="maintainers">
-          <li>
-            <span class="name">Oleksandra Rebrysh</span>
-            <span class="role">Web developer and content manager</span>
-            <a href="mailto:oleksandra.rebrysh@inaf.it">oleksandra.rebrysh@inaf.it</a>
-          </li>
-          <li>
-            <span class="name">Angelie Mary Alagao</span>
-            <span class="role">Web designer and content manager</span>
-            <a href="mailto:angelie.alagao@lam.fr">angelie.alagao@lam.fr</a>
-          </li>
+      <section class="contacts-block" aria-labelledby="contacts-title">
+        <h2 id="contacts-title">Contacts</h2>
+        <ul class="contacts">
+          <li>Oleksandra Rebrysh, web developer and content manager, <a href="mailto:oleksandra.rebrysh@inaf.it">oleksandra.rebrysh@inaf.it</a></li>
+          <li>Angelie Mary Alagao, web designer and content manager, <a href="mailto:angelie.alagao@lam.fr">angelie.alagao@lam.fr</a></li>
         </ul>
       </section>
     </main>
 
-    <nav class="side-nav nav-right" aria-label="Operations">
+    <nav class="side-nav nav-right" aria-label="Activities">
       <ul>
-        <li><a href="../pages/schedule.html">Schedule</a></li>
-        <li><a href="../pages/logbook.html">Logs</a></li>
-        <li><a href="../pages/user-guide.html">User Guide</a></li>
+        <li>
+          <details class="nav-group">
+            <summary>Observation schedule</summary>
+            <ul class="sub-nav">
+              <li><a href="../pages/schedule.html">Technical nights plan</a></li>
+              <li><a href="../pages/observation-schedule.html" target="_blank" rel="noopener" class="ext" data-schedule-link>Calendar &amp; proposals<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details class="nav-group">
+            <summary>OAO school</summary>
+            <ul class="sub-nav">
+              <li><a href="https://indico.ict.inaf.it/event/3554/overview" target="_blank" rel="noopener" class="ext">Main webpage<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+              <li><a href="https://oao2026tutorials.netlify.app/#tutorials" target="_blank" rel="noopener" class="ext">Tutorials<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            </ul>
+          </details>
+        </li>
         <li><a href="../pages/todo.html">To do’s</a></li>
         <li><a href="../pages/contact.html" aria-current="page">Contact us</a></li>
+        <li data-admin-only hidden><a href="#" data-admin-link class="admin-link">Admin</a></li>
       </ul>
     </nav>
   </div>
@@ -130,7 +129,7 @@
       <li><img src="../assets/img/partners/unige.webp" width="480" height="139" loading="lazy" alt="Université de Genève"></li>
       <li><img src="../assets/img/partners/ipag.webp" width="142" height="160" loading="lazy" alt="IPAG – Institut de Planétologie et d’Astrophysique de Grenoble"></li>
     </ul>
-    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory<span data-admin-wrap hidden><br><a href="#" data-admin-link>Admin</a></span></p>
+    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory</p>
   </footer>
 </body>
 </html>

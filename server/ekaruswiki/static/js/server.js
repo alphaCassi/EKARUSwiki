@@ -49,3 +49,23 @@
     count();
   }
 })();
+
+/* Bench page shown from the wiki: switch the subsystem panel (same behaviour as on the wiki) */
+(function () {
+  var picker = document.querySelector(".wiki-content [data-subsystems]");
+  if (!picker) return;
+  var buttons = Array.prototype.slice.call(picker.querySelectorAll("button[data-target]"));
+  var panels = Array.prototype.slice.call(document.querySelectorAll(".wiki-content .subsystem-panel"));
+  function show(id) {
+    if (!panels.some(function (p) { return p.id === id; })) id = panels[0].id;
+    panels.forEach(function (p) { p.hidden = p.id !== id; });
+    buttons.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-target") === id ? "true" : "false"); });
+  }
+  buttons.forEach(function (b) {
+    b.addEventListener("click", function () {
+      var id = b.getAttribute("data-target");
+      show(b.getAttribute("aria-pressed") === "true" ? panels[0].id : id);
+    });
+  });
+  show(location.hash.slice(1));
+})();

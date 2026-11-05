@@ -773,3 +773,14 @@ tr.is-done td:first-child { text-decoration: line-through; }
 .maintainers li { display: grid; gap: 0.15rem; padding: 0.9rem 1rem; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); }
 .maintainers .name { font-weight: 600; }
 .maintainers .role { color: var(--gold); font-size: var(--fs-sm); }
+
+/* ---------- Contact page: small contact list */
+.contacts-block { margin-top: 0.5rem; }
+.contacts-block h2 { font-size: var(--fs-base); color: var(--muted); margin-bottom: 0.4rem; }
+.contacts { list-style: none; margin: 0; padding: 0; font-size: var(--fs-sm); color: var(--muted); display: grid; gap: 0.25rem; }
+
+/* ---------- Documentation placeholders */
+.placeholder-link { font-weight: 600; color: var(--muted); font-style: italic; }
+
+/* ---------- Admin item in the menu (shown to admins only) */
+.side-nav .admin-link { border-color: var(--gold); color: var(--gold); }

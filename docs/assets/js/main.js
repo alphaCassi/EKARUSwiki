@@ -16,52 +16,81 @@
   /* Observation Schedule button: the schedule module of the server */
   if (server) {
     document.querySelectorAll("[data-schedule-link]").forEach(function (a) {
-      a.href = server + "/schedule/";
+      a.href = server + "/";
     });
   }
 
   /* ---------- Sign out (header button on every protected page) */
   document.querySelectorAll("[data-signout]").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      try { window.localStorage.removeItem(KEY); } catch (e) {}
+      try {
+        ["ekarus.access", "ekarus.email", "ekarus.name", "ekarus.admin", "ekarus.exp"].forEach(function (k) {
+          window.localStorage.removeItem(k);
+        });
+      } catch (e) {}
       window.location.href = root + "index.html";
     });
   });
 
-  /* ---------- Access page: sign in with a registered e-mail */
+  /* ---------- Access page: sign in.
+     With the server connected, the team gets an e-mail sign-in link (no password); the link
+     brings them back here signed in (see gate.js). If the server can't be reached, the wiki
+     falls back to its own list (users.js), so it stays readable. */
   var signinForm = document.getElementById("signin-form");
   if (signinForm) {
     var msg = document.getElementById("signin-message");
     var home = config.homePage || "home.html";
-
-    // Only allow redirects to pages inside this site.
     var next = new URLSearchParams(window.location.search).get("next");
     var target = next && /^(home\.html|pages\/[a-z0-9-]+\.html)$/.test(next) ? next : home;
 
-    // Already signed in on this browser? Go straight in.
-    try {
-      if (window.localStorage.getItem(KEY)) { window.location.replace(target); return; }
+    try {   // already signed in on this browser? go straight in
+      var exp = parseInt(window.localStorage.getItem("ekarus.exp") || "0", 10);
+      if (window.localStorage.getItem(KEY) && (!exp || exp * 1000 > Date.now())) { window.location.replace(target); return; }
     } catch (e) {}
 
-    signinForm.addEventListener("submit", function (ev) {
-      ev.preventDefault();
-      var email = signinForm.elements.email.value.trim().toLowerCase();
-      if (!email) { setMessage(msg, "error", "Enter your e-mail address."); return; }
-
+    var localCheck = function (email) {
       if (!(window.crypto && window.crypto.subtle)) {
         setMessage(msg, "error", "This browser can't check the address. Open the site over https in an up-to-date browser.");
         return;
       }
       sha256(email).then(function (hash) {
-        var users = window.EKARUS_USERS || [];
-        if (users.indexOf(hash) !== -1) {
-          try { window.localStorage.setItem(KEY, "1"); } catch (e) {}
-          setMessage(msg, "ok", "Signed in.");
+        if ((window.EKARUS_USERS || []).indexOf(hash) !== -1) {
+          try {
+            window.localStorage.setItem(KEY, "1");
+            window.localStorage.setItem("ekarus.email", email);
+            window.localStorage.setItem("ekarus.admin", "");
+            window.localStorage.setItem("ekarus.exp", "0");
+          } catch (e) {}
           window.location.href = target;
         } else {
-          setMessage(msg, "error", "This address isn't registered. Check the spelling, or request access below.");
+          setMessage(msg, "error", "This address isn't on the team list. Request access below.");
         }
       });
+    };
+
+    signinForm.addEventListener("submit", function (ev) {
+      ev.preventDefault();
+      var email = signinForm.elements.email.value.trim().toLowerCase();
+      if (!email) { setMessage(msg, "error", "Enter your e-mail address."); return; }
+      if (!server) { localCheck(email); return; }
+      var button = signinForm.querySelector("button");
+      button.disabled = true;
+      setMessage(msg, "", "Sending your sign-in link…");
+      fetch(server + "/api/signin-link", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, next: new URL(target, window.location.href).href })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          if (res.ok) {
+            setMessage(msg, "ok", "Check your inbox: we sent a sign-in link to " + email + ". It works once, for 30 minutes.");
+          } else {
+            setMessage(msg, "error", res.error || "Sign-in failed. Please try again.");
+          }
+        })
+        .catch(function () { localCheck(email); })     // server off: use the wiki's own list
+        .then(function () { button.disabled = false; });
     });
   }
 
@@ -137,12 +166,12 @@
     });
   }
 
-  /* ---------- Footer "Admin" link: the wiki's admin pages live on the server */
-  if (server) {
-    document.querySelectorAll("[data-admin-link]").forEach(function (a) {
-      a.href = server + "/admin/";
-      a.closest("[data-admin-wrap]").hidden = false;
-    });
+  /* ---------- Admin menu item: only for admins signed in with an e-mail link */
+  var isAdmin = false;
+  try { isAdmin = window.localStorage.getItem("ekarus.admin") === "1"; } catch (e) {}
+  if (server && isAdmin) {
+    document.querySelectorAll("[data-admin-link]").forEach(function (a) { a.href = server + "/admin/"; });
+    document.querySelectorAll("[data-admin-only]").forEach(function (el) { el.hidden = false; });
   }
 
   /* ---------- Banner and highlights from data/site.json (edited on the admin page).

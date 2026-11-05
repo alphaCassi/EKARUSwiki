@@ -3,16 +3,18 @@
 The wiki pages themselves are static (docs/, published by GitHub Pages). Everything that has
 to receive, store or change something runs here:
 
-  /account/...          one account system for the whole server
-  /admin/...            EKARUSwiki admin: overview, messages, wiki users, wiki content, accounts
+  /, /dashboard, /proposals/..., /info/...
+                        the EKARUS Observation Schedule site (its own address: this server's)
+  /account/...          sign-in: e-mail link for the EKARUS team (no password),
+                        registration with password for external observers
+  /admin/...            EKARUSwiki admin: overview, messages, team, wiki content, accounts
   /admin/schedule/...   observation schedule, admin side (proposals, nights)
-  /schedule/...         observation schedule for observers (calendar, proposals)
-  /api/contact          contact form and access requests sent from the wiki
+  /api/...              called by the wiki: sign-in links, contact form, access requests
 """
 import os
 from datetime import date
 
-from flask import Flask, g, redirect, render_template, url_for
+from flask import Flask, redirect
 
 from . import db, security
 
@@ -51,6 +53,7 @@ def create_app(test_config=None):
         CORS_ORIGINS=os.environ.get("CORS_ORIGINS", ""),
         # Behind nginx or a Cloudflare tunnel: trust its X-Forwarded-For header (rate limiting)
         PROXY_FIX=os.environ.get("PROXY_FIX", "0") == "1",
+        PERMANENT_SESSION_LIFETIME=30 * 24 * 3600,   # stay signed in for 30 days
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE", "1") == "1",
@@ -73,12 +76,19 @@ def create_app(test_config=None):
     app.register_blueprint(schedule_views.bp)
     app.register_blueprint(schedule_admin.bp)
 
-    @app.route("/")
-    def home():
-        """Server entry page: admins go to the admin overview, everyone else to the schedule."""
-        if g.user is not None and g.user["is_admin"]:
-            return redirect(url_for("admin.overview"))
-        return render_template("home.html")
+    @app.route("/schedule/", defaults={"rest": ""})
+    @app.route("/schedule/<path:rest>")
+    def old_schedule_address(rest):
+        """The schedule used to live under /schedule/: keep old links working."""
+        return redirect("/" + rest, code=301)
+
+    @app.context_processor
+    def team_flag():
+        """Team members see links back to the (internal) wiki; external observers don't."""
+        from flask import g
+        from . import team
+        user = getattr(g, "user", None)
+        return {"is_team": bool(user is not None and team.is_team(user["email"]))}
 
     @app.template_filter("nicedate")
     def nicedate(value):

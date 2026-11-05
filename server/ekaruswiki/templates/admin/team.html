@@ -1,0 +1,34 @@
+{% extends "base.html" %}{% from "_macros.html" import csrf %}
+{% block section %}Admin{% endblock %}
+{% block title %}Admin: team members{% endblock %}
+{% block content %}
+<h1>EKARUSwiki admin</h1>
+{% include "admin/_tabs.html" %}
+<p class="lede">Team members sign in to the wiki, the admin pages (admins only) and the observation schedule with an e-mail link, without a password.</p>
+<div class="row">
+  <form method="post" class="card form grow">
+    {{ csrf() }}<input type="hidden" name="action" value="add">
+    <h2>Add a team member</h2>
+    <label class="field">E-mail <input name="email" type="email" required></label>
+    <label class="field">Name <input name="name" maxlength="120"></label>
+    <button class="btn" type="submit">Add</button>
+  </form>
+  <form method="post" class="card form grow" data-confirm="Remove this person from the team?">
+    {{ csrf() }}<input type="hidden" name="action" value="remove">
+    <h2>Remove a team member</h2>
+    <label class="field">E-mail <input name="email" type="email" required></label>
+    <button class="btn btn-danger" type="submit">Remove</button>
+  </form>
+</div>
+<section class="card">
+  <h2>Team ({{ members|length }})</h2>
+  {% if members %}
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Name</th><th scope="col">E-mail</th><th scope="col">Added</th><th scope="col">Signed in</th></tr></thead>
+    <tbody>{% for m in members %}<tr><td>{{ m.name or '—' }}</td><td>{{ m.email }}</td><td>{{ m.added_at[:10] }}</td><td>{{ 'Yes' if m.first_signin else 'Not yet' }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% else %}<p class="muted">No team members yet. Approved access requests appear here.</p>{% endif %}
+  <p class="muted small mt">Admins ({{ admins|join(', ') }}) are always team members. People in the wiki's own list (users.js) also count as team.
+  {% if not github_ok %}Without GITHUB_TOKEN, changes here aren't copied to that list, which the wiki uses only when this server is off.{% endif %}</p>
+</section>
+{% endblock %}

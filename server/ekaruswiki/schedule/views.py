@@ -4,11 +4,11 @@ from datetime import date
 
 from flask import Blueprint, abort, flash, g, redirect, render_template, request, url_for
 
-from .. import mail
+from .. import mail, wiki_pages
 from ..db import get_db, now
 from ..security import login_required
 
-bp = Blueprint("schedule", __name__, url_prefix="/schedule")
+bp = Blueprint("schedule", __name__)   # the observation schedule is the server's main site
 
 MODES = [
     "VIS imaging (science camera)",
@@ -78,14 +78,32 @@ def calendar():
                            upcoming_open=upcoming_open)
 
 
+@bp.route("/dashboard")
 @bp.route("/proposals")
 @login_required
-def my_proposals():
-    rows = get_db().execute(
+def dashboard():
+    """The observer's dashboard: their proposals with status, and their allocated nights."""
+    db = get_db()
+    rows = db.execute(
         "SELECT p.*, (SELECT COUNT(*) FROM proposal_nights pn WHERE pn.proposal_id = p.id) AS n_req,"
         " (SELECT COUNT(*) FROM nights n WHERE n.proposal_id = p.id) AS n_alloc"
         " FROM proposals p WHERE p.user_id = ? ORDER BY p.id DESC", (g.user["id"],)).fetchall()
-    return render_template("schedule/proposals/list.html", proposals=rows)
+    upcoming = db.execute(
+        "SELECT n.date, p.code, p.title, p.id AS pid FROM nights n JOIN proposals p ON p.id = n.proposal_id"
+        " WHERE p.user_id = ? AND n.date >= ? ORDER BY n.date", (g.user["id"], date.today().isoformat())).fetchall()
+    counts = {s: sum(1 for r in rows if r["status"] == s) for s in ("submitted", "accepted", "rejected", "withdrawn")}
+    return render_template("schedule/dashboard.html", proposals=rows, upcoming=upcoming, counts=counts)
+
+
+@bp.route("/info/<page>")
+@login_required
+def info(page):
+    """Telescope, bench and team pages, taken from the published wiki (one source of content)."""
+    if page not in wiki_pages.PAGES:
+        abort(404)
+    html, error = wiki_pages.get(page)
+    return render_template("schedule/info.html", page=page, title=wiki_pages.PAGES[page][1],
+                           content=html, error=error)
 
 
 @bp.route("/proposals/new", methods=["GET", "POST"])
@@ -196,4 +214,4 @@ def withdraw(pid):
     mail.send(mail.admin_addresses(), f"{p['code']} withdrawn", "withdrawn_admin", p=p,
               link=url_for("schedule_admin.review", pid=pid))
     flash(f"{p['code']} withdrawn.", "ok")
-    return redirect(url_for("schedule.my_proposals"))
+    return redirect(url_for("schedule.dashboard"))

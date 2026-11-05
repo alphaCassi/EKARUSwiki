@@ -1,0 +1,56 @@
+{% extends "base.html" %}{% from "_macros.html" import status_badge %}
+{% block section %}Observation schedule{% endblock %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Your dashboard</h1>
+    <p class="lede">Your proposals, their status, and the nights allocated to you.</p>
+  </div>
+  <a class="btn" href="{{ url_for('schedule.new_proposal') }}">New proposal</a>
+</div>
+
+<ul class="overview-grid">
+  <li><div class="card stat-card"><span class="stat">{{ counts.submitted }}</span><strong>Waiting for review</strong></div></li>
+  <li><div class="card stat-card"><span class="stat">{{ counts.accepted }}</span><strong>Accepted</strong></div></li>
+  <li><div class="card stat-card"><span class="stat">{{ upcoming|length }}</span><strong>Upcoming nights</strong></div></li>
+</ul>
+
+{% if upcoming %}
+<section class="card mt">
+  <h2>Your upcoming nights</h2>
+  <ul class="night-list">
+    {% for n in upcoming %}<li>{{ n.date|nicedate }} <a href="{{ url_for('schedule.view_proposal', pid=n.pid) }}">{{ n.code }}</a> {{ n.title }}</li>{% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+<section class="card mt">
+  <h2>Your proposals</h2>
+  {% if proposals %}
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th scope="col">Code</th><th scope="col">Title</th><th scope="col">Nights</th><th scope="col">Status</th><th scope="col">Submitted</th></tr></thead>
+      <tbody>
+      {% for p in proposals %}
+        <tr>
+          <td><a href="{{ url_for('schedule.view_proposal', pid=p.id) }}">{{ p.code }}</a></td>
+          <td>{{ p.title }}</td>
+          <td>{% if p.status == 'accepted' %}{{ p.n_alloc }} of {{ p.n_req }} allocated{% else %}{{ p.n_req }} requested{% endif %}</td>
+          <td>{{ status_badge(p.status) }}</td>
+          <td>{{ p.created_at[:10] }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <p class="muted">You haven't submitted any proposals yet. <a href="{{ url_for('schedule.new_proposal') }}">Submit your first proposal</a>.</p>
+  {% endif %}
+</section>
+
+<section class="card">
+  <h2>Before you observe</h2>
+  <p>Read about the <a href="{{ url_for('schedule.info', page='telescope') }}">Copernico telescope</a>, the <a href="{{ url_for('schedule.info', page='bench') }}">EKARUS bench</a>, and the <a href="{{ url_for('schedule.info', page='team') }}">team and contacts</a>.</p>
+</section>
+{% endblock %}

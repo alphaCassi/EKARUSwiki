@@ -11,7 +11,7 @@ from datetime import date
 from flask import Blueprint, abort, current_app, flash, g, redirect, render_template, request, url_for
 
 from . import github, mail, wiki_users
-from .db import get_db
+from .db import get_db, now
 from .security import admin_required
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
@@ -43,7 +43,8 @@ def overview():
         "to_review": db.execute("SELECT COUNT(*) FROM proposals WHERE status = 'submitted'").fetchone()[0],
         "open_nights": db.execute("SELECT COUNT(*) FROM nights WHERE status = 'open' AND date >= ?", (today,)).fetchone()[0],
         "booked_nights": db.execute("SELECT COUNT(*) FROM nights WHERE status = 'booked' AND date >= ?", (today,)).fetchone()[0],
-        "accounts": db.execute("SELECT COUNT(*) FROM users").fetchone()[0],
+        "accounts": db.execute("SELECT COUNT(*) FROM users WHERE password_hash NOT LIKE '!%'").fetchone()[0],
+        "team": db.execute("SELECT COUNT(*) FROM team").fetchone()[0],
     }
     return render_template("admin/overview.html", c=counts, github_ok=github.configured())
 
@@ -80,18 +81,13 @@ def message(mid):
     if request.method == "POST":
         action = request.form.get("action")
         if action == "approve" and m["kind"] == "access":
-            try:
-                initials = "".join(w[0] for w in m["name"].split()[:3]).upper()
-                added = _add_wiki_user(m["email"], initials)
-            except github.GitHubError as e:
-                flash(str(e), "error")
-                return redirect(url_for("admin.message", mid=mid))
+            added, sync_note = add_team_member(m["email"], m["name"])
             db.execute("UPDATE messages SET status = 'done' WHERE id = ?", (mid,))
             db.commit()
-            mail.send(m["email"], "You can now sign in to the EKARUS wiki", "access_approved",
+            mail.send(m["email"], "You now have access to the EKARUS wiki", "access_approved",
                       name=m["name"], wiki_url=current_app.config["WIKI_URL"])
-            flash(("Registered on the wiki" if added else "Already registered") +
-                  f"; {m['email']} has been told by e-mail.", "ok")
+            flash(("Added to the team" if added else "Already on the team") +
+                  f"; {m['email']} has been told by e-mail. {sync_note}", "ok")
             return redirect(url_for("admin.messages"))
         if action in ("done", "new"):
             db.execute("UPDATE messages SET status = ? WHERE id = ?", (action, mid))
@@ -104,53 +100,65 @@ def message(mid):
     return render_template("admin/message.html", m=m)
 
 
-# ---------------------------------------------------------------- wiki sign-in list
-def _add_wiki_user(email, note=""):
-    text, sha = github.read(wiki_users.PATH)
-    header, entries = wiki_users.parse(text)
-    h = wiki_users.email_hash(email)
-    if h in [x for x, _ in entries]:
-        return False
-    entries.append((h, note.replace("@", "").replace("\n", " ")[:40]))  # never store the address itself
-    github.write(wiki_users.PATH, wiki_users.serialize(header, entries), sha,
-                 f"Register a wiki user (by {g.user['name']} via admin page)")
-    return True
+# ---------------------------------------------------------------- team members
+def _sync_wiki_list(email, add):
+    """Keep the wiki's own sign-in list (users.js, used when the server is off) in step.
+    Returns a short note for the admin; never raises."""
+    if not github.configured():
+        return ("The wiki's offline list wasn't updated (no GITHUB_TOKEN); "
+                "sign-in links work anyway while the server is on.")
+    try:
+        text, sha = github.read(wiki_users.PATH)
+        header, entries = wiki_users.parse(text)
+        h = wiki_users.email_hash(email)
+        hashes = [x for x, _ in entries]
+        if add and h not in hashes:
+            entries.append((h, ""))
+        elif not add and h in hashes:
+            entries = [(x, n) for x, n in entries if x != h]
+        else:
+            return ""
+        github.write(wiki_users.PATH, wiki_users.serialize(header, entries), sha,
+                     f"{'Add' if add else 'Remove'} a team member (by {g.user['name']} via admin page)")
+        return "The wiki's offline list was updated too."
+    except github.GitHubError as e:
+        return f"The wiki's offline list couldn't be updated: {e}"
 
 
-@bp.route("/wiki-users", methods=["GET", "POST"])
+def add_team_member(email, name=""):
+    email = email.strip().lower()
+    db = get_db()
+    if db.execute("SELECT 1 FROM team WHERE email = ?", (email,)).fetchone():
+        return False, ""
+    db.execute("INSERT INTO team (email, name, added_at) VALUES (?, ?, ?)", (email, name.strip()[:120], now()))
+    db.commit()
+    return True, _sync_wiki_list(email, True)
+
+
+@bp.route("/team", methods=["GET", "POST"])
 @admin_required
-def wiki_user_list():
+def team_members():
+    db = get_db()
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
-        action = request.form.get("action")
         if "@" not in email:
             flash("Enter an e-mail address.", "error")
-            return redirect(url_for("admin.wiki_user_list"))
-        try:
-            if action == "add":
-                added = _add_wiki_user(email, request.form.get("note", "").strip())
-                flash(f"{email} registered on the wiki." if added else f"{email} was already registered.", "ok")
-            elif action == "remove":
-                text, sha = github.read(wiki_users.PATH)
-                header, entries = wiki_users.parse(text)
-                h = wiki_users.email_hash(email)
-                if h not in [x for x, _ in entries]:
-                    flash(f"{email} isn't registered.", "error")
-                else:
-                    github.write(wiki_users.PATH,
-                                 wiki_users.serialize(header, [(x, n) for x, n in entries if x != h]),
-                                 sha, f"Remove a wiki user (by {g.user['name']} via admin page)")
-                    flash(f"{email} removed from the wiki.", "ok")
-        except github.GitHubError as e:
-            flash(str(e), "error")
-        return redirect(url_for("admin.wiki_user_list"))
-
-    entries, error = [], None
-    try:
-        _, entries = wiki_users.parse(github.read(wiki_users.PATH)[0])
-    except github.GitHubError as e:
-        error = str(e)
-    return render_template("admin/wiki_users.html", entries=entries, error=error)
+        elif request.form.get("action") == "add":
+            added, note = add_team_member(email, request.form.get("name", ""))
+            flash((f"{email} added to the team. " if added else f"{email} is already on the team. ") + note, "ok")
+        elif request.form.get("action") == "remove":
+            cur = db.execute("DELETE FROM team WHERE email = ?", (email,))
+            db.commit()
+            if cur.rowcount:
+                flash(f"{email} removed from the team. " + _sync_wiki_list(email, False), "ok")
+            else:
+                flash(f"{email} isn't in the team list.", "error")
+        return redirect(url_for("admin.team_members"))
+    rows = db.execute(
+        "SELECT t.*, u.created_at AS first_signin FROM team t LEFT JOIN users u ON u.email = t.email"
+        " ORDER BY t.name COLLATE NOCASE, t.email").fetchall()
+    return render_template("admin/team.html", members=rows, admins=mail.admin_addresses(),
+                           github_ok=github.configured())
 
 
 # ---------------------------------------------------------------- home page content

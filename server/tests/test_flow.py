@@ -51,7 +51,19 @@ class Flow(unittest.TestCase):
         data["csrf_token"] = self.token(client, form_url or url)
         return client.post(url, data=data, follow_redirects=True)
 
+    def signin_link(self, mail, client=None, next_url=""):
+        """Team member: ask for an e-mail sign-in link and open it. Returns the client and the response."""
+        c = client or self.app.test_client()
+        self.post(c, "/account/email-link", {"email": mail, "next": next_url}, form_url="/account/login")
+        msg = [m for m in self.outbox() if m["To"] == mail][-1]
+        link = re.search(r"https://sched\.test(/account/magic/\S+)", msg.get_payload(decode=True).decode()).group(1)
+        return c, c.get(link)
+
     def register_and_verify(self, mail, name):
+        if mail == ADMIN:                      # admins are team members: e-mail link, no password
+            c, r = self.signin_link(mail)
+            self.assertIn("Sign out", c.get("/").get_data(as_text=True))
+            return c
         c = self.app.test_client()
         self.post(c, "/account/register", {"name": name, "email": mail, "institute": "INAF",
                                            "password": PW, "password2": PW})
@@ -81,7 +93,7 @@ class Flow(unittest.TestCase):
             ids = [r["id"] for r in get_db().execute("SELECT id FROM nights ORDER BY date")]
 
         # calendar is public and shows the open nights
-        html = self.app.test_client().get(f"/schedule/?y={d0.year}&m={d0.month}").get_data(as_text=True)
+        html = self.app.test_client().get(f"/?y={d0.year}&m={d0.month}").get_data(as_text=True)
         self.assertIn("night-open", html)
 
         # user submits a proposal for the first two nights
@@ -91,7 +103,7 @@ class Flow(unittest.TestCase):
                 "t_name": ["HD 1234", "HD 5678"], "t_ra": ["01:00:00", "02:00:00"],
                 "t_dec": ["+45:00:00", "+50:00:00"], "t_mag": ["6.1", "7.2"],
                 "nights": [str(ids[0]), str(ids[1])], "min_nights": "1"}
-        r = self.post(user, "/schedule/proposals/new", data)
+        r = self.post(user, "/proposals/new", data)
         page = r.get_data(as_text=True)
         self.assertIn("EK-", page)
         self.assertIn("Waiting for review", page)
@@ -109,26 +121,26 @@ class Flow(unittest.TestCase):
 
         # the booked night can no longer be requested
         data2 = dict(data, nights=[str(ids[0])], title="Second try")
-        r = self.post(user, "/schedule/proposals/new", data2)
+        r = self.post(user, "/proposals/new", data2)
         self.assertIn("no longer available", r.get_data(as_text=True))
 
         # user submits again on a free night, then withdraws it
         data3 = dict(data, nights=[str(ids[2])], title="Third")
-        self.post(user, "/schedule/proposals/new", data3)
-        r = self.post(user, "/schedule/proposals/2/withdraw", {}, form_url="/schedule/proposals/2")
+        self.post(user, "/proposals/new", data3)
+        r = self.post(user, "/proposals/2/withdraw", {}, form_url="/proposals/2")
         self.assertIn("withdrawn", r.get_data(as_text=True))
         self.assertIn("withdrawn", self.outbox()[-1]["Subject"])
 
         # another user can't see someone else's proposal
         other = self.register_and_verify("someone@example.org", "Someone")
-        self.assertEqual(other.get("/schedule/proposals/1").status_code, 403)
+        self.assertEqual(other.get("/proposals/1").status_code, 403)
 
     def test_reject_needs_reason(self):
         admin = self.register_and_verify(ADMIN, "Oleksandra")
         user = self.register_and_verify(USER, "Olga")
         d0 = date.today() + timedelta(days=5)
         self.post(admin, "/admin/schedule/nights", {"action": "add", "start": d0.isoformat(), "end": ""})
-        self.post(user, "/schedule/proposals/new", {"title": "T", "summary": "S", "science_case": "C",
+        self.post(user, "/proposals/new", {"title": "T", "summary": "S", "science_case": "C",
                                            "mode": "Engineering / calibration", "nights": ["1"]})
         r = self.post(admin, "/admin/schedule/proposals/1", {"decision": "reject", "message": ""})
         self.assertIn("Add a short reason", r.get_data(as_text=True))

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+{% if content %}
+  <div class="wiki-content">{{ content }}</div>
+  <p class="muted small mt">From the EKARUS wiki.</p>
+{% else %}
+  <div class="card"><h1>{{ title }}</h1><p class="flash flash-error">{{ error }}</p></div>
+{% endif %}
+{% endblock %}

@@ -4,7 +4,13 @@
 {% block content %}
 <div class="narrow card">
   <h1>Check your e-mail</h1>
+  {% if signin_link %}
+  <p>We sent a sign-in link to <strong>{{ email }}</strong>. Open it on this device to sign in.</p>
+  <p class="muted">The link works once, for 30 minutes. Nothing arrived? Check spam, or ask for a new one in a minute.</p>
+  {% else %}
   <p>We sent a confirmation link to <strong>{{ email }}</strong>. Open it to activate your account, then sign in.</p>
   <p class="muted">The link works for 3 days. Nothing arrived? Check spam, or try signing in to get a new link.</p>
+  {% endif %}
+  {% if not config.SMTP_HOST %}<p class="flash flash-info">Test mode: e-mail sending isn't set up on this server, so the message was saved in the server's outbox folder instead.</p>{% endif %}
 </div>
 {% endblock %}

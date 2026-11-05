@@ -1,6 +1,6 @@
-{% if m.kind == 'access' %}{{ m.name }} <{{ m.email }}> asks to be registered on the EKARUS wiki.
+{% if m.kind == 'access' %}{{ m.name }} <{{ m.email }}> asks for access to the EKARUS wiki.
 
-Register them with one click:{% else %}New change request for the EKARUS wiki.
+Add them to the team with one click:{% else %}New change request for the EKARUS wiki.
 
 From:  {{ m.name }} <{{ m.email }}>
 Topic: {{ m.topic }}{% if m.page %}

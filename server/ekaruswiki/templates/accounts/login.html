@@ -1,15 +1,22 @@
 {% extends "base.html" %}{% from "_macros.html" import csrf %}
-{% block section %}Account{% endblock %}
 {% block title %}Sign in{% endblock %}
 {% block content %}
 <div class="narrow">
   <h1>Sign in</h1>
+  <form method="post" action="{{ url_for('accounts.email_link') }}" class="form card">
+    {{ csrf() }}
+    <h2>EKARUS team</h2>
+    <p class="muted small">No password: we e-mail you a sign-in link.</p>
+    <label class="field">Team e-mail <input name="email" type="email" value="{{ email }}" autocomplete="email" required></label>
+    <button class="btn" type="submit">E-mail me a sign-in link</button>
+  </form>
   <form method="post" class="form card">
     {{ csrf() }}
-    <label class="field">E-mail <input name="email" type="email" value="{{ email }}" autocomplete="email" required autofocus></label>
+    <h2>Observers</h2>
+    <label class="field">E-mail <input name="email" type="email" value="{{ email }}" autocomplete="email" required></label>
     <label class="field">Password <input name="password" type="password" autocomplete="current-password" required></label>
-    <button class="btn" type="submit">Sign in</button>
+    <button class="btn btn-secondary" type="submit">Sign in</button>
+    <p class="small"><a href="{{ url_for('accounts.forgot') }}">Forgot your password?</a> No account yet? <a href="{{ url_for('accounts.register') }}">Register as an observer</a></p>
   </form>
-  <p><a href="{{ url_for('accounts.forgot') }}">Forgot your password?</a> No account yet? <a href="{{ url_for('accounts.register') }}">Register</a></p>
 </div>
 {% endblock %}

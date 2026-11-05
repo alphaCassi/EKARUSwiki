@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="robots" content="noindex, nofollow">
-  <title>{% block title %}EKARUSwiki{% endblock %} – EKARUSwiki</title>
+  <title>{% block title %}Observation schedule{% endblock %} – EKARUS</title>
   <link rel="icon" href="{{ url_for('static', filename='img/favicon.png') }}" type="image/png">
   <link rel="preload" href="{{ url_for('static', filename='fonts/barlow-latin-400-normal.woff2') }}" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/server.css') }}">
@@ -13,15 +13,18 @@
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="topbar">
-    <a class="brand" href="{{ url_for('home') }}">
+    <a class="brand" href="{{ url_for('schedule.calendar') }}">
       <img src="{{ url_for('static', filename='img/ekarus-logo.webp') }}" width="480" height="480" alt="">
-      <span>EKARUSwiki<br><small>{% block section %}Server{% endblock %}</small></span>
+      <span>EKARUS<br><small>{% block section %}Observation schedule{% endblock %}</small></span>
     </a>
     <nav class="topnav" aria-label="Main">
-      {% if config.WIKI_URL %}<a href="{{ config.WIKI_URL }}">Wiki</a>{% endif %}
-      <a href="{{ url_for('schedule.calendar') }}" {% if request.endpoint and request.endpoint.startswith('schedule.') %}aria-current="page"{% endif %}>Observation schedule</a>
+      <a href="{{ url_for('schedule.calendar') }}" {% if request.endpoint == 'schedule.calendar' %}aria-current="page"{% endif %}>Calendar</a>
       {% if g.user %}
-        <a href="{{ url_for('schedule.my_proposals') }}" {% if request.endpoint in ('schedule.my_proposals', 'schedule.view_proposal') %}aria-current="page"{% endif %} class="sub">My proposals</a>
+        <a href="{{ url_for('schedule.dashboard') }}" {% if request.endpoint in ('schedule.dashboard', 'schedule.view_proposal') %}aria-current="page"{% endif %}>Dashboard</a>
+        <a href="{{ url_for('schedule.new_proposal') }}" {% if request.endpoint == 'schedule.new_proposal' %}aria-current="page"{% endif %}>New proposal</a>
+        <a href="{{ url_for('schedule.info', page='telescope') }}" {% if request.view_args and request.view_args.get('page') == 'telescope' %}aria-current="page"{% endif %}>Telescope</a>
+        <a href="{{ url_for('schedule.info', page='bench') }}" {% if request.view_args and request.view_args.get('page') == 'bench' %}aria-current="page"{% endif %}>Bench</a>
+        <a href="{{ url_for('schedule.info', page='team') }}" {% if request.view_args and request.view_args.get('page') == 'team' %}aria-current="page"{% endif %}>Team</a>
         {% if g.user.is_admin %}
           <a href="{{ url_for('admin.overview') }}" {% if request.endpoint and (request.endpoint.startswith('admin.') or request.endpoint.startswith('schedule_admin.')) %}aria-current="page"{% endif %}>Admin{% if new_message_count %} <span class="count-badge">{{ new_message_count }}</span>{% endif %}</a>
         {% endif %}
@@ -53,8 +56,8 @@
   </main>
 
   <footer class="footer">
-    EKARUSwiki, INAF Asiago Astrophysical Observatory
-    {% if config.WIKI_URL %}<br><a href="{{ config.WIKI_URL }}">Back to the EKARUS wiki</a>{% endif %}
+    EKARUS, INAF Asiago Astrophysical Observatory
+    {% if config.WIKI_URL and is_team %}<br><a href="{{ config.WIKI_URL }}">Back to the EKARUS wiki</a>{% endif %}
   </footer>
 </body>
 </html>

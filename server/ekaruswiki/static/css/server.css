@@ -280,3 +280,25 @@ tr.unread td { font-weight: 600; }
 .linklike { color: var(--cyan) !important; text-decoration: underline; }
 
 .overview-grid + .flash { margin-top: 1rem; }
+
+/* ---------- Wiki pages shown on the schedule site */
+.wiki-content .panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.25rem 1.4rem; margin-bottom: 1.25rem; }
+.wiki-content img { border-radius: var(--radius); }
+.wiki-content .figure-frame { background: #fff; padding: 0.75rem; border-radius: var(--radius); }
+.wiki-content .table-wrap { overflow-x: auto; }
+.wiki-content caption { text-align: left; font-weight: 600; padding-bottom: 0.4rem; }
+.wiki-content .placeholder-figure, .wiki-content .empty { border: 1px dashed var(--line); border-radius: var(--radius); padding: 1rem; color: var(--muted); }
+.wiki-content .person, .wiki-content .org-row, .wiki-content .wp-row, .wiki-content .wp-people { list-style: none; padding: 0; }
+.wiki-content .org-row { display: flex; justify-content: center; gap: 2rem; margin: 0 0 1rem; }
+.wiki-content .wp-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr)); gap: 0.75rem; }
+.wiki-content .person { display: grid; justify-items: center; text-align: center; font-size: 0.85rem; }
+.wiki-content .photo { width: 4.5rem; height: 5.4rem; border-radius: var(--radius); background: var(--panel-2); border: 1px solid var(--line); margin-bottom: 0.3rem; object-fit: cover; }
+.wiki-content .role { color: var(--muted); font-size: 0.8rem; }
+.wiki-content .wp-title span { color: var(--gold); display: block; }
+.wiki-content .contacts { list-style: none; padding: 0; }
+.wiki-content .subsystem-panel[hidden] { display: none; }
+.wiki-content .subsystems button { font: inherit; color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 0.45rem 0.6rem; cursor: pointer; width: 100%; }
+.wiki-content .subsystems button[aria-pressed="true"] { background: var(--gold); color: #0b1128; border-color: var(--gold); }
+.wiki-content .subsystems ul { list-style: none; padding: 0; display: grid; gap: 0.4rem; }
+.wiki-content .bench-detail { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 1rem; }
+@media (max-width: 700px) { .wiki-content .bench-detail { grid-template-columns: 1fr; } }

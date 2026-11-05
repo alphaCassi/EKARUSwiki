@@ -9,5 +9,5 @@
    file publicly, so it is a convenience gate, not real access protection. */
 window.EKARUS_USERS = [
   // "<sha256-hex>",  // <optional note, e.g. initials>
-  "7eb5a7820761a8952c4384cc23c5775780e66b8faa77287b529b4fc03275115b",  // admin
+  "7eb5a7820761a8952c4384cc23c5775780e66b8faa77287b529b4fc03275115b",
 ];

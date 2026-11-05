@@ -1,34 +1,43 @@
 # EKARUSwiki server
 
-The active part of the EKARUS wiki. The wiki pages (`docs/`) are static and published by
-GitHub Pages; everything that has to receive, store or change something runs here:
+The active part of EKARUS. The wiki pages (`docs/`) are static and published by GitHub Pages
+for the team; this server does everything else:
 
 | Address | What |
 |---|---|
-| `/` | Entry page (admins go straight to the admin overview) |
-| `/account/…` | One account system for the whole server: register, confirm e-mail, sign in, reset password |
-| `/admin/` | **EKARUSwiki admin**: overview with counts and links to every admin tool |
-| `/admin/messages` | Change requests (wiki *Contact us*) and access requests (wiki sign-in page) |
-| `/admin/wiki-users` | Who can sign in to the wiki (edits `docs/assets/js/users.js` on GitHub) |
-| `/admin/wiki-content` | Wiki banner and highlights (edits `docs/data/site.json` on GitHub) |
-| `/admin/accounts` | Accounts registered on this server |
+| `/` | **EKARUS Observation Schedule** site: this server's address *is* the schedule site |
+| `/dashboard` | Observers' dashboard: their proposals and statuses, upcoming nights |
+| `/proposals/new`, `/proposals/<n>` | Submit and follow a proposal |
+| `/info/telescope`, `/info/bench`, `/info/team` | Wiki pages shown to signed-in observers (read live from the wiki) |
+| `/account/…` | Sign-in (see below), observer registration, password reset |
+| `/admin/` | **EKARUSwiki admin**: overview, messages, team members, wiki home page content, observer accounts |
 | `/admin/schedule/…` | Observation schedule, admin side: proposals to review, nights |
-| `/schedule/…` | Observation schedule for observers: calendar, proposals |
-| `/api/contact` | Receives the wiki's forms |
+| `/api/…` | Called by the wiki: sign-in links, contact form, access requests |
 
-Admins are the addresses in `ADMIN_EMAILS`. E-mails are sent automatically: account
-confirmation, password reset, every new message or proposal to the admins, and decisions to
-the observers.
+Old links to `/schedule/…` are redirected.
+
+## Who signs in how
+
+| Who | How |
+|---|---|
+| **EKARUS team** (Admin → Team members, approved access requests, the wiki's `users.js`, and all `ADMIN_EMAILS`) | **No password.** They type their e-mail (on the wiki's sign-in page or this server's) and receive a one-time **sign-in link**, valid 30 minutes. It signs them in to the wiki and this server for 30 days. Admins then see **Admin** in the wiki menu. |
+| **External observers** | **Register** on the schedule site with a password, confirm their e-mail, then use the calendar, dashboard, proposals and the Telescope / Bench / Team pages. |
+
+Approving a wiki **access request** (Admin → Messages) adds the person to the team list and
+e-mails them; no GitHub token is needed. With `GITHUB_TOKEN`, the wiki's own list `users.js`
+(used only when this server is off) is updated as well.
 
 ## Folder layout
 
 ```
 ekaruswiki/__init__.py      App setup, settings (read from .env), entry page
-ekaruswiki/accounts.py      Accounts: register, confirm, sign in/out, reset, profile
-ekaruswiki/admin.py         Wiki admin: overview, messages, wiki users, wiki content, accounts
+ekaruswiki/accounts.py      Sign-in links for the team; observer register, confirm, sign in/out, reset
+ekaruswiki/admin.py         Admin: overview, messages, team members, wiki content, observer accounts
+ekaruswiki/team.py          Who is on the EKARUS team (sign-in without password)
+ekaruswiki/wiki_pages.py    Telescope / Bench / Team pages read from the wiki for observers
 ekaruswiki/api.py           /api/contact for the wiki's forms (CORS, spam trap, rate limit)
-ekaruswiki/schedule/        Observation schedule module
-    views.py                  calendar, new proposal, my proposals, withdraw
+ekaruswiki/schedule/        Observation schedule (the site at /)
+    views.py                  calendar, dashboard, info pages, new proposal, withdraw
     admin.py                  review and decide, cancel allocations, open/close nights
 ekaruswiki/db.py            SQLite database; schema.sql has the tables
 ekaruswiki/mail.py          Sending e-mail (SMTP), or saving to instance/outbox/ without SMTP
@@ -39,7 +48,8 @@ ekaruswiki/templates/       Pages (accounts/, admin/, schedule/) and e-mail text
 ekaruswiki/static/          CSS, JS, fonts, logo
 tests/                      End-to-end tests (no server needed; GitHub is faked)
 wsgi.py                     Entry point; loads .env
-deploy/                     systemd service and nginx (HTTPS) examples for a Linux server
+Dockerfile, docker-compose.yml   Docker setup: see LINUX_SETUP.md
+deploy/                     systemd and nginx examples (alternative to Docker)
 .env.example                All settings, explained
 ```
 
@@ -84,7 +94,7 @@ py -c "import email,glob,os; f=max(glob.glob('instance/outbox/*.eml'),key=os.pat
 
 ## Connect the wiki (GitHub token)
 
-*Wiki users* and *Home page content* commit to the wiki repository:
+*Home page content* (and the offline copy of the team list) commit to the wiki repository:
 
 1. GitHub: profile picture → Settings → Developer settings → Personal access tokens →
    **Fine-grained tokens** → Generate new token. Repository access: only `EKARUSwiki`.
@@ -94,7 +104,11 @@ py -c "import email,glob,os; f=max(glob.glob('instance/outbox/*.eml'),key=os.pat
 
 Keep the token only in `.env` (never in git).
 
-## Deploy on a Linux server
+## Permanent setup on Linux
+
+See **LINUX_SETUP.md**: Docker plus a free fixed address with Tailscale Funnel.
+
+## Deploy on a Linux server without Docker
 
 1. Copy this folder to e.g. `/opt/ekaruswiki-server`, create `.venv`, install `requirements.txt`.
 2. Fill in `.env` (random `SECRET_KEY`, `BASE_URL`, SMTP account, GitHub token).

@@ -23,22 +23,13 @@
   </header>
 
   <div class="shell">
-    <nav class="side-nav nav-left" aria-label="Instrument">
+    <nav class="side-nav nav-left" aria-label="Project">
       <ul>
         <li><a href="../pages/team.html">Team</a></li>
         <li><a href="../pages/telescope.html">Telescope</a></li>
         <li><a href="../pages/bench.html" aria-current="page">Bench Architecture</a></li>
-        <li><a href="http://193.206.244.171/index.html" target="_blank" rel="noopener" class="ext">DAO-EKARUS<span class="visually-hidden"> (opens the DAO server in a new tab)</span></a></li>
-        <li><a href="../pages/observation-schedule.html" target="_blank" rel="noopener" class="ext" data-schedule-link>Observation Schedule<span class="visually-hidden"> (opens in a new tab)</span></a></li>
-        <li>
-          <details class="nav-group">
-            <summary>OAO school</summary>
-            <ul class="sub-nav">
-              <li><a href="https://indico.ict.inaf.it/event/3554/overview" target="_blank" rel="noopener" class="ext">Main webpage<span class="visually-hidden"> (opens in a new tab)</span></a></li>
-              <li><a href="https://oao2026tutorials.netlify.app/#tutorials" target="_blank" rel="noopener" class="ext">Tutorials<span class="visually-hidden"> (opens in a new tab)</span></a></li>
-            </ul>
-          </details>
-        </li>
+        <li><a href="http://193.206.244.171/index.html" target="_blank" rel="noopener" class="ext">DAO-EKARUS<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+        <li><a href="../pages/documentation.html">Documentation</a></li>
       </ul>
     </nav>
 
@@ -245,13 +236,29 @@
       </div>
     </main>
 
-    <nav class="side-nav nav-right" aria-label="Operations">
+    <nav class="side-nav nav-right" aria-label="Activities">
       <ul>
-        <li><a href="../pages/schedule.html">Schedule</a></li>
-        <li><a href="../pages/logbook.html">Logs</a></li>
-        <li><a href="../pages/user-guide.html">User Guide</a></li>
+        <li>
+          <details class="nav-group">
+            <summary>Observation schedule</summary>
+            <ul class="sub-nav">
+              <li><a href="../pages/schedule.html">Technical nights plan</a></li>
+              <li><a href="../pages/observation-schedule.html" target="_blank" rel="noopener" class="ext" data-schedule-link>Calendar &amp; proposals<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details class="nav-group">
+            <summary>OAO school</summary>
+            <ul class="sub-nav">
+              <li><a href="https://indico.ict.inaf.it/event/3554/overview" target="_blank" rel="noopener" class="ext">Main webpage<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+              <li><a href="https://oao2026tutorials.netlify.app/#tutorials" target="_blank" rel="noopener" class="ext">Tutorials<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            </ul>
+          </details>
+        </li>
         <li><a href="../pages/todo.html">To do’s</a></li>
         <li><a href="../pages/contact.html">Contact us</a></li>
+        <li data-admin-only hidden><a href="#" data-admin-link class="admin-link">Admin</a></li>
       </ul>
     </nav>
   </div>
@@ -266,7 +273,7 @@
       <li><img src="../assets/img/partners/unige.webp" width="480" height="139" loading="lazy" alt="Université de Genève"></li>
       <li><img src="../assets/img/partners/ipag.webp" width="142" height="160" loading="lazy" alt="IPAG – Institut de Planétologie et d’Astrophysique de Grenoble"></li>
     </ul>
-    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory<span data-admin-wrap hidden><br><a href="#" data-admin-link>Admin</a></span></p>
+    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory</p>
   </footer>
 </body>
 </html>

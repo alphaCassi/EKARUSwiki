@@ -26,7 +26,8 @@ tools/manage_users.py Add / remove / list registered users
 - **Navigation** is written in every page (left and right `<nav>` blocks). If you add or
   rename a page, update the nav in all HTML files. The current page is marked with
   `aria-current="page"`, which highlights its button.
-- **Observation Schedule** button opens the schedule on the EKARUSwiki server (`serverUrl` + `/schedule/`) in a new tab. Until `serverUrl` is set in `assets/js/config.js`, it shows `pages/observation-schedule.html`.
+- **Observation schedule → Calendar & proposals** opens the schedule site, which is the server's own address (`serverUrl`), in a new tab. Until `serverUrl` is set, it shows `pages/observation-schedule.html`.
+- **Documentation** (`pages/documentation.html`): sections for results, design documents, logs and user guides; copy an `<li>` to add a document.
 - **OAO school** button: opens two sub-buttons (Main webpage, Tutorials); the links are in the left `<nav>` of every page.
 - **RTC & ICS** (`pages/bench.html`, panel `id="rtc-ics"`): replace the placeholder text, schematic and latency values.
 - **DAO-EKARUS** button links straight to the DAO server; `pages/dao-ekarus.html` is kept but not linked.
@@ -41,6 +42,20 @@ tools/manage_users.py Add / remove / list registered users
 - **Images**: put them in `assets/img/` (WebP or JPEG, ideally under ~200 KB) and always
   set `width`, `height` and `alt`.
 
+## Menus
+
+- Left (project): Team, Telescope, Bench Architecture, DAO-EKARUS, Documentation.
+- Right (activities): Observation schedule (Technical nights plan, and the Calendar & proposals
+  site on the server), OAO school, To do's, Contact us, and **Admin** (shown to admins only).
+- The menus are written in every page: when you add or rename a page, update them in all files.
+
+## Signing in
+
+With the server connected (`serverUrl`), team members type their e-mail on the sign-in page and
+receive a one-time **sign-in link** (no password); the link brings them back signed in for 30
+days. Admins (ADMIN_EMAILS on the server) then see **Admin** in the menu. If the server can't be
+reached, the sign-in falls back to the wiki's own list (`assets/js/users.js`).
+
 ## Admin, contact form and editable content
 
 These need the EKARUSwiki server (`server/` folder) to be running and `serverUrl` set in
@@ -48,7 +63,7 @@ These need the EKARUSwiki server (`server/` folder) to be running and `serverUrl
 
 - **Contact us** (`pages/contact.html`) and **Request access** (`index.html`) send their message to
   the server, which stores it on the admin page and e-mails the admins. No mail program is used.
-- The footer shows an **Admin** link to the wiki's admin pages on the server (`serverUrl` + `/admin/`).
+- Admins see an **Admin** item in the menu, opening the admin pages on the server (`serverUrl` + `/admin/`).
 - The banner and the Highlights come from `data/site.json`, which the admin page edits. The text
   written in the HTML pages is only a fallback (e.g. when a page is opened from disk).
 

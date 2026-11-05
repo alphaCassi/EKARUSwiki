@@ -2,9 +2,9 @@
   <a href="{{ url_for('admin.overview') }}" {% if request.endpoint == 'admin.overview' %}aria-current="page"{% endif %}>Overview</a>
   <span class="tab-group">Wiki</span>
   <a href="{{ url_for('admin.messages') }}" {% if request.endpoint in ('admin.messages', 'admin.message') %}aria-current="page"{% endif %}>Messages{% if new_message_count %} <span class="count-badge">{{ new_message_count }}</span>{% endif %}</a>
-  <a href="{{ url_for('admin.wiki_user_list') }}" {% if request.endpoint == 'admin.wiki_user_list' %}aria-current="page"{% endif %}>Wiki users</a>
+  <a href="{{ url_for('admin.team_members') }}" {% if request.endpoint == 'admin.team_members' %}aria-current="page"{% endif %}>Team members</a>
   <a href="{{ url_for('admin.wiki_content') }}" {% if request.endpoint == 'admin.wiki_content' %}aria-current="page"{% endif %}>Home page content</a>
-  <a href="{{ url_for('admin.accounts') }}" {% if request.endpoint == 'admin.accounts' %}aria-current="page"{% endif %}>Accounts</a>
+  <a href="{{ url_for('admin.accounts') }}" {% if request.endpoint == 'admin.accounts' %}aria-current="page"{% endif %}>Observer accounts</a>
   <span class="tab-group">Observation schedule</span>
   <a href="{{ url_for('schedule_admin.dashboard') }}" {% if request.endpoint in ('schedule_admin.dashboard', 'schedule_admin.review') %}aria-current="page"{% endif %}>Proposals</a>
   <a href="{{ url_for('schedule_admin.nights') }}" {% if request.endpoint == 'schedule_admin.nights' %}aria-current="page"{% endif %}>Nights</a>

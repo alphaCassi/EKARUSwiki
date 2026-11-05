@@ -21,8 +21,15 @@ def close_db(_exc=None):
 
 
 def init_db():
+    conn = get_db()
     with current_app.open_resource("schema.sql") as f:
-        get_db().executescript(f.read().decode("utf-8"))
+        conn.executescript(f.read().decode("utf-8"))
+    # Columns added after the first release: add them to existing databases.
+    cols = {r["name"] for r in conn.execute("PRAGMA table_info(users)")}
+    for col, decl in (("magic_nonce", "TEXT NOT NULL DEFAULT ''"), ("magic_sent_at", "TEXT NOT NULL DEFAULT ''")):
+        if col not in cols:
+            conn.execute(f"ALTER TABLE users ADD COLUMN {col} {decl}")
+    conn.commit()
 
 
 def now():

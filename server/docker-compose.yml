@@ -1,0 +1,27 @@
+# EKARUSwiki server with Docker.  See LINUX_SETUP.md.
+#
+#   docker compose up -d --build        start (and rebuild after code updates)
+#   docker compose logs -f server       follow the log
+#   docker compose down                 stop
+#
+# Settings come from .env in this folder; data stays in ./instance on the host.
+services:
+  server:
+    build: .
+    image: ekaruswiki-server
+    env_file: .env
+    volumes:
+      - ./instance:/app/instance
+    ports:
+      - "127.0.0.1:5000:8000"     # reachable only from this computer; the tunnel publishes it
+    restart: unless-stopped
+
+  # Optional, for quick tests only: a temporary Cloudflare address that changes on every
+  # restart. Start it with:  docker compose --profile quicktunnel up -d
+  # and read the address with:  docker compose logs quicktunnel
+  quicktunnel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate --url http://server:8000
+    depends_on: [server]
+    restart: unless-stopped
+    profiles: [quicktunnel]

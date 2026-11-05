@@ -1,0 +1,9 @@
+Hello {{ name }},
+
+Here is your sign-in link for EKARUS:
+
+{{ base_url }}{{ link }}
+
+It works once, within 30 minutes. If you didn't ask for it, ignore this message.
+
+EKARUS
