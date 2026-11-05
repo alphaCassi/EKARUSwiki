@@ -26,7 +26,7 @@ tools/manage_users.py Add / remove / list registered users
 - **Navigation** is written in every page (left and right `<nav>` blocks). If you add or
   rename a page, update the nav in all HTML files. The current page is marked with
   `aria-current="page"`, which highlights its button.
-- **Observation Schedule** button opens the scheduler app in a new tab; set its address in `schedulerUrl` (`assets/js/config.js`). Until then it shows `pages/observation-schedule.html`.
+- **Observation Schedule** button opens the schedule on the EKARUSwiki server (`serverUrl` + `/schedule/`) in a new tab. Until `serverUrl` is set in `assets/js/config.js`, it shows `pages/observation-schedule.html`.
 - **OAO school** button: opens two sub-buttons (Main webpage, Tutorials); the links are in the left `<nav>` of every page.
 - **RTC & ICS** (`pages/bench.html`, panel `id="rtc-ics"`): replace the placeholder text, schematic and latency values.
 - **DAO-EKARUS** button links straight to the DAO server; `pages/dao-ekarus.html` is kept but not linked.
@@ -43,18 +43,18 @@ tools/manage_users.py Add / remove / list registered users
 
 ## Admin, contact form and editable content
 
-These need the EKARUS server (the scheduler app) to be running and `schedulerUrl` set in
-`assets/js/config.js`; see `scheduler/README.md`, "Connect the wiki".
+These need the EKARUSwiki server (`server/` folder) to be running and `serverUrl` set in
+`assets/js/config.js`; see `server/README.md`.
 
 - **Contact us** (`pages/contact.html`) and **Request access** (`index.html`) send their message to
   the server, which stores it on the admin page and e-mails the admins. No mail program is used.
-- The footer shows an **Admin** link to the server's admin pages.
+- The footer shows an **Admin** link to the wiki's admin pages on the server (`serverUrl` + `/admin/`).
 - The banner and the Highlights come from `data/site.json`, which the admin page edits. The text
   written in the HTML pages is only a fallback (e.g. when a page is opened from disk).
 
 ## To-do list
 
-The spreadsheet lives in the repository at `templates/EKARUS_todo.xlsx`. The To-do page links to it
+The spreadsheet lives in the repository at `resources/EKARUS_todo.xlsx`. The To-do page links to it
 once `githubRepo` (e.g. `"owner/ekarus"`) is set in `assets/js/config.js`.
 
 The rows shown on the page are written in `pages/todo.html`. Editing the spreadsheet does not change
@@ -65,7 +65,7 @@ Sheet published as CSV, set `todoSheetUrl` and the page reads it automatically.)
 
 1. This folder is `docs/` in the EKARUS repository; push the repository to the `main` branch.
 2. Repository **Settings → Pages → Build and deployment**: Source "Deploy from a branch",
-   branch `main`, folder **`/docs`** (so only the wiki is published, not the scheduler code).
+   branch `main`, folder **`/docs`** (so only the wiki pages are published, not the server code).
 3. The site appears at `https://<user-or-org>.github.io/<repository>/` after a minute or two.
 
 You can also open `docs/index.html` directly from disk to preview; no server is needed.

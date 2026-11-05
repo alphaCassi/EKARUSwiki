@@ -1,0 +1,15 @@
+# systemd unit — copy to /etc/systemd/system/, adjust paths and user, then:
+#   sudo systemctl daemon-reload && sudo systemctl enable --now ekaruswiki-server
+[Unit]
+Description=EKARUSwiki server (admin, accounts, observation schedule)
+After=network.target
+
+[Service]
+User=ekarus
+WorkingDirectory=/opt/ekaruswiki-server
+EnvironmentFile=/opt/ekaruswiki-server/.env
+ExecStart=/opt/ekaruswiki-server/.venv/bin/gunicorn --workers 2 --bind 127.0.0.1:8000 wsgi:app
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

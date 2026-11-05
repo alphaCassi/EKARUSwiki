@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Welcome{% endblock %}
+{% block content %}
+<div class="narrow">
+  <h1>EKARUSwiki server</h1>
+  <p class="lede">This server runs the active parts of the EKARUS wiki: accounts, the observation schedule, and the admin tools.</p>
+  <ul class="portal">
+    {% if config.WIKI_URL %}
+    <li><a class="card portal-card" href="{{ config.WIKI_URL }}"><strong>EKARUS wiki</strong><span>Team, telescope, bench, logs and guides</span></a></li>
+    {% endif %}
+    <li><a class="card portal-card" href="{{ url_for('schedule.calendar') }}"><strong>Observation schedule</strong><span>See open nights and submit an observing proposal</span></a></li>
+    {% if not g.user %}
+    <li><a class="card portal-card" href="{{ url_for('accounts.login') }}"><strong>Sign in</strong><span>Or <span class="linklike">register</span> if you don't have an account yet</span></a></li>
+    {% endif %}
+  </ul>
+</div>
+{% endblock %}

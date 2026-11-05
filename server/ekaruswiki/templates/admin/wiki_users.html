@@ -1,0 +1,35 @@
+{% extends "base.html" %}{% from "_macros.html" import csrf %}
+{% block section %}Admin{% endblock %}
+{% block title %}Admin: wiki users{% endblock %}
+{% block content %}
+<h1>EKARUSwiki admin</h1>
+{% include "admin/_tabs.html" %}
+{% if error %}<div class="card"><p class="flash flash-error">{{ error }}</p><p class="muted small">See "Connect the wiki" in the server README.</p></div>{% endif %}
+<div class="row">
+  <form method="post" class="card form grow">
+    {{ csrf() }}<input type="hidden" name="action" value="add">
+    <h2>Register someone</h2>
+    <label class="field">E-mail <input name="email" type="email" required></label>
+    <label class="field">Note <span class="hint">Optional, e.g. initials. Stored publicly next to the hash, so no e-mail or private details.</span>
+      <input name="note" maxlength="40"></label>
+    <button class="btn" type="submit">Register</button>
+  </form>
+  <form method="post" class="card form grow" data-confirm="Remove this address from the wiki?">
+    {{ csrf() }}<input type="hidden" name="action" value="remove">
+    <h2>Remove someone</h2>
+    <label class="field">E-mail <input name="email" type="email" required></label>
+    <button class="btn btn-danger" type="submit">Remove</button>
+  </form>
+</div>
+<section class="card">
+  <h2>Registered ({{ entries|length }})</h2>
+  <p class="muted small">Addresses are stored only as hashes, so they can't be shown here. Use "Remove" with the address to unregister someone.</p>
+  {% if entries %}
+  <div class="table-wrap"><table>
+    <thead><tr><th scope="col">Hash</th><th scope="col">Note</th></tr></thead>
+    <tbody>{% for h, note in entries %}<tr><td><code>{{ h[:12] }}…</code></td><td>{{ note or '—' }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  {% endif %}
+  <p class="muted small mt">Changes are committed to the wiki repository and go live within a minute or two.</p>
+</section>
+{% endblock %}

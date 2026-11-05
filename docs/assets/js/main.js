@@ -10,10 +10,13 @@
   var config = window.EKARUS_CONFIG || {};
   html.classList.add("js");
 
-  /* ---------- Observation Schedule button: point it at the scheduler app if configured */
-  if (config.schedulerUrl) {
-    document.querySelectorAll("[data-scheduler-link]").forEach(function (a) {
-      a.href = config.schedulerUrl;
+  /* ---------- The EKARUSwiki server (active parts of the wiki), if configured */
+  var server = (config.serverUrl || "").replace(/\/$/, "");
+
+  /* Observation Schedule button: the schedule module of the server */
+  if (server) {
+    document.querySelectorAll("[data-schedule-link]").forEach(function (a) {
+      a.href = server + "/schedule/";
     });
   }
 
@@ -62,17 +65,17 @@
     });
   }
 
-  /* ---------- Sending to the admins (contact form, access requests) via the scheduler server.
+  /* ---------- Sending to the admins (contact form, access requests) via the EKARUSwiki server.
      No mail program is involved: the server stores the message for the admin page and
      e-mails it to the admins. */
   function sendToAdmins(payload, button, msgEl, onDone) {
-    if (!config.schedulerUrl) {
-      setMessage(msgEl, "error", "Sending isn't available yet: the EKARUS server isn't connected to the wiki.");
+    if (!server) {
+      setMessage(msgEl, "error", "Sending isn't available yet: the EKARUSwiki server isn't connected.");
       return;
     }
     button.disabled = true;
     setMessage(msgEl, "", "Sending…");
-    fetch(config.schedulerUrl.replace(/\/$/, "") + "/api/contact", {
+    fetch(server + "/api/contact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
@@ -134,10 +137,10 @@
     });
   }
 
-  /* ---------- Footer "Admin" link: the admin pages live on the scheduler server */
-  if (config.schedulerUrl) {
+  /* ---------- Footer "Admin" link: the wiki's admin pages live on the server */
+  if (server) {
     document.querySelectorAll("[data-admin-link]").forEach(function (a) {
-      a.href = config.schedulerUrl.replace(/\/$/, "") + "/admin/messages";
+      a.href = server + "/admin/";
       a.closest("[data-admin-wrap]").hidden = false;
     });
   }
@@ -219,7 +222,7 @@
   if (todoFile) {
     if (config.githubRepo) {
       todoFile.href = "https://github.com/" + config.githubRepo + "/blob/" +
-        (config.githubBranch || "main") + "/templates/EKARUS_todo.xlsx";
+        (config.githubBranch || "main") + "/resources/EKARUS_todo.xlsx";
     } else {
       // repository not configured yet: show plain text instead of a dead link
       var span = document.createElement("span");

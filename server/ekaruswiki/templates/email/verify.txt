@@ -1,0 +1,9 @@
+Hello {{ name }},
+
+Confirm your e-mail address to activate your EKARUSwiki account:
+
+{{ base_url }}{{ link }}
+
+The link works for 3 days. If you didn't register, ignore this message.
+
+EKARUSwiki

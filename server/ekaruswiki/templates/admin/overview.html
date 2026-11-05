@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block section %}Admin{% endblock %}
+{% block content %}
+<h1>EKARUSwiki admin</h1>
+{% include "admin/_tabs.html" %}
+
+<h2 class="group-title">Wiki</h2>
+<ul class="overview-grid">
+  <li><a class="card stat-card{% if c.new_messages %} attention{% endif %}" href="{{ url_for('admin.messages') }}">
+    <span class="stat">{{ c.new_messages }}</span><strong>New messages</strong>
+    <span class="muted small">{{ c.open_messages }} open in total, from Contact us and access requests</span></a></li>
+  <li><a class="card stat-card" href="{{ url_for('admin.wiki_user_list') }}">
+    <span class="stat">&rarr;</span><strong>Wiki users</strong>
+    <span class="muted small">Who can sign in to the wiki</span></a></li>
+  <li><a class="card stat-card" href="{{ url_for('admin.wiki_content') }}">
+    <span class="stat">&rarr;</span><strong>Home page content</strong>
+    <span class="muted small">Banner and highlights</span></a></li>
+  <li><a class="card stat-card" href="{{ url_for('admin.accounts') }}">
+    <span class="stat">{{ c.accounts }}</span><strong>Accounts</strong>
+    <span class="muted small">People registered on this server</span></a></li>
+</ul>
+{% if not github_ok %}
+  <p class="flash flash-info">Wiki users and Home page content need a GitHub token (GITHUB_TOKEN in .env). See the server README, "Connect the wiki".</p>
+{% endif %}
+
+<h2 class="group-title">Observation schedule</h2>
+<ul class="overview-grid">
+  <li><a class="card stat-card{% if c.to_review %} attention{% endif %}" href="{{ url_for('schedule_admin.dashboard') }}">
+    <span class="stat">{{ c.to_review }}</span><strong>Proposals to review</strong>
+    <span class="muted small">Waiting for your decision</span></a></li>
+  <li><a class="card stat-card" href="{{ url_for('schedule_admin.nights') }}">
+    <span class="stat">{{ c.open_nights }}</span><strong>Open nights</strong>
+    <span class="muted small">{{ c.booked_nights }} upcoming nights booked</span></a></li>
+</ul>
+{% endblock %}
