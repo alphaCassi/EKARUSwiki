@@ -21,16 +21,27 @@
   }
 
   /* ---------- Sign out (header button on every protected page) */
+  function forgetSignin() {
+    try {
+      ["ekarus.access", "ekarus.email", "ekarus.name", "ekarus.admin", "ekarus.exp"].forEach(function (k) {
+        window.localStorage.removeItem(k);
+      });
+    } catch (e) {}
+  }
   document.querySelectorAll("[data-signout]").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      try {
-        ["ekarus.access", "ekarus.email", "ekarus.name", "ekarus.admin", "ekarus.exp"].forEach(function (k) {
-          window.localStorage.removeItem(k);
-        });
-      } catch (e) {}
-      window.location.href = root + "index.html";
+      forgetSignin();
+      var back = new URL(root + "index.html", window.location.href).href;
+      var srv = (config.serverUrl || "").replace(/\/$/, "");
+      // also end the server session (admin), which then comes back here
+      window.location.href = srv ? srv + "/account/signout?next=" + encodeURIComponent(back) : back;
     });
   });
+  // Signed out on the server's pages: forget the wiki sign-in as well
+  if (/[?&]signout=1/.test(window.location.search)) {
+    forgetSignin();
+    history.replaceState(null, "", window.location.pathname);
+  }
 
   /* ---------- Access page: sign in with your e-mail (no password).
      With the server connected, the server checks the team list and says whether you're an

@@ -211,3 +211,32 @@ class AdminRemembered(Flow):
         r = c.get("/account/admin-signin?next=%2Fadmin%2F&email=" + ADMIN)
         self.assertEqual(r.status_code, 302)
         self.assertTrue(r.headers["Location"].endswith("/admin/"))
+
+
+class SignOut(Flow):
+    def setUp(self):
+        super().setUp()
+        self.app.config["WIKI_URL"] = "https://alphacassi.github.io/EKARUSwiki/"
+        from ekaruswiki import team
+        team._cache.update(at=10**12, hashes=set())
+
+    def test_logout_redirects_team_to_wiki_signout(self):
+        c, _ = self.admin_signin(ADMIN)
+        token = __import__("re").search(r'name="csrf_token" value="([^"]+)"', c.get("/admin/").get_data(as_text=True)).group(1)
+        r = c.post("/account/logout", data={"csrf_token": token})
+        self.assertEqual(r.headers["Location"], "https://alphacassi.github.io/EKARUSwiki/index.html?signout=1")
+        self.assertIn("/account/admin-signin", c.get("/admin/").headers["Location"])
+
+    def test_observer_logout_stays_on_schedule_site(self):
+        user = self.register_and_verify(USER, "Olga")
+        token = __import__("re").search(r'name="csrf_token" value="([^"]+)"', user.get("/dashboard").get_data(as_text=True)).group(1)
+        r = user.post("/account/logout", data={"csrf_token": token})
+        self.assertEqual(r.headers["Location"], "/")
+
+    def test_wiki_sign_out_ends_server_session(self):
+        c, _ = self.admin_signin(ADMIN)
+        r = c.get("/account/signout?next=https://alphacassi.github.io/EKARUSwiki/index.html")
+        self.assertEqual(r.headers["Location"], "https://alphacassi.github.io/EKARUSwiki/index.html")
+        self.assertIn("/account/admin-signin", c.get("/admin/").headers["Location"])
+        r = c.get("/account/signout?next=https://evil.example/")      # never sent elsewhere
+        self.assertEqual(r.headers["Location"], "/")

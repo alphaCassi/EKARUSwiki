@@ -115,9 +115,25 @@ def login():
 
 @bp.route("/logout", methods=["POST"])
 def logout():
+    """Sign out button on this server. Team members and admins are also signed out of the wiki."""
+    was_team = g.user is not None and team.is_team(g.user["email"])
     session.clear()
+    wiki = current_app.config.get("WIKI_URL", "").rstrip("/")
+    if was_team and wiki:
+        return redirect(wiki + "/index.html?signout=1")
     flash("Signed out.", "ok")
-    return redirect(url_for("home"))
+    return redirect(url_for("schedule.calendar"))
+
+
+@bp.route("/signout")
+def signout_from_wiki():
+    """The wiki's Sign out button comes here, so the server session (and admin) ends too."""
+    session.clear()
+    wiki = current_app.config.get("WIKI_URL", "").rstrip("/")
+    nxt = request.args.get("next", "")
+    if wiki and nxt.startswith(wiki + "/"):
+        return redirect(nxt)
+    return redirect(url_for("schedule.calendar"))
 
 
 @bp.route("/forgot", methods=["GET", "POST"])
