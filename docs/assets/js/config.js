@@ -12,7 +12,7 @@ window.EKARUS_CONFIG = {
   // or a Cloudflare tunnel address. It runs the wiki's admin pages and the Observation
   // Schedule, and receives the contact form and access requests.
   // Empty = those features show "not available yet".
-  serverUrl: "https://juvenile-bought-prepare-stretch.trycloudflare.com",
+  serverUrl: "https://alexandra-asus-tuf-gaming-a16.tail5e4104.ts.net/",
 
   // GitHub repository of this site, as "owner/name" (e.g. "oleksandra-rebrysh/ekarus").
   // Used for the link to resources/EKARUS_todo.xlsx on the To-do page.
