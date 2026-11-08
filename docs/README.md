@@ -46,14 +46,15 @@ tools/manage_users.py Add / remove / list registered users
 
 - Left (project): Team, Telescope, Bench Architecture, DAO-EKARUS, Documentation.
 - Right (activities): Observation schedule (Technical nights plan, and the Calendar & proposals
-  site on the server), OAO school, To do's, Contact us, and **Admin** (shown to admins only).
+  site on the server), OAO school, To do's, Contact us.
 - The menus are written in every page: when you add or rename a page, update them in all files.
 
 ## Signing in
 
 Team members type their e-mail on the sign-in page and they're in, for 30 days (no password).
 With the server connected (`serverUrl`), the server checks the team list; admins (ADMIN_EMAILS)
-then see **Admin** in the menu; the admin pages ask once for the admin password. If the
+tick **Sign in as admin** on the sign-in page: after the e-mail they enter the admin password
+on the server (remembered 30 days) and land on the admin pages. If the
 server can't be reached, the wiki uses its own list (`assets/js/users.js`).
 
 ## Admin, contact form and editable content
@@ -63,7 +64,7 @@ These need the EKARUSwiki server (`server/` folder) to be running and `serverUrl
 
 - **Contact us** (`pages/contact.html`) and **Request access** (`index.html`) send their message to
   the server, which stores it on the admin page and e-mails the admins. No mail program is used.
-- Admins see an **Admin** item in the menu, opening the admin pages on the server (`serverUrl` + `/admin/`).
+- Admins open the admin pages with **Sign in as admin** on the sign-in page (`serverUrl` + `/admin/`).
 - The banner and the Highlights come from `data/site.json`, which the admin page edits. The text
   written in the HTML pages is only a fallback (e.g. when a page is opened from disk).
 

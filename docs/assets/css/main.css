@@ -782,5 +782,7 @@ tr.is-done td:first-child { text-decoration: line-through; }
 /* ---------- Documentation placeholders */
 .placeholder-link { font-weight: 600; color: var(--muted); font-style: italic; }
 
-/* ---------- Admin item in the menu (shown to admins only) */
-.side-nav .admin-link { border-color: var(--gold); color: var(--gold); }
+
+/* ---------- Sign-in page: "Sign in as admin" option */
+.check-option { display: flex; align-items: center; gap: 0.5rem; font-weight: 400 !important; color: var(--muted); }
+.check-option input { width: auto; accent-color: var(--gold); }

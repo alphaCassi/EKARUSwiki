@@ -18,6 +18,7 @@
       <span>EKARUS<br><small>{% block section %}Observation schedule{% endblock %}</small></span>
     </a>
     <nav class="topnav" aria-label="Main">
+      {% if config.WIKI_URL and is_team %}<a href="{{ config.WIKI_URL.rstrip('/') }}/home.html">Wiki</a>{% endif %}
       <a href="{{ url_for('schedule.calendar') }}" {% if request.endpoint == 'schedule.calendar' %}aria-current="page"{% endif %}>Calendar</a>
       {% if g.user %}
         <a href="{{ url_for('schedule.dashboard') }}" {% if request.endpoint in ('schedule.dashboard', 'schedule.view_proposal') %}aria-current="page"{% endif %}>Dashboard</a>

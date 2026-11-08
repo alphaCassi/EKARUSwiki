@@ -74,6 +74,11 @@
       ev.preventDefault();
       var email = signinForm.elements.email.value.trim().toLowerCase();
       if (!email) { setMessage(msg, "error", "Enter your e-mail address."); return; }
+      var asAdmin = signinForm.elements.as_admin && signinForm.elements.as_admin.checked;
+      if (asAdmin && !server) {
+        setMessage(msg, "error", "Admin sign-in needs the EKARUS server, which isn't connected to the wiki.");
+        return;
+      }
       if (!server) { localCheck(email); return; }
       var button = signinForm.querySelector("button");
       button.disabled = true;
@@ -84,10 +89,18 @@
       })
         .then(function (r) { return r.json(); })
         .then(function (res) {
-          if (res.ok) { enter(email, res.name, res.admin); }
-          else { setMessage(msg, "error", res.error || "Sign-in failed. Please try again."); }
+          if (!res.ok) { setMessage(msg, "error", res.error || "Sign-in failed. Please try again."); return; }
+          if (asAdmin && !res.admin) { setMessage(msg, "error", "This address isn't an admin. Untick “Sign in as admin” to enter the wiki."); return; }
+          if (asAdmin) {
+            // signed in to the wiki too, then the admin password on the server
+            target = server + "/account/admin-signin?next=%2Fadmin%2F&email=" + encodeURIComponent(email);
+          }
+          enter(email, res.name, res.admin);
         })
-        .catch(function () { localCheck(email); })     // server off: use the wiki's own list
+        .catch(function () {
+          if (asAdmin) { setMessage(msg, "error", "The EKARUS server can't be reached, so admin sign-in isn't possible right now."); return; }
+          localCheck(email);                                // server off: use the wiki's own list
+        })
         .then(function () { button.disabled = false; });
     });
   }
@@ -162,20 +175,6 @@
         setMessage(cmsg, "ok", "Thank you! Your request has been sent to the wiki admins.");
       });
     });
-  }
-
-  /* ---------- Admin menu item: only for admins. The server asks for the admin password
-     the first time, then remembers this browser for 30 days. */
-  var isAdmin = false, myEmail = "";
-  try {
-    isAdmin = window.localStorage.getItem("ekarus.admin") === "1";
-    myEmail = window.localStorage.getItem("ekarus.email") || "";
-  } catch (e) {}
-  if (server && isAdmin && myEmail) {
-    document.querySelectorAll("[data-admin-link]").forEach(function (a) {
-      a.href = server + "/account/admin-signin?next=%2Fadmin%2F&email=" + encodeURIComponent(myEmail);
-    });
-    document.querySelectorAll("[data-admin-only]").forEach(function (el) { el.hidden = false; });
   }
 
   /* ---------- Banner and highlights from data/site.json (edited on the admin page).
