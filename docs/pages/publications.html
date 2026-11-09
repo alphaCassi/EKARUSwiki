@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" data-root="../">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="EKARUS publications">
+  <title>Publications – EKARUS wiki</title>
+  <link rel="icon" href="../assets/img/favicon.png" type="image/png">
+  <link rel="preload" href="../assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/gate.js"></script>
+  <script src="../assets/js/config.js" defer></script>
+  <script src="../assets/js/main.js" defer></script>
+  <script src="../assets/js/publications-data.js" defer></script>
+  <script src="../assets/js/publications.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <a class="logo" href="../home.html"><img src="../assets/img/ekarus-logo.webp" width="480" height="480" alt="EKARUS home"></a>
+    <p class="happening" data-site-banner></p>
+    <button class="signout" type="button" data-signout>Sign out</button>
+  </header>
+
+  <div class="shell">
+    <nav class="side-nav nav-left" aria-label="Project">
+      <ul>
+        <li><a href="../pages/team.html">Team</a></li>
+        <li><a href="../pages/telescope.html">Telescope</a></li>
+        <li><a href="../pages/bench.html">Bench Architecture</a></li>
+        <li><a href="http://193.206.244.171/index.html" target="_blank" rel="noopener" class="ext">DAO-EKARUS<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+        <li><a href="../pages/documentation.html">Documentation</a></li>
+      </ul>
+    </nav>
+
+    <main class="main" id="main">
+      <h1>Publications</h1>
+      <form class="panel pub-filters" id="pub-filters" role="search" aria-label="Filter publications">
+        <div class="pub-filter-row">
+          <label class="pub-field pub-search">Search
+            <input type="search" name="q" placeholder="Title, author or conference">
+          </label>
+          <label class="pub-field">Year
+            <select name="year"><option value="">All years</option></select>
+          </label>
+          <label class="pub-field">Author
+            <select name="author"><option value="">All authors</option></select>
+          </label>
+        </div>
+        <div class="pub-filter-row">
+          <label class="pub-field">Type
+            <select name="type">
+              <option value="">All types</option>
+              <option value="paper">Refereed papers</option>
+              <option value="proceedings">Proceedings</option>
+              <option value="poster">Posters</option>
+              <option value="talk">Talks</option>
+            </select>
+          </label>
+          <label class="pub-field">Sort by
+            <select name="sort">
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="title">Title A–Z</option>
+              <option value="author">First author A–Z</option>
+            </select>
+          </label>
+          <label class="check-option pub-check"><input type="checkbox" name="related" checked> Include works that mention EKARUS</label>
+          <button type="reset" class="pub-reset">Clear filters</button>
+        </div>
+      </form>
+      <p class="pub-count" id="pub-count" aria-live="polite"></p>
+      <ol class="pub-list" id="pub-list"></ol>
+      <p class="empty" id="pub-empty" hidden>No publication matches these filters.</p>
+      <noscript><p class="empty">The publication list needs JavaScript.</p></noscript>
+      <p class="source">To add a publication, edit <code>assets/js/publications-data.js</code>. Sources: SPIE Astronomical Telescopes + Instrumentation 2026, HAL, Zenodo.</p>
+    </main>
+
+    <nav class="side-nav nav-right" aria-label="Activities">
+      <ul>
+        <li>
+          <details class="nav-group">
+            <summary>Observation schedule</summary>
+            <ul class="sub-nav">
+              <li><a href="../pages/schedule.html">Technical nights plan</a></li>
+              <li><a href="../pages/observation-schedule.html" target="_blank" rel="noopener" class="ext" data-schedule-link>Calendar &amp; proposals<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details class="nav-group">
+            <summary>OAO school</summary>
+            <ul class="sub-nav">
+              <li><a href="https://indico.ict.inaf.it/event/3554/overview" target="_blank" rel="noopener" class="ext">Main webpage<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+              <li><a href="https://oao2026tutorials.netlify.app/#tutorials" target="_blank" rel="noopener" class="ext">Tutorials<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            </ul>
+          </details>
+        </li>
+        <li><a href="../pages/publications.html" aria-current="page">Publications</a></li>
+        <li><a href="../pages/todo.html">To do’s</a></li>
+        <li><a href="../pages/contact.html">Contact us</a></li>
+      </ul>
+    </nav>
+  </div>
+  <footer class="partners" aria-labelledby="partners-title">
+    <h2 id="partners-title">Partners</h2>
+    <ul>
+      <li><img src="../assets/img/partners/inaf-oapd.webp" width="240" height="127" loading="lazy" alt="INAF – Osservatorio Astronomico di Padova"></li>
+      <li><img src="../assets/img/partners/onera.webp" width="240" height="69" loading="lazy" alt="ONERA – The French Aerospace Lab"></li>
+      <li><img src="../assets/img/partners/lam.webp" width="240" height="77" loading="lazy" alt="LAM – Laboratoire d’Astrophysique de Marseille"></li>
+      <li class="on-dark"><img src="../assets/img/partners/adoni.webp" width="200" height="120" loading="lazy" alt="ADONI – Laboratorio Nazionale di Ottica Adattiva"></li>
+      <li><img src="../assets/img/partners/durham.webp" width="340" height="160" loading="lazy" alt="Durham University"></li>
+      <li><img src="../assets/img/partners/unige.webp" width="480" height="139" loading="lazy" alt="Université de Genève"></li>
+      <li><img src="../assets/img/partners/ipag.webp" width="142" height="160" loading="lazy" alt="IPAG – Institut de Planétologie et d’Astrophysique de Grenoble"></li>
+    </ul>
+    <p class="site-footer">EKARUS – INAF Asiago Astrophysical Observatory</p>
+  </footer>
+</body>
+</html>

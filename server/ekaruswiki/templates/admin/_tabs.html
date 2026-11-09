@@ -5,6 +5,7 @@
   <a href="{{ url_for('admin.team_members') }}" {% if request.endpoint == 'admin.team_members' %}aria-current="page"{% endif %}>Team members</a>
   <a href="{{ url_for('admin.wiki_content') }}" {% if request.endpoint == 'admin.wiki_content' %}aria-current="page"{% endif %}>Home page content</a>
   <a href="{{ url_for('admin.accounts') }}" {% if request.endpoint == 'admin.accounts' %}aria-current="page"{% endif %}>Observer accounts</a>
+  <a href="{{ url_for('admin.signins') }}" {% if request.endpoint == 'admin.signins' %}aria-current="page"{% endif %}>Sign-ins</a>
   <span class="tab-group">Observation schedule</span>
   <a href="{{ url_for('schedule_admin.dashboard') }}" {% if request.endpoint in ('schedule_admin.dashboard', 'schedule_admin.review') %}aria-current="page"{% endif %}>Proposals</a>
   <a href="{{ url_for('schedule_admin.nights') }}" {% if request.endpoint == 'schedule_admin.nights' %}aria-current="page"{% endif %}>Nights</a>

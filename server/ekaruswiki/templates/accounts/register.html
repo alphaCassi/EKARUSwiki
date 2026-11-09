@@ -8,6 +8,7 @@
   <p class="muted small">EKARUS team members don't register: <a href="{{ url_for('accounts.login') }}">sign in with your e-mail</a>.</p>
   <form method="post" class="form card">
     {{ csrf() }}
+    <div class="trap" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
     <label class="field">Name <input name="name" value="{{ form.name }}" autocomplete="name" required></label>
     <label class="field">E-mail <input name="email" type="email" value="{{ form.email }}" autocomplete="email" required></label>
     <label class="field">Institute <input name="institute" value="{{ form.institute }}" autocomplete="organization"></label>

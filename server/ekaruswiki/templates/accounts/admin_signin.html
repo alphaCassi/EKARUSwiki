@@ -7,7 +7,7 @@
   {% if not configured %}
     <p class="flash flash-error">No admin password is set on this server yet: add ADMIN_PASSWORD to server/.env and restart the server.</p>
   {% endif %}
-  <p class="lede">The admin pages need the admin password. This browser remembers it for 30 days.</p>
+  <p class="lede">The admin pages need the admin password. You stay signed in until you close the browser.</p>
   <form method="post" class="form card">
     {{ csrf() }}
     <input type="hidden" name="next" value="{{ next }}">

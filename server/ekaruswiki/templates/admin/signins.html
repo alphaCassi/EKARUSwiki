@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block section %}Admin{% endblock %}
+{% block title %}Admin: sign-ins{% endblock %}
+{% block content %}
+<h1>EKARUSwiki admin</h1>
+{% include "admin/_tabs.html" %}
+<p class="lede">Every sign-in to the wiki and this server, newest first. Failed or blocked attempts from unknown addresses can mean someone is guessing.</p>
+<nav class="filters" aria-label="Which sign-ins">
+  <a href="{{ url_for('admin.signins', show='all') }}" {% if show != 'failed' %}aria-current="true"{% endif %}>All</a>
+  <a href="{{ url_for('admin.signins', show='failed') }}" {% if show == 'failed' %}aria-current="true"{% endif %}>Failed <span class="count">{{ failed_24h }} in 24 h</span></a>
+</nav>
+{% if rows %}
+<div class="card table-wrap">
+  <table>
+    <thead><tr><th scope="col">Time (UTC)</th><th scope="col">E-mail</th><th scope="col">Where</th><th scope="col">Result</th><th scope="col">Connection</th></tr></thead>
+    <tbody>
+    {% for r in rows %}
+      <tr class="{{ '' if r.ok else 'unread' }}">
+        <td>{{ r.at|shortdate }}</td>
+        <td>{{ r.email or '—' }}</td>
+        <td>{{ {'wiki': 'Wiki', 'server': 'Schedule site (team)', 'admin': 'Admin password', 'observer': 'Schedule site (observer)'}.get(r.source, r.source) }}</td>
+        <td>{% if r.ok %}<span class="badge badge-accepted">Signed in</span>{% else %}<span class="badge badge-rejected">{{ r.reason|capitalize or 'Failed' }}</span>{% endif %}</td>
+        <td><code>{{ r.ip_hash[:8] }}</code></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<p class="muted small">Connections are shown as short codes, not IP addresses: the same code means the same connection. The last 2000 entries are kept.</p>
+{% else %}
+  <div class="card empty"><p>No sign-ins yet.</p></div>
+{% endif %}
+{% endblock %}

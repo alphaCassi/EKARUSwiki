@@ -92,8 +92,10 @@ class Flow(unittest.TestCase):
             from ekaruswiki.db import get_db
             ids = [r["id"] for r in get_db().execute("SELECT id FROM nights ORDER BY date")]
 
-        # calendar is public and shows the open nights
-        html = self.app.test_client().get(f"/?y={d0.year}&m={d0.month}").get_data(as_text=True)
+        # the calendar needs signing in, then shows the open nights
+        r = self.app.test_client().get("/")
+        self.assertIn("/account/login", r.headers["Location"])
+        html = user.get(f"/?y={d0.year}&m={d0.month}").get_data(as_text=True)
         self.assertIn("night-open", html)
 
         # user submits a proposal for the first two nights

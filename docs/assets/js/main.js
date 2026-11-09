@@ -22,11 +22,10 @@
 
   /* ---------- Sign out (header button on every protected page) */
   function forgetSignin() {
-    try {
-      ["ekarus.access", "ekarus.email", "ekarus.name", "ekarus.admin", "ekarus.exp"].forEach(function (k) {
-        window.localStorage.removeItem(k);
-      });
-    } catch (e) {}
+    ["ekarus.access", "ekarus.email", "ekarus.name", "ekarus.admin", "ekarus.exp"].forEach(function (k) {
+      try { window.sessionStorage.removeItem(k); } catch (e) {}
+      try { window.localStorage.removeItem(k); } catch (e) {}     // left over from older versions
+    });
   }
   document.querySelectorAll("[data-signout]").forEach(function (btn) {
     btn.addEventListener("click", function () {
@@ -52,20 +51,15 @@
     var home = config.homePage || "home.html";
     var next = new URLSearchParams(window.location.search).get("next");
     var target = next && /^(home\.html|pages\/[a-z0-9-]+\.html)$/.test(next) ? next : home;
-    var DAYS30 = 30 * 24 * 3600;
-
-    try {   // already signed in on this browser? go straight in
-      var exp = parseInt(window.localStorage.getItem("ekarus.exp") || "0", 10);
-      if (window.localStorage.getItem(KEY) && (!exp || exp * 1000 > Date.now())) { window.location.replace(target); return; }
-    } catch (e) {}
+    // The sign-in page always shows, even if this browser was signed in before.
+    forgetSignin();
 
     var enter = function (email, name, admin) {
-      try {
-        window.localStorage.setItem(KEY, "1");
-        window.localStorage.setItem("ekarus.email", email);
-        window.localStorage.setItem("ekarus.name", name || "");
-        window.localStorage.setItem("ekarus.admin", admin ? "1" : "");
-        window.localStorage.setItem("ekarus.exp", String(Math.floor(Date.now() / 1000) + DAYS30));
+      try {   // kept only until the browser is closed
+        window.sessionStorage.setItem(KEY, "1");
+        window.sessionStorage.setItem("ekarus.email", email);
+        window.sessionStorage.setItem("ekarus.name", name || "");
+        window.sessionStorage.setItem("ekarus.admin", admin ? "1" : "");
       } catch (e) {}
       window.location.href = target;
     };
@@ -96,7 +90,7 @@
       fetch(server + "/api/signin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email })
+        body: JSON.stringify({ email: email, website: signinForm.elements.website ? signinForm.elements.website.value : "" })
       })
         .then(function (r) { return r.json(); })
         .then(function (res) {

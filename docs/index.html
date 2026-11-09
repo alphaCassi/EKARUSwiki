@@ -27,6 +27,10 @@
         <input id="signin-email" name="email" type="email" autocomplete="email" required>
       </div>
       <label class="check-option"><input type="checkbox" name="as_admin" id="signin-admin"> Sign in as admin</label>
+      <div class="trap" aria-hidden="true">
+        <label for="signin-website">Website</label>
+        <input id="signin-website" name="website" type="text" tabindex="-1" autocomplete="off">
+      </div>
       <button class="btn" type="submit">Sign in</button>
       <p class="form-message" id="signin-message" role="status" aria-live="polite"></p>
     </form>

@@ -49,6 +49,20 @@ def overview():
     return render_template("admin/overview.html", c=counts, github_ok=github.configured())
 
 
+# ---------------------------------------------------------------- sign-in log
+@bp.route("/signins")
+@admin_required
+def signins():
+    show = request.args.get("show", "all")
+    sql = "SELECT * FROM signin_log"
+    if show == "failed":
+        sql += " WHERE ok = 0"
+    rows = get_db().execute(sql + " ORDER BY id DESC LIMIT 300").fetchall()
+    failed_24h = get_db().execute(
+        "SELECT COUNT(*) FROM signin_log WHERE ok = 0 AND at >= datetime('now', '-1 day')").fetchone()[0]
+    return render_template("admin/signins.html", rows=rows, show=show, failed_24h=failed_24h)
+
+
 # ---------------------------------------------------------------- server accounts
 @bp.route("/accounts")
 @admin_required

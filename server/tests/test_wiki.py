@@ -240,3 +240,62 @@ class SignOut(Flow):
         self.assertIn("/account/admin-signin", c.get("/admin/").headers["Location"])
         r = c.get("/account/signout?next=https://evil.example/")      # never sent elsewhere
         self.assertEqual(r.headers["Location"], "/")
+
+
+
+class EverySiteVisitStartsAtSignIn(Flow):
+    def test_all_pages_need_sign_in_and_sessions_end_with_browser(self):
+        anon = self.app.test_client()
+        for path in ("/", "/dashboard", "/proposals/new", "/info/telescope", "/admin/"):
+            r = anon.get(path)
+            self.assertEqual(r.status_code, 302, path)
+            self.assertIn("/account/", r.headers["Location"], path)
+        self.assertEqual(anon.get("/account/login").status_code, 200)
+        c = self.app.test_client()
+        token = __import__("re").search(r'name="csrf_token" value="([^"]+)"',
+                                        c.get("/account/admin-signin").get_data(as_text=True)).group(1)
+        r = c.post("/account/admin-signin", data={"csrf_token": token, "email": ADMIN, "password": "admin-test-pass"})
+        cookies = [h for h in r.headers.getlist("Set-Cookie") if h.startswith("session=")]
+        self.assertTrue(cookies)
+        for h in cookies:
+            self.assertNotIn("Expires", h)          # browser-session cookie: gone when the browser closes
+
+
+class BotProtection(Flow):
+    def setUp(self):
+        super().setUp()
+        self.app.config["WIKI_URL"] = "https://alphacassi.github.io/EKARUSwiki/"
+        from ekaruswiki import team
+        team._cache.update(at=10**12, hashes=set())
+
+    def wiki(self, payload):
+        return self.app.test_client().post("/api/signin", json=payload, headers={"Origin": "https://alphacassi.github.io"})
+
+    def test_too_many_signin_attempts_are_blocked(self):
+        for i in range(10):
+            self.wiki({"email": f"guess{i}@x.org"})
+        r = self.wiki({"email": ADMIN})                     # even a real address is blocked now
+        self.assertEqual(r.status_code, 429)
+
+    def test_bot_trap(self):
+        r = self.wiki({"email": ADMIN, "website": "http://spam.example"})
+        self.assertEqual(r.status_code, 403)
+
+    def test_admin_password_guessing_is_limited(self):
+        c = self.app.test_client()
+        for _ in range(5):
+            self.post(c, "/account/admin-signin", {"email": ADMIN, "password": "guess"}, form_url="/account/admin-signin")
+        r = self.post(c, "/account/admin-signin", {"email": ADMIN, "password": "admin-test-pass"}, form_url="/account/admin-signin")
+        self.assertIn("Too many attempts", r.get_data(as_text=True))
+
+    def test_signin_log_robots_and_headers(self):
+        self.wiki({"email": "stranger@x.org"})
+        self.wiki({"email": ADMIN})
+        admin, _ = self.admin_signin(ADMIN)
+        page = admin.get("/admin/signins").get_data(as_text=True)
+        self.assertIn("stranger@x.org", page)
+        self.assertIn("Not on the team", page)
+        self.assertIn("Admin password", page)
+        r = self.app.test_client().get("/robots.txt")
+        self.assertIn("Disallow: /", r.get_data(as_text=True))
+        self.assertEqual(r.headers["X-Frame-Options"], "DENY")

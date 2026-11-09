@@ -46,15 +46,19 @@ tools/manage_users.py Add / remove / list registered users
 
 - Left (project): Team, Telescope, Bench Architecture, DAO-EKARUS, Documentation.
 - Right (activities): Observation schedule (Technical nights plan, and the Calendar & proposals
-  site on the server), OAO school, To do's, Contact us.
+  site on the server), OAO school, Publications, To do's, Contact us.
+- **Publications** (`pages/publications.html`): searchable list with filters (year, author, type,
+  works that only mention EKARUS) and sorting. The entries are in `assets/js/publications-data.js`:
+  copy one `{ ... }` block to add a publication (instructions at the top of the file).
 - The menus are written in every page: when you add or rename a page, update them in all files.
 
 ## Signing in
 
-Team members type their e-mail on the sign-in page and they're in, for 30 days (no password).
+Opening the wiki always shows the sign-in page. Team members type their e-mail and they're in
+(no password) until they close the browser.
 With the server connected (`serverUrl`), the server checks the team list; admins (ADMIN_EMAILS)
 tick **Sign in as admin** on the sign-in page: after the e-mail they enter the admin password
-on the server (remembered 30 days) and land on the admin pages. If the
+on the server and land on the admin pages. If the
 server can't be reached, the wiki uses its own list (`assets/js/users.js`).
 
 ## Admin, contact form and editable content

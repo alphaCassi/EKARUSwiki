@@ -27,7 +27,8 @@ def login_required(view):
     @functools.wraps(view)
     def wrapped(*args, **kwargs):
         if g.user is None:
-            flash("Sign in to continue.", "info")
+            if request.path != "/":
+                flash("Sign in to continue.", "info")
             return redirect(url_for("accounts.login", next=request.path))
         return view(*args, **kwargs)
     return wrapped

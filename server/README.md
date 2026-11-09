@@ -5,7 +5,7 @@ for the team; this server does everything else:
 
 | Address | What |
 |---|---|
-| `/` | **EKARUS Observation Schedule** site: this server's address *is* the schedule site |
+| `/` | **EKARUS Observation Schedule** site: this server's address *is* the schedule site. Every page needs signing in first |
 | `/dashboard` | Observers' dashboard: their proposals and statuses, upcoming nights |
 | `/proposals/new`, `/proposals/<n>` | Submit and follow a proposal |
 | `/info/telescope`, `/info/bench`, `/info/team` | Wiki pages shown to signed-in observers (read live from the wiki) |
@@ -14,14 +14,14 @@ for the team; this server does everything else:
 | `/admin/schedule/…` | Observation schedule, admin side: proposals to review, nights |
 | `/api/…` | Called by the wiki: team sign-in check, contact form, access requests |
 
-Old links to `/schedule/…` are redirected.
+Old links to `/schedule/…` are redirected. All sign-ins end when the browser is closed.
 
 ## Who signs in how
 
 | Who | How |
 |---|---|
-| **EKARUS team** (Admin → Team members, approved access requests, the wiki's `users.js`, and all `ADMIN_EMAILS`) | **E-mail only, no password**, on the wiki's sign-in page or this server's. Signed in for 30 days. |
-| **Admins** (`ADMIN_EMAILS`) | Like the team, plus **Admin** in the wiki menu. The admin pages ask once for the **admin password** (`ADMIN_PASSWORD` in `.env`) and remember it for 30 days in that browser. |
+| **EKARUS team** (Admin → Team members, approved access requests, the wiki's `users.js`, and all `ADMIN_EMAILS`) | **E-mail only, no password**, on the wiki's sign-in page or this server's. |
+| **Admins** (`ADMIN_EMAILS`) | Tick **Sign in as admin** on the wiki's sign-in page: e-mail, then the **admin password** (`ADMIN_PASSWORD` in `.env`). |
 | **External observers** | **Register** on the schedule site with a password, confirm their e-mail, then use the calendar, dashboard, proposals and the Telescope / Bench / Team pages. |
 
 Approving a wiki **access request** (Admin → Messages) adds the person to the team list and

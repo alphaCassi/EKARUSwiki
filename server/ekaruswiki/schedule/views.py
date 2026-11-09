@@ -55,6 +55,7 @@ def load_proposal(pid):
 
 
 @bp.route("/")
+@login_required
 def calendar():
     today = date.today()
     try:

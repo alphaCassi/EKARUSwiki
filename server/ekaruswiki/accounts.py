@@ -2,7 +2,8 @@
 
 - EKARUS team members (team.py): sign in with their e-mail only.
 - Admins (ADMIN_EMAILS): like the team; the admin pages also need the admin password
-  (ADMIN_PASSWORD in .env), asked once and remembered for 30 days in that browser.
+  (ADMIN_PASSWORD in .env), asked at every admin sign-in.
+- Every sign-in ends when the browser is closed.
 - External observers register with a password (observation schedule only).
 """
 import hmac
@@ -12,7 +13,7 @@ import time
 from flask import Blueprint, current_app, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from . import mail, team
+from . import mail, protect, team
 from .db import get_db, now
 from .security import login_required, make_token, read_token
 
@@ -45,6 +46,11 @@ def register():
         form["email"] = form["email"].lower()
         password = request.form.get("password", "")
         errors = []
+        if protect.is_bot(request.form.get("website")):
+            return render_template("accounts/check_email.html", email=form["email"])   # say nothing to bots
+        if protect.too_many("register"):
+            flash("Too many attempts from this connection. Please wait a few minutes and try again.", "error")
+            return render_template("accounts/register.html", form=form)
         if form["email"] and team.is_team(form["email"]):
             flash("You're on the EKARUS team, so you don't need to register: just sign in with your e-mail.", "info")
             return redirect(url_for("accounts.login", email=form["email"]))
@@ -94,8 +100,12 @@ def login():
         email = request.form.get("email", "").strip().lower()
         db = get_db()
         user = db.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
-        if user is None or user["password_hash"].startswith("!") or \
+        if protect.is_bot(request.form.get("website")) or protect.too_many("login"):
+            protect.log_signin(email, "observer", False, "blocked")
+            flash("Too many attempts from this connection. Please wait a few minutes and try again.", "error")
+        elif user is None or user["password_hash"].startswith("!") or \
                 not check_password_hash(user["password_hash"], request.form.get("password", "")):
+            protect.log_signin(email, "observer", False, "wrong password")
             flash("E-mail or password is wrong.", "error")
         elif not user["verified"]:
             _send_verification(user)
@@ -108,7 +118,8 @@ def login():
                 db.commit()
             session.clear()
             session["user_id"] = user["id"]
-            session.permanent = True
+            session.permanent = False
+            protect.log_signin(email, "observer", True)
             return redirect(_safe_next(request.args.get("next")))
     return render_template("accounts/login.html", email=email or request.args.get("email", ""))
 
@@ -141,6 +152,9 @@ def forgot():
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         user = get_db().execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+        if protect.too_many("forgot"):
+            flash("Too many attempts from this connection. Please wait a few minutes and try again.", "error")
+            return redirect(url_for("accounts.forgot"))
         if user:
             # the token includes part of the current hash, so it stops working once used
             token = make_token("reset", [user["id"], user["password_hash"][-12:]])
@@ -212,39 +226,50 @@ def _start_session(user, admin_ok=False):
     session.clear()
     session["user_id"] = user["id"]
     session["admin_ok"] = bool(admin_ok)
-    session.permanent = True
+    session.permanent = False
 
 
 @bp.route("/team-signin", methods=["POST"])
 def team_signin():
     email = request.form.get("email", "").strip().lower()
     nxt = request.form.get("next", "")
+    if protect.is_bot(request.form.get("website")) or protect.too_many("signin"):
+        protect.log_signin(email, "server", False, "blocked")
+        flash("Too many attempts from this connection. Please wait a few minutes and try again.", "error")
+        return redirect(url_for("accounts.login"))
     if not team.is_team(email):
+        protect.log_signin(email, "server", False, "not on the team")
         flash("This address isn't on the EKARUS team list. Observers: sign in with your password below, "
               "or register.", "error")
         return redirect(url_for("accounts.login", email=email))
     user = team_user(email)
     _start_session(user)
+    protect.log_signin(email, "server", True)
     return redirect(_safe_next(nxt))
 
 
 # ---------------------------------------------------------------- admin password
 @bp.route("/admin-signin", methods=["GET", "POST"])
 def admin_signin():
-    """Admin pages: admin e-mail + admin password (ADMIN_PASSWORD), remembered 30 days."""
+    """Admin pages: admin e-mail + admin password (ADMIN_PASSWORD), until the browser is closed."""
     nxt = request.values.get("next", "")
     email = request.values.get("email", "").strip().lower()
     configured = bool(current_app.config.get("ADMIN_PASSWORD"))
     if request.method == "GET" and g.user is not None and session.get("admin_ok") \
             and (not email or email == g.user["email"]):
         return redirect(_safe_next(nxt or url_for("admin.overview")))   # already remembered
-    if request.method == "POST":
+    if request.method == "POST" and protect.too_many("admin"):
+        protect.log_signin(email, "admin", False, "blocked")
+        flash("Too many attempts from this connection. Please wait a few minutes and try again.", "error")
+    elif request.method == "POST":
         password = request.form.get("password", "")
         ok = (configured and _is_admin_email(email)
               and hmac.compare_digest(password.encode(), current_app.config["ADMIN_PASSWORD"].encode()))
         if ok:
             _start_session(team_user(email), admin_ok=True)
+            protect.log_signin(email, "admin", True)
             return redirect(_safe_next(nxt or url_for("admin.overview")))
+        protect.log_signin(email, "admin", False, "wrong password")
         time.sleep(1)                       # slow down guessing
         flash("Wrong e-mail or admin password.", "error")
     return render_template("accounts/admin_signin.html", email=email or (g.user["email"] if g.user else ""),

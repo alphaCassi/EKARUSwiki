@@ -786,3 +786,39 @@ tr.is-done td:first-child { text-decoration: line-through; }
 /* ---------- Sign-in page: "Sign in as admin" option */
 .check-option { display: flex; align-items: center; gap: 0.5rem; font-weight: 400 !important; color: var(--muted); }
 .check-option input { width: auto; accent-color: var(--gold); }
+
+/* ---------- Publications: filters and list */
+.pub-filters { display: grid; gap: 0.9rem; }
+.pub-filter-row { display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; align-items: flex-end; }
+.pub-field { display: grid; gap: 0.3rem; font-weight: 600; font-size: var(--fs-sm); flex: 1 1 9rem; }
+.pub-search { flex: 3 1 16rem; }
+.pub-field input, .pub-field select {
+  width: 100%; font: inherit; font-weight: 400; color: var(--ink);
+  background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 0.5rem 0.6rem;
+}
+.pub-check { flex: 2 1 14rem; padding-bottom: 0.55rem; font-size: var(--fs-sm); }
+.pub-reset {
+  font: inherit; font-size: var(--fs-sm); color: var(--cyan); background: none;
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 0.5rem 0.8rem; cursor: pointer;
+}
+.pub-reset:hover { border-color: var(--cyan); }
+.pub-count { color: var(--muted); font-size: var(--fs-sm); margin: 0.75rem 0 0.5rem; }
+.pub-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; }
+.pub {
+  background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--gold);
+  border-radius: var(--radius); padding: 1rem 1.2rem;
+}
+.pub-head { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 0.35rem; }
+.pub-year { font-family: var(--font-head); font-weight: 600; color: var(--gold); }
+.pub-type { font-size: 0.75rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 0 0.5rem; }
+.pub-related { color: var(--cyan); border-color: var(--cyan); }
+.pub-title { font-size: var(--fs-md); margin: 0 0 0.35rem; line-height: 1.3; }
+.pub-title a { color: var(--ink); text-decoration: none; }
+.pub-title a:hover { color: var(--cyan); text-decoration: underline; }
+.pub-authors { font-size: var(--fs-sm); margin: 0 0 0.25rem; max-width: none; }
+.pub-me { color: var(--gold); font-weight: 600; }
+.pub-more { display: inline; }
+.pub-more summary { display: inline; cursor: pointer; color: var(--cyan); }
+.pub-more[open] summary { display: none; }
+.pub-venue { font-size: var(--fs-sm); color: var(--muted); margin: 0; max-width: none; }

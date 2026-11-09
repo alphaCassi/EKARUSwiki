@@ -33,7 +33,7 @@ def create_app(test_config=None):
         DATABASE=os.environ.get("DATABASE") or _default_database(app.instance_path),
         # Comma-separated list. These addresses become admins when they register or sign in.
         ADMIN_EMAILS=os.environ.get("ADMIN_EMAILS", "oleksandra.rebrysh@inaf.it"),
-        # Password for the admin pages (asked once per browser, remembered 30 days).
+        # Password for the admin pages (asked at every admin sign-in).
         ADMIN_PASSWORD=os.environ.get("ADMIN_PASSWORD", ""),
         # Public address of this server, used in e-mail links.
         BASE_URL=os.environ.get("BASE_URL", "http://localhost:5000").rstrip("/"),
@@ -55,7 +55,6 @@ def create_app(test_config=None):
         CORS_ORIGINS=os.environ.get("CORS_ORIGINS", ""),
         # Behind nginx or a Cloudflare tunnel: trust its X-Forwarded-For header (rate limiting)
         PROXY_FIX=os.environ.get("PROXY_FIX", "0") == "1",
-        PERMANENT_SESSION_LIFETIME=30 * 24 * 3600,   # stay signed in for 30 days
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE", "1") == "1",
@@ -77,6 +76,19 @@ def create_app(test_config=None):
     app.register_blueprint(api.bp)
     app.register_blueprint(schedule_views.bp)
     app.register_blueprint(schedule_admin.bp)
+
+    @app.route("/robots.txt")
+    def robots():
+        """Ask search engines not to index anything on this server."""
+        return "User-agent: *\nDisallow: /\n", 200, {"Content-Type": "text/plain"}
+
+    @app.after_request
+    def security_headers(resp):
+        resp.headers.setdefault("X-Frame-Options", "DENY")              # no embedding in other sites
+        resp.headers.setdefault("X-Content-Type-Options", "nosniff")
+        resp.headers.setdefault("Referrer-Policy", "same-origin")
+        resp.headers.setdefault("X-Robots-Tag", "noindex, nofollow")
+        return resp
 
     @app.route("/schedule/", defaults={"rest": ""})
     @app.route("/schedule/<path:rest>")

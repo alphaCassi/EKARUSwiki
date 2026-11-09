@@ -102,12 +102,21 @@ def signin():
     The wiki's Admin item opens the admin pages, which ask for the admin password."""
     if request.method == "OPTIONS":
         return "", 204
-    from . import team
+    from . import protect, team
     from .accounts import team_user
-    email = str((request.get_json(silent=True) or {}).get("email", "")).strip().lower()[:200]
+    data = request.get_json(silent=True) or {}
+    email = str(data.get("email", "")).strip().lower()[:200]
+    if protect.is_bot(data.get("website")):
+        protect.log_signin(email, "wiki", False, "bot trap")
+        return fail("This address isn't on the team list. Request access below.", 403)
+    if protect.too_many("signin"):
+        protect.log_signin(email, "wiki", False, "blocked")
+        return fail("Too many attempts from this connection. Please wait a few minutes and try again.", 429)
     if not EMAIL_RE.match(email):
         return fail("Enter a valid e-mail address.")
     if not team.is_team(email):
+        protect.log_signin(email, "wiki", False, "not on the team")
         return fail("This address isn't on the team list. Request access below.", 403)
     user = team_user(email)
+    protect.log_signin(email, "wiki", True)
     return jsonify(ok=True, name=user["name"], admin=email in mail.admin_addresses())

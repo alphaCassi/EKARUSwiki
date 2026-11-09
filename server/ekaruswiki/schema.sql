@@ -93,3 +93,23 @@ CREATE TABLE IF NOT EXISTS team (
     name     TEXT NOT NULL DEFAULT '',
     added_at TEXT NOT NULL
 );
+
+-- Protection against bots and guessing: recent attempts per connection, and a sign-in log for admins.
+CREATE TABLE IF NOT EXISTS attempts (
+    id      INTEGER PRIMARY KEY,
+    kind    TEXT NOT NULL,          -- signin, admin, login, register, forgot
+    ip_hash TEXT NOT NULL,
+    at      REAL NOT NULL           -- unix time
+);
+CREATE INDEX IF NOT EXISTS idx_attempts ON attempts(kind, ip_hash, at);
+
+CREATE TABLE IF NOT EXISTS signin_log (
+    id      INTEGER PRIMARY KEY,
+    at      TEXT NOT NULL,
+    email   TEXT NOT NULL,
+    source  TEXT NOT NULL,          -- wiki, server, admin, observer
+    ok      INTEGER NOT NULL,
+    reason  TEXT NOT NULL DEFAULT '',
+    ip_hash TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_signin_log_at ON signin_log(at);
