@@ -14,7 +14,7 @@ from markupsafe import Markup
 # key: (wiki file, title)
 PAGES = {
     "telescope": ("pages/telescope.html", "Telescope"),
-    "bench": ("pages/bench.html", "Bench architecture"),
+    "bench": ("pages/bench.html", "EKARUS"),
     "team": ("pages/team.html", "Team and contacts"),
 }
 CACHE_SECONDS = 600

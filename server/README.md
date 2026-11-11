@@ -126,3 +126,17 @@ python -m unittest discover -s tests -v
 
 Editing a proposal after submission, attachments, calendar export (.ics), rate limiting of
 sign-in attempts.
+
+## Admin notes
+
+- **Proposals:** rejecting no longer needs a written reason (a default one is sent). A rejected or
+  withdrawn proposal can be accepted later from its page ("Accept it now"), on its requested nights
+  or any other open night. Accepting reports clearly when a night was taken in the meantime.
+- **Nights:** a night can be removed unless a proposal waiting for review requested it.
+- **Home page content:** banner, highlights, and pictures (a main picture and one per highlight;
+  JPEG, PNG or WebP up to 3 MB, stored in the wiki under `docs/assets/img/highlights/`). Needs
+  `GITHUB_TOKEN`: a fine-grained token with access to the wiki repository and Contents: Read and
+  write. A wrong token now gives a clear message on the page.
+- **Admin rights** on this site count only after the admin password, in that browser session.
+- **Calendar:** shown only to signed-in users; months load in the page (`/calendar.json`) without a
+  reload. Clicking an available night opens a new proposal with that night ticked.

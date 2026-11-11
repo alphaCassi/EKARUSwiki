@@ -1,62 +1,60 @@
 {% extends "base.html" %}
-{% block section %}Observation schedule{% endblock %}
 {% block title %}Calendar{% endblock %}
 {% block content %}
 <div class="page-head">
   <div>
     <h1>Observing nights</h1>
-    <p class="lede">{{ upcoming_open }} night{{ 's' if upcoming_open != 1 }} open for proposals. Pick the ones you need when you submit a proposal.</p>
+    <p class="lede">{{ upcoming_open }} night{{ 's' if upcoming_open != 1 }} available for proposals. Click an available night to propose it.</p>
   </div>
-  {% if g.user %}
-    <a class="btn" href="{{ url_for('schedule.new_proposal') }}">New proposal</a>
-  {% else %}
-    <a class="btn" href="{{ url_for('accounts.register') }}">Register to submit a proposal</a>
-  {% endif %}
+  <a class="btn" href="{{ url_for('schedule.new_proposal') }}">New proposal</a>
 </div>
 
-<section class="card calendar-card" aria-labelledby="month-title">
-  <div class="month-nav">
-    <a href="{{ url_for('schedule.calendar', y=prev_m.year, m=prev_m.month) }}" aria-label="Previous month">‹</a>
-    <h2 id="month-title">{{ first.strftime('%B %Y') }}</h2>
-    <a href="{{ url_for('schedule.calendar', y=next_m.year, m=next_m.month) }}" aria-label="Next month">›</a>
-  </div>
-  <ul class="legend" aria-label="Legend">
-    <li><span class="dot dot-open"></span>Open for proposals</li>
-    <li><span class="dot dot-booked"></span>Booked</li>
-    <li><span class="dot dot-closed"></span>Not available</li>
-  </ul>
-  <div class="table-wrap">
-    <table class="month">
-      <thead><tr>{% for d in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}<th scope="col">{{ d }}</th>{% endfor %}</tr></thead>
-      <tbody>
-      {% for week in weeks %}
-        <tr>
-        {% for d, n in week %}
-          {% if d is none %}<td class="pad"></td>
-          {% else %}
-            <td class="day {{ 'night-' ~ n.status if n else 'no-night' }}{% if d == today %} today{% endif %}{% if d < today %} past{% endif %}">
-              <span class="num">{{ d.day }}</span>
-              {% if n %}
-                <span class="state">{{ {'open': 'Open', 'booked': 'Booked', 'closed': 'Closed'}[n.status] }}</span>
-                {% if n.note %}<span class="note">{{ n.note }}</span>{% endif %}
-              {% endif %}
-            </td>
-          {% endif %}
-        {% endfor %}
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  <p class="muted small">A date is the evening on which the night starts.</p>
-</section>
+<div class="cal-layout">
+  <section class="card cal" aria-labelledby="cal-title"
+           data-calendar
+           data-initial='{{ initial|tojson }}'
+           data-json-url="{{ url_for('schedule.calendar_json') }}"
+           data-new-url="{{ url_for('schedule.new_proposal') }}">
+    <div class="cal-head">
+      <h2 id="cal-title" class="cal-title" aria-live="polite">{{ initial.title }}</h2>
+      <div class="cal-nav">
+        <button type="button" class="cal-btn" data-cal="prev" aria-label="Previous month">&#8249;</button>
+        <button type="button" class="cal-btn cal-today" data-cal="today">Today</button>
+        <button type="button" class="cal-btn" data-cal="next" aria-label="Next month">&#8250;</button>
+      </div>
+    </div>
+    <ul class="cal-legend" aria-label="Legend">
+      <li><span class="chip chip-open"></span>Available</li>
+      <li><span class="chip chip-booked"></span>Booked</li>
+      <li><span class="chip chip-mine"></span>Your night</li>
+      <li><span class="chip chip-closed"></span>Unavailable</li>
+      <li><span class="cal-moon-legend" aria-hidden="true">&#127765;</span>Moon (illuminated %)</li>
+    </ul>
+    <div class="cal-weekdays" aria-hidden="true">
+      <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span class="we">Sat</span><span class="we">Sun</span>
+    </div>
+    <div class="cal-grid" data-cal-grid role="grid" aria-labelledby="cal-title"></div>
+    <noscript><p class="empty">The calendar needs JavaScript.</p></noscript>
+    <p class="muted small cal-foot">A date is the evening on which the night starts. Moon phase is approximate (for that evening).</p>
+  </section>
 
-<section class="card how">
-  <h2>How it works</h2>
-  <ol class="steps-line">
-    <li><strong>Register</strong> and confirm your e-mail. EKARUS team members just sign in with their e-mail.</li>
-    <li><strong>Submit a proposal</strong>: case, targets, and the open nights you want.</li>
-    <li><strong>Get the decision by e-mail.</strong> Accepted nights appear as booked here.</li>
-  </ol>
-</section>
+  <aside class="card cal-side" aria-labelledby="next-title">
+    <h2 id="next-title">Next available nights</h2>
+    {% if upcoming %}
+      <ul class="cal-next">
+        {% for n in upcoming %}
+          <li><a href="{{ url_for('schedule.new_proposal', night=n.id) }}"><span>{{ n.date|nicedate }}</span>{% if n.note %}<small>{{ n.note }}</small>{% endif %}</a></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No nights are open right now.</p>
+    {% endif %}
+    <h2 class="mt">How it works</h2>
+    <ol class="cal-steps">
+      <li>Pick one or more available nights.</li>
+      <li>Describe your project and targets.</li>
+      <li>Get the decision by e-mail and follow it on your dashboard.</li>
+    </ol>
+  </aside>
+</div>
 {% endblock %}

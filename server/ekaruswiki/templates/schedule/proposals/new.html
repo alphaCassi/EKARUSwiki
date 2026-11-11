@@ -13,26 +13,24 @@
 <form method="post" class="form proposal-form" data-proposal-form>
   {{ csrf() }}
 
-  <section class="card">
+  <section class="card" data-step-section>
     <h2><span class="step">1</span>Your project</h2>
     <label class="field">Title *<input name="title" value="{{ form.title }}" maxlength="200" required></label>
-    <label class="field">Summary * <span class="hint">One paragraph, shown first to the reviewer</span>
-      <textarea name="summary" rows="3" maxlength="1200" required>{{ form.summary }}</textarea></label>
     <label class="field">Science or technical case * <span class="hint">Goals, why EKARUS, expected results</span>
       <textarea name="science_case" rows="8" maxlength="8000" required>{{ form.science_case }}</textarea></label>
-    <label class="field">Observing mode *
+    <label class="field">Observing mode * <span class="hint">All science modes imply AO correction.</span>
       <select name="mode" required>
         <option value="">Choose…</option>
         {% for m in modes %}<option {% if form.mode == m %}selected{% endif %}>{{ m }}</option>{% endfor %}
       </select></label>
   </section>
 
-  <section class="card">
-    <h2><span class="step">2</span>Targets</h2>
-    <p class="muted small">One row per target. Coordinates as you prefer (e.g. 12:34:56.7 / +45:12:34). EKARUS works for guide stars of mag 0–11.2.</p>
+  <section class="card" data-step-section data-optional>
+    <h2><span class="step">2</span>Targets <span class="hint">optional</span></h2>
+    <p class="muted small">One row per target, coordinates in J2000 (e.g. RA 12:34:56.7, Dec +45:12:34). EKARUS works for guide stars of mag 0–11.2.</p>
     <div class="table-wrap">
       <table class="targets" data-targets data-max="{{ max_targets }}">
-        <thead><tr><th scope="col">Name</th><th scope="col">RA</th><th scope="col">Dec</th><th scope="col">Mag</th><th scope="col"><span class="visually-hidden">Remove</span></th></tr></thead>
+        <thead><tr><th scope="col">Name</th><th scope="col">RA (J2000)</th><th scope="col">Dec (J2000)</th><th scope="col">Mag</th><th scope="col"><span class="visually-hidden">Remove</span></th></tr></thead>
         <tbody>
         {% for t in targets %}
           <tr>
@@ -49,7 +47,7 @@
     <button type="button" class="btn btn-secondary btn-small" data-add-row>Add target</button>
   </section>
 
-  <section class="card">
+  <section class="card" data-step-section data-needs-night>
     <h2><span class="step">3</span>Nights</h2>
     <p class="muted small">Select every night that would work for you. The admin allocates nights from your selection.</p>
     {% for month, nights in by_month.items() %}
@@ -72,7 +70,7 @@
       <input name="observers" value="{{ form.observers }}" maxlength="500"></label>
     <label class="field">Constraints <span class="hint">Seeing, Moon, time-critical windows…</span>
       <input name="constraints" value="{{ form.constraints }}" maxlength="500"></label>
-    <label class="field">Notes for the admin
+    <label class="field">Notes for the admin <span class="hint">optional</span>
       <textarea name="notes" rows="3" maxlength="2000">{{ form.notes }}</textarea></label>
   </section>
 

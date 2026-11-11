@@ -9,8 +9,8 @@
 
 {% macro proposal_body(p, targets, nights, events, show_pi=false) %}
   <section class="card">
-    <h2>Summary</h2>
-    <p>{{ p.summary }}</p>
+    <h2>Overview</h2>
+    {% if p.summary %}<p>{{ p.summary }}</p>{% endif %}
     <dl class="facts">
       {% if show_pi %}<div><dt>PI</dt><dd>{{ p.pi_name }}{% if p.pi_institute %}, {{ p.pi_institute }}{% endif %} (<a href="mailto:{{ p.pi_email }}">{{ p.pi_email }}</a>)</dd></div>{% endif %}
       <div><dt>Mode</dt><dd>{{ p.mode }}</dd></div>
@@ -27,10 +27,10 @@
     <h2>Targets</h2>
     {% if targets %}
       <div class="table-wrap"><table>
-        <thead><tr><th scope="col">Name</th><th scope="col">RA</th><th scope="col">Dec</th><th scope="col">Mag</th></tr></thead>
+        <thead><tr><th scope="col">Name</th><th scope="col">RA (J2000)</th><th scope="col">Dec (J2000)</th><th scope="col">Mag</th></tr></thead>
         <tbody>{% for t in targets %}<tr><td>{{ t.name }}</td><td>{{ t.ra }}</td><td>{{ t.dec }}</td><td>{{ t.mag }}</td></tr>{% endfor %}</tbody>
       </table></div>
-    {% else %}<p class="muted">No targets (engineering / calibration).</p>{% endif %}
+    {% else %}<p class="muted">No targets given.</p>{% endif %}
   </section>
   {% if p.notes %}
   <section class="card"><h2>Notes</h2><p class="prewrap">{{ p.notes }}</p></section>

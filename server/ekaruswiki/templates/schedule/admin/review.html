@@ -11,32 +11,62 @@
   {{ status_badge(p.status) }}
 </div>
 
-{% if p.status == 'submitted' %}
-<form method="post" class="card decision" data-decision-form>
-  {{ csrf() }}
-  <h2>Decision</h2>
+{% macro night_picker(checked_requested) %}
   <fieldset>
     <legend>Nights to allocate <span class="hint">Requested {{ nights|length }}, minimum useful {{ p.min_nights }}</span></legend>
     <ul class="night-list">
     {% for n in nights %}
       <li>
         <label class="check">
-          <input type="checkbox" name="allocate" value="{{ n.id }}" {% if n.status == 'open' %}checked{% else %}disabled{% endif %}>
-          {{ n.date|nicedate }}
+          <input type="checkbox" name="allocate" value="{{ n.id }}" {% if n.status == 'open' %}{% if checked_requested %}checked{% endif %}{% else %}disabled{% endif %}>
+          {{ n.date|nicedate }} <span class="muted small">requested</span>
         </label>
-        {% if n.status == 'booked' %}<span class="badge badge-withdrawn">Already booked</span>
+        {% if n.status == 'booked' %}<span class="badge badge-withdrawn">Booked{% if n.proposal_id != p.id %} by another proposal{% endif %}</span>
         {% elif n.status == 'closed' %}<span class="badge badge-withdrawn">Closed</span>{% endif %}
       </li>
     {% endfor %}
     </ul>
+    {% if other_open %}
+    <details class="mt">
+      <summary>Other open nights ({{ other_open|length }})</summary>
+      <ul class="night-list mt">
+      {% for n in other_open %}
+        <li><label class="check"><input type="checkbox" name="allocate" value="{{ n.id }}"> {{ n.date|nicedate }}</label></li>
+      {% endfor %}
+      </ul>
+    </details>
+    {% endif %}
   </fieldset>
-  <label class="field">Message to the PI <span class="hint">Required when rejecting; optional when accepting</span>
+{% endmacro %}
+
+{% if p.status == 'submitted' %}
+<form method="post" class="card decision" data-decision-form>
+  {{ csrf() }}
+  <h2>Decision</h2>
+  {{ night_picker(true) }}
+  <label class="field">Message to the PI <span class="hint">Optional; sent with the decision</span>
     <textarea name="message" rows="3" maxlength="2000"></textarea></label>
   <div class="form-actions">
     <button class="btn" type="submit" name="decision" value="accept">Accept selected nights</button>
     <button class="btn btn-danger" type="submit" name="decision" value="reject" data-confirm="Reject {{ p.code }}? The PI will be notified.">Reject</button>
   </div>
-  <p class="muted small">The PI is e-mailed automatically. Accepted nights become booked in the calendar.</p>
+  <p class="muted small">The PI is e-mailed automatically. Accepted nights become booked in the calendar. A rejected proposal can still be accepted later from this page.</p>
+</form>
+{% elif p.status in ('rejected', 'withdrawn') %}
+<form method="post" class="card decision">
+  {{ csrf() }}
+  <h2>Accept it now</h2>
+  <p class="muted small">{{ 'Rejected' if p.status == 'rejected' else 'Withdrawn' }} earlier. If a night became free (for example someone withdrew), you can still accept this proposal.</p>
+  {% if requested_open or other_open %}
+    {{ night_picker(false) }}
+    <label class="field">Message to the PI <span class="hint">Optional</span>
+      <textarea name="message" rows="2" maxlength="2000"></textarea></label>
+    <div class="form-actions">
+      <button class="btn" type="submit" name="decision" value="reconsider" data-confirm="Accept {{ p.code }} on the selected nights? The PI will be notified.">Accept on selected nights</button>
+    </div>
+  {% else %}
+    <p class="empty">No open nights at the moment. Open nights in Admin, Nights first.</p>
+  {% endif %}
 </form>
 {% elif p.status == 'accepted' %}
 <section class="card">
@@ -49,7 +79,7 @@
     <summary>Cancel this allocation</summary>
     <form method="post" action="{{ url_for('schedule_admin.cancel', pid=p.id) }}" class="form" data-confirm="Cancel the allocation of {{ p.code }}? Its nights will reopen and the PI will be notified.">
       {{ csrf() }}
-      <label class="field">Reason for the PI <textarea name="message" rows="2" required></textarea></label>
+      <label class="field">Reason for the PI <span class="hint">Optional</span><textarea name="message" rows="2"></textarea></label>
       <button class="btn btn-danger" type="submit">Cancel allocation</button>
     </form>
   </details>

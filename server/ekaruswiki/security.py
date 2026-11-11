@@ -12,6 +12,7 @@ def init_app(app):
     app.before_request(load_user)
     app.before_request(check_csrf)
     app.jinja_env.globals["csrf_token"] = csrf_token
+    app.jinja_env.globals["is_admin_session"] = is_admin_session
 
 
 def load_user():
@@ -21,6 +22,13 @@ def load_user():
         g.user = get_db().execute("SELECT * FROM users WHERE id = ?", (uid,)).fetchone()
         if g.user is None:
             session.clear()
+
+
+def is_admin_session():
+    """True only for an admin address that entered the admin password in this browser session."""
+    from . import mail
+    return (getattr(g, "user", None) is not None and session.get("admin_ok") is True
+            and g.user["email"] in mail.admin_addresses())
 
 
 def login_required(view):

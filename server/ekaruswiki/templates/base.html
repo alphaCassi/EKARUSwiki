@@ -18,15 +18,20 @@
       <span>EKARUS<br><small>{% block section %}Observation schedule{% endblock %}</small></span>
     </a>
     <nav class="topnav" aria-label="Main">
-      {% if config.WIKI_URL and is_team %}<a href="{{ config.WIKI_URL.rstrip('/') }}/home.html">Wiki</a>{% endif %}
       <a href="{{ url_for('schedule.calendar') }}" {% if request.endpoint == 'schedule.calendar' %}aria-current="page"{% endif %}>Calendar</a>
       {% if g.user %}
         <a href="{{ url_for('schedule.dashboard') }}" {% if request.endpoint in ('schedule.dashboard', 'schedule.view_proposal') %}aria-current="page"{% endif %}>Dashboard</a>
         <a href="{{ url_for('schedule.new_proposal') }}" {% if request.endpoint == 'schedule.new_proposal' %}aria-current="page"{% endif %}>New proposal</a>
-        <a href="{{ url_for('schedule.info', page='telescope') }}" {% if request.view_args and request.view_args.get('page') == 'telescope' %}aria-current="page"{% endif %}>Telescope</a>
-        <a href="{{ url_for('schedule.info', page='bench') }}" {% if request.view_args and request.view_args.get('page') == 'bench' %}aria-current="page"{% endif %}>Bench</a>
-        <a href="{{ url_for('schedule.info', page='team') }}" {% if request.view_args and request.view_args.get('page') == 'team' %}aria-current="page"{% endif %}>Team</a>
-        {% if g.user.is_admin %}
+        {% set info_page = request.view_args.get('page') if request.endpoint == 'schedule.info' and request.view_args else '' %}
+        <details class="nav-menu">
+          <summary {% if info_page %}aria-current="page"{% endif %}>Wiki</summary>
+          <div class="nav-menu-list">
+            <a href="{{ url_for('schedule.info', page='telescope') }}" {% if info_page == 'telescope' %}aria-current="page"{% endif %}>Telescope</a>
+            <a href="{{ url_for('schedule.info', page='bench') }}" {% if info_page == 'bench' %}aria-current="page"{% endif %}>EKARUS</a>
+            <a href="{{ url_for('schedule.info', page='team') }}" {% if info_page == 'team' %}aria-current="page"{% endif %}>Team</a>
+          </div>
+        </details>
+        {% if is_admin_session() %}
           <a href="{{ url_for('admin.overview') }}" {% if request.endpoint and (request.endpoint.startswith('admin.') or request.endpoint.startswith('schedule_admin.')) %}aria-current="page"{% endif %}>Admin{% if new_message_count %} <span class="count-badge">{{ new_message_count }}</span>{% endif %}</a>
         {% endif %}
       {% endif %}
@@ -58,7 +63,6 @@
 
   <footer class="footer">
     EKARUS, INAF Asiago Astrophysical Observatory
-    {% if config.WIKI_URL and is_team %}<br><a href="{{ config.WIKI_URL }}">Back to the EKARUS wiki</a>{% endif %}
   </footer>
 </body>
 </html>

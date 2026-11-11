@@ -49,3 +49,23 @@ def is_team(email):
 def team_name(email):
     row = get_db().execute("SELECT name FROM team WHERE email = ?", (email.lower(),)).fetchone()
     return (row["name"] if row and row["name"] else email.split("@")[0])
+
+
+def all_members():
+    """Everyone who counts as team, once each: [(email or None, name, source)].
+    People only in the wiki's users.js are known by hash only, so their e-mail is None."""
+    db = get_db()
+    seen, out = set(), []
+    for email in mail.admin_addresses():
+        h = hashlib.sha256(email.encode()).hexdigest()
+        seen.add(h)
+        out.append((email, team_name(email), "admin"))
+    for r in db.execute("SELECT email, name FROM team ORDER BY name COLLATE NOCASE, email"):
+        h = hashlib.sha256(r["email"].encode()).hexdigest()
+        if h not in seen:
+            seen.add(h)
+            out.append((r["email"], r["name"] or r["email"].split("@")[0], "team list"))
+    for h in sorted(_wiki_hashes() - seen):
+        seen.add(h)
+        out.append((None, "", "wiki list"))
+    return out

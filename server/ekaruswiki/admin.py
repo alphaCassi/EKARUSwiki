@@ -6,11 +6,12 @@ Changes to the wiki are committed to its GitHub repository (see github.py); GitH
 publishes them within a minute or two.
 """
 import json
-from datetime import date
+import re
+from datetime import date, datetime
 
 from flask import Blueprint, abort, current_app, flash, g, redirect, render_template, request, url_for
 
-from . import github, mail, wiki_users
+from . import github, mail, team, wiki_users
 from .db import get_db, now
 from .security import admin_required
 
@@ -18,6 +19,7 @@ bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 SITE_PATH = "docs/data/site.json"
 EXTRA_ROWS = 3
+MAX_IMAGE_BYTES = 3_000_000
 
 
 def new_messages():
@@ -26,7 +28,8 @@ def new_messages():
 
 @bp.app_context_processor
 def inject_counts():
-    if getattr(g, "user", None) is not None and g.user["is_admin"]:
+    from .security import is_admin_session
+    if is_admin_session():
         return {"new_message_count": new_messages()}
     return {}
 
@@ -44,7 +47,7 @@ def overview():
         "open_nights": db.execute("SELECT COUNT(*) FROM nights WHERE status = 'open' AND date >= ?", (today,)).fetchone()[0],
         "booked_nights": db.execute("SELECT COUNT(*) FROM nights WHERE status = 'booked' AND date >= ?", (today,)).fetchone()[0],
         "accounts": db.execute("SELECT COUNT(*) FROM users WHERE password_hash NOT LIKE '!%'").fetchone()[0],
-        "team": db.execute("SELECT COUNT(*) FROM team").fetchone()[0],
+        "team": len(team.all_members()),
     }
     return render_template("admin/overview.html", c=counts, github_ok=github.configured())
 
@@ -168,14 +171,42 @@ def team_members():
             else:
                 flash(f"{email} isn't in the team list.", "error")
         return redirect(url_for("admin.team_members"))
-    rows = db.execute(
-        "SELECT t.*, u.created_at AS first_signin FROM team t LEFT JOIN users u ON u.email = t.email"
-        " ORDER BY t.name COLLATE NOCASE, t.email").fetchall()
-    return render_template("admin/team.html", members=rows, admins=mail.admin_addresses(),
+    signed = {r["email"] for r in db.execute("SELECT email FROM users WHERE password_hash LIKE '!%' OR is_admin = 1")}
+    added = {r["email"]: r["added_at"] for r in db.execute("SELECT email, added_at FROM team")}
+    members = [{"email": e, "name": n, "source": src, "added": added.get(e, ""),
+                "signed_in": bool(e and e in signed)} for e, n, src in team.all_members()]
+    return render_template("admin/team.html", members=members, admins=mail.admin_addresses(),
                            github_ok=github.configured())
 
 
 # ---------------------------------------------------------------- home page content
+def _image_upload(field):
+    """Read an uploaded image from the form. Returns (bytes, extension) or (None, None)."""
+    f = request.files.get(field)
+    if not f or not f.filename:
+        return None, None
+    data = f.read(MAX_IMAGE_BYTES + 1)
+    if len(data) > MAX_IMAGE_BYTES:
+        raise ValueError(f"{f.filename} is larger than {MAX_IMAGE_BYTES // 1_000_000} MB; please resize it.")
+    if data[:3] == b"\xff\xd8\xff":
+        ext = "jpg"
+    elif data[:8] == b"\x89PNG\r\n\x1a\n":
+        ext = "png"
+    elif data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        ext = "webp"
+    else:
+        raise ValueError(f"{f.filename} isn't a JPEG, PNG or WebP image.")
+    return data, ext
+
+
+def _save_image(data, ext, base):
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    slug = re.sub(r"[^a-z0-9]+", "-", base.lower()).strip("-")[:40] or "image"
+    rel = f"assets/img/highlights/{stamp}-{slug}.{ext}"
+    github.write_bytes("docs/" + rel, data, f"Add home page picture {rel} (by {g.user['name']} via admin page)")
+    return rel
+
+
 @bp.route("/wiki-content", methods=["GET", "POST"])
 @admin_required
 def wiki_content():
@@ -188,19 +219,44 @@ def wiki_content():
         site, sha = {"banner": "", "highlights": []}, None
 
     if request.method == "POST":
-        dates, titles = request.form.getlist("h_date"), request.form.getlist("h_title")
-        texts, dones = request.form.getlist("h_text"), request.form.getlist("h_done")
-        highlights = []
-        for i in range(len(titles)):
-            row = {"date": dates[i].strip()[:60], "title": titles[i].strip()[:200],
-                   "text": texts[i].strip()[:1500], "done": dones[i] == "yes"}
-            if row["title"] or row["text"]:
-                highlights.append(row)
-        new = {"banner": request.form.get("banner", "").strip()[:200], "highlights": highlights}
         try:
+            # main picture
+            image = site.get("image") or {}
+            if request.form.get("main_remove"):
+                image = {}
+            data, ext = _image_upload("main_image")
+            if data:
+                image = {"src": _save_image(data, ext, "main")}
+            if image:
+                image["alt"] = request.form.get("main_alt", "").strip()[:200]
+                image["caption"] = request.form.get("main_caption", "").strip()[:300]
+
+            dates, titles = request.form.getlist("h_date"), request.form.getlist("h_title")
+            texts, dones = request.form.getlist("h_text"), request.form.getlist("h_done")
+            kept, alts = request.form.getlist("h_image_keep"), request.form.getlist("h_alt")
+            removes = set(request.form.getlist("h_image_remove"))
+            highlights = []
+            for i in range(len(titles)):
+                row = {"date": dates[i].strip()[:60], "title": titles[i].strip()[:200],
+                       "text": texts[i].strip()[:1500], "done": dones[i] == "yes"}
+                src = kept[i] if i < len(kept) else ""
+                if str(i) in removes:
+                    src = ""
+                data, ext = _image_upload(f"h_image_{i}")
+                if data:
+                    src = _save_image(data, ext, row["title"] or "highlight")
+                if src:
+                    row["image"] = {"src": src, "alt": (alts[i] if i < len(alts) else "").strip()[:200]}
+                if row["title"] or row["text"]:
+                    highlights.append(row)
+            new = {"banner": request.form.get("banner", "").strip()[:200], "highlights": highlights}
+            if image:
+                new["image"] = image
             github.write(SITE_PATH, json.dumps(new, ensure_ascii=False, indent=2) + "\n", sha,
                          f"Update home page content (by {g.user['name']} via admin page)")
             flash("Saved. The wiki shows the change within a minute or two.", "ok")
+        except ValueError as e:
+            flash(str(e), "error")
         except github.GitHubError as e:
             flash(str(e), "error")
         return redirect(url_for("admin.wiki_content"))

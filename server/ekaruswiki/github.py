@@ -40,6 +40,14 @@ def _request(method, path, body=None):
             return json.loads(r.read().decode())
     except urllib.error.HTTPError as e:
         detail = e.read().decode(errors="replace")[:300]
+        if e.code == 401:
+            raise GitHubError("GitHub refused the token (401: bad or expired). Create a new fine-grained token "
+                              "with access to the wiki repository and Contents: Read and write, put it in "
+                              "GITHUB_TOKEN in .env and restart the server.") from None
+        if e.code in (403, 404):
+            raise GitHubError(f"GitHub answered {e.code}: the token can't see or change {cfg['GITHUB_REPO']}. "
+                              "Check GITHUB_REPO and that the token covers that repository with "
+                              "Contents: Read and write.") from None
         raise GitHubError(f"GitHub answered {e.code}: {detail}") from None
     except urllib.error.URLError as e:
         raise GitHubError(f"GitHub can't be reached: {e.reason}") from None
@@ -51,6 +59,22 @@ def read(path):
         raise GitHubError("GITHUB_TOKEN is not set, so the wiki can't be changed from here.")
     data = _request("GET", path)
     return base64.b64decode(data["content"]).decode("utf-8"), data["sha"]
+
+
+def write_bytes(path, data, message):
+    """Commit a binary file (e.g. an image). Overwrites it if it already exists."""
+    if not configured():
+        raise GitHubError("GITHUB_TOKEN is not set, so the wiki can't be changed from here.")
+    sha = None
+    try:
+        sha = _request("GET", path).get("sha")
+    except GitHubError:
+        pass                                    # new file
+    body = {"message": message, "content": base64.b64encode(data).decode(),
+            "branch": current_app.config["GITHUB_BRANCH"]}
+    if sha:
+        body["sha"] = sha
+    _request("PUT", path, body)
 
 
 def write(path, text, sha, message):

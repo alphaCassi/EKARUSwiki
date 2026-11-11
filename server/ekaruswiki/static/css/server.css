@@ -182,31 +182,6 @@ td.actions form { display: flex; gap: 0.75rem; margin: 0; }
 .status-withdrawn { border-left-color: var(--muted); }
 .status-card p:last-child { margin-bottom: 0; }
 
-/* ---------- Calendar */
-.month-nav { display: flex; align-items: center; justify-content: center; gap: 1.5rem; }
-.month-nav h2 { margin: 0; min-width: 11rem; text-align: center; }
-.month-nav a { font-size: 1.8rem; line-height: 1; text-decoration: none; padding: 0 0.5rem; }
-.legend { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.25rem; padding: 0; margin: 0.75rem 0 1rem; font-size: 0.9rem; color: var(--muted); }
-.dot { display: inline-block; width: 0.8rem; height: 0.8rem; border-radius: 2px; margin-right: 0.4rem; vertical-align: -0.05rem; }
-.dot-open { background: var(--gold); }
-.dot-booked { background: var(--cyan); }
-.dot-closed { background: var(--line); }
-
-table.month { table-layout: fixed; min-width: 36rem; }
-table.month th { text-align: center; }
-table.month td { height: 5.2rem; border: 1px solid var(--line); padding: 0.35rem 0.4rem; }
-table.month td.pad { border: 0; }
-.day .num { font-weight: 600; display: block; }
-.day .state { display: block; font-size: 0.8rem; font-weight: 600; margin-top: 0.2rem; }
-.day .note { display: block; font-size: 0.75rem; color: var(--muted); line-height: 1.2; }
-.night-open { background: color-mix(in srgb, var(--gold) 18%, transparent); }
-.night-open .state { color: var(--gold); }
-.night-booked { background: color-mix(in srgb, var(--cyan) 16%, transparent); }
-.night-booked .state { color: var(--cyan); }
-.night-closed .state { color: var(--muted); }
-.day.past { opacity: 0.5; }
-.day.today .num { color: var(--gold); text-decoration: underline; }
-
 .steps-line { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: 1rem; padding-left: 1.2rem; margin: 0; }
 
 /* ---------- Proposal details */
@@ -305,3 +280,124 @@ tr.unread td { font-weight: 600; }
 
 /* Bot trap: off-screen for people, still in the form for bots */
 .trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+/* Admin tabs: one row per group (Overview, Wiki, Observation schedule) */
+.tabs { flex-direction: column; align-items: stretch; gap: 0.5rem; }
+.tab-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+.tab-row .tab-group { min-width: 11.5rem; margin-left: 0; }
+@media (max-width: 700px) { .tab-row .tab-group { min-width: 0; flex-basis: 100%; } }
+
+/* Proposal form: section number turns green when the section is complete */
+.step { transition: background-color 0.2s ease; }
+.step.step-done { background: var(--ok); }
+.step.step-done::after { content: ""; }
+h2 .hint { font-family: var(--font-body); font-size: 0.85rem; font-weight: 400; margin-left: 0.4rem; }
+
+/* Top bar: "Wiki" menu with its sub-pages */
+.nav-menu { position: relative; }
+.nav-menu > summary {
+  list-style: none; cursor: pointer; color: var(--ink); font-weight: 600;
+  padding: 0.4rem 0.75rem; border-radius: var(--radius);
+}
+.nav-menu > summary::-webkit-details-marker { display: none; }
+.nav-menu > summary::after { content: " \25BE"; color: var(--cyan); }
+.nav-menu > summary:hover { background: var(--panel-2); }
+.nav-menu > summary[aria-current="page"] { background: var(--gold); color: #0b1128; }
+.nav-menu > summary[aria-current="page"]::after { color: #0b1128; }
+.nav-menu-list {
+  position: absolute; z-index: 20; top: calc(100% + 0.3rem); left: 0; min-width: 10rem;
+  display: grid; padding: 0.35rem; gap: 0.15rem;
+  background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+.nav-menu-list a { color: var(--ink); text-decoration: none; padding: 0.45rem 0.7rem; border-radius: var(--radius); font-weight: 600; }
+.nav-menu-list a:hover { background: var(--panel-2); }
+.nav-menu-list a[aria-current="page"] { color: var(--gold); }
+
+/* ---------- Calendar (observation schedule) */
+:root {
+  --st-open: #34c38f;        /* available: green */
+  --st-booked: #e8667a;      /* booked by someone: rose */
+  --st-mine: #e3c341;        /* your night: gold */
+  --st-closed: #5a6584;      /* not available: grey */
+}
+.cal-layout { display: grid; grid-template-columns: minmax(0, 1fr) 16rem; gap: 1.25rem; align-items: start; }
+@media (max-width: 900px) { .cal-layout { grid-template-columns: minmax(0, 1fr); } }
+.cal { padding: 1.25rem; transition: opacity 0.15s ease; }
+.cal.is-loading { opacity: 0.6; }
+.cal-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.cal-title { margin: 0; font-size: 1.5rem; }
+.cal-nav { display: flex; gap: 0.35rem; }
+.cal-btn {
+  font: inherit; font-weight: 600; color: var(--ink); background: var(--paper);
+  border: 1px solid var(--line); border-radius: var(--radius); padding: 0.35rem 0.8rem;
+  cursor: pointer; min-width: 2.4rem; font-size: 1.05rem; line-height: 1.2;
+}
+.cal-btn:hover { border-color: var(--cyan); }
+.cal-today { font-size: 0.9rem; }
+.cal-legend { list-style: none; display: flex; flex-wrap: wrap; gap: 0.4rem 1.1rem; padding: 0; margin: 0.9rem 0 1rem; font-size: 0.85rem; color: var(--muted); }
+.cal-legend li { display: flex; align-items: center; gap: 0.4rem; }
+.chip { width: 0.9rem; height: 0.9rem; border-radius: 3px; display: inline-block; }
+.chip-open { background: var(--st-open); }
+.chip-booked { background: var(--st-booked); }
+.chip-mine { background: var(--st-mine); }
+.chip-closed { background: repeating-linear-gradient(45deg, var(--st-closed) 0 3px, transparent 3px 6px); border: 1px solid var(--st-closed); }
+.cal-moon-legend { font-size: 0.95rem; }
+
+.cal-weekdays, .cal-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 0.35rem; }
+.cal-weekdays span { text-align: center; font-size: 0.8rem; font-weight: 600; color: var(--muted); padding-bottom: 0.3rem; }
+.cal-weekdays .we { color: var(--cyan); }
+.cal-cell {
+  position: relative; min-height: 5.6rem; padding: 0.4rem 0.45rem; border-radius: 6px;
+  background: var(--paper); border: 1px solid var(--line); color: var(--ink);
+  display: flex; flex-direction: column; gap: 0.2rem; text-decoration: none; overflow: hidden;
+}
+.cal-cell.is-we { background: color-mix(in srgb, var(--paper) 85%, var(--panel-2)); }
+.cal-pad { background: transparent; border: 0; }
+.cal-top { display: flex; justify-content: space-between; align-items: baseline; gap: 0.2rem; }
+.cal-day { font-weight: 600; font-size: 0.95rem; }
+.cal-moon { font-size: 0.7rem; color: var(--muted); white-space: nowrap; }
+.cal-pill {
+  align-self: flex-start; font-size: 0.72rem; font-weight: 600; padding: 0.05rem 0.45rem;
+  border-radius: 999px; line-height: 1.4;
+}
+.cal-code, .cal-note { font-size: 0.7rem; color: var(--muted); line-height: 1.2; overflow-wrap: anywhere; }
+
+.st-open { border-color: color-mix(in srgb, var(--st-open) 70%, transparent); background: color-mix(in srgb, var(--st-open) 14%, var(--paper)); cursor: pointer; }
+.st-open .cal-pill { background: var(--st-open); color: #06231a; }
+a.st-open:hover { background: color-mix(in srgb, var(--st-open) 26%, var(--paper)); transform: translateY(-1px); }
+.st-booked { border-color: color-mix(in srgb, var(--st-booked) 60%, transparent); background: color-mix(in srgb, var(--st-booked) 12%, var(--paper)); }
+.st-booked .cal-pill { background: var(--st-booked); color: #2a0910; }
+.st-mine { border-color: var(--st-mine); background: color-mix(in srgb, var(--st-mine) 16%, var(--paper)); }
+.st-mine .cal-pill { background: var(--st-mine); color: #2a2304; }
+.st-closed { background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--st-closed) 22%, var(--paper)) 0 6px, var(--paper) 6px 12px); }
+.st-closed .cal-pill { background: var(--st-closed); color: var(--ink); }
+.cal-cell.is-past { opacity: 0.45; }
+.cal-cell.is-today { box-shadow: 0 0 0 2px var(--cyan) inset; }
+.cal-cell.is-today .cal-day { color: var(--cyan); }
+.cal-foot { margin: 0.8rem 0 0; }
+@media (max-width: 600px) {
+  .cal-cell { min-height: 4.2rem; padding: 0.3rem; }
+  .cal-moon, .cal-note, .cal-code { display: none; }
+  .cal-pill { font-size: 0; width: 0.7rem; height: 0.7rem; padding: 0; }
+}
+@media (prefers-reduced-motion: reduce) { a.st-open:hover { transform: none; } }
+
+.cal-side h2 { font-size: 1.05rem; }
+.cal-next { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+.cal-next a {
+  display: grid; padding: 0.5rem 0.65rem; border-radius: var(--radius); text-decoration: none; color: var(--ink);
+  border: 1px solid color-mix(in srgb, var(--st-open) 60%, transparent);
+  background: color-mix(in srgb, var(--st-open) 10%, var(--paper));
+}
+.cal-next a:hover { background: color-mix(in srgb, var(--st-open) 22%, var(--paper)); }
+.cal-next small { color: var(--muted); }
+.cal-steps { margin: 0; padding-left: 1.2rem; color: var(--muted); font-size: 0.9rem; display: grid; gap: 0.3rem; }
+
+/* Admin: picture previews on the home page content editor */
+.admin-thumb { margin: 0 0 0.6rem; }
+.admin-thumb img { max-height: 10rem; width: auto; border-radius: var(--radius); border: 1px solid var(--line); }
+.admin-thumb-row { display: flex; align-items: center; gap: 0.8rem; }
+.admin-thumb-small { height: 3.5rem; width: auto; border-radius: var(--radius); border: 1px solid var(--line); }
+input[type="file"] { padding: 0.35rem; }
+.wiki-content .callout { border: 1px solid var(--line); border-left: 3px solid var(--cyan); border-radius: var(--radius); padding: 0.9rem 1.1rem; background: var(--paper); }

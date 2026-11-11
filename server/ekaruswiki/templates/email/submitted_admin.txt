@@ -7,8 +7,10 @@ Targets: {{ targets|length }}
 Nights requested ({{ nights|length }}, minimum useful {{ p.min_nights }}):
 {% for n in nights %}  - {{ n.date|nicedate }}
 {% endfor %}
-Summary:
+{% if p.summary %}Summary:
 {{ p.summary }}
+{% endif %}Science or technical case:
+{{ p.science_case[:600] }}{% if p.science_case|length > 600 %}…{% endif %}
 
 Review and decide:
 {{ base_url }}{{ link }}

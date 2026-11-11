@@ -2,7 +2,7 @@
 import calendar as pycal
 from datetime import date
 
-from flask import Blueprint, abort, flash, g, redirect, render_template, request, url_for
+from flask import Blueprint, abort, flash, g, jsonify, redirect, render_template, request, url_for
 
 from .. import mail, wiki_pages
 from ..db import get_db, now
@@ -11,7 +11,7 @@ from ..security import login_required
 bp = Blueprint("schedule", __name__)   # the observation schedule is the server's main site
 
 MODES = [
-    "VIS imaging (science camera)",
+    "VIS imaging",
     "NIR imaging",
     "Wavefront sensing / AO tests",
     "Engineering / calibration",
@@ -42,7 +42,8 @@ def load_proposal(pid):
         " FROM proposals p JOIN users u ON u.id = p.user_id WHERE p.id = ?", (pid,)).fetchone()
     if p is None:
         abort(404)
-    if not (g.user["is_admin"] or p["user_id"] == g.user["id"]):
+    from ..security import is_admin_session
+    if not (is_admin_session() or p["user_id"] == g.user["id"]):
         abort(403)
     targets = db.execute("SELECT * FROM proposal_targets WHERE proposal_id = ? ORDER BY id", (pid,)).fetchall()
     nights = db.execute(
@@ -54,29 +55,59 @@ def load_proposal(pid):
     return p, targets, nights, events
 
 
+def month_data(year, month):
+    """Nights of one month for the calendar (shown only to signed-in users)."""
+    from ..security import is_admin_session
+    first = date(year, month, 1)
+    nxt = date(year + (month == 12), month % 12 + 1, 1)
+    prev = date(year - (month == 1), (month - 2) % 12 + 1, 1)
+    db = get_db()
+    rows = db.execute(
+        "SELECT n.*, p.user_id AS owner, p.code AS code FROM nights n"
+        " LEFT JOIN proposals p ON p.id = n.proposal_id WHERE n.date >= ? AND n.date < ? ORDER BY n.date",
+        (first.isoformat(), nxt.isoformat())).fetchall()
+    admin = is_admin_session()
+    nights = []
+    for r in rows:
+        mine = r["status"] == "booked" and r["owner"] == g.user["id"]
+        nights.append({"id": r["id"], "date": r["date"], "status": r["status"], "note": r["note"],
+                       "mine": mine, "code": r["code"] if (mine or admin) else ""})
+    return {"year": year, "month": month, "title": first.strftime("%B %Y"), "today": date.today().isoformat(),
+            "prev": {"y": prev.year, "m": prev.month}, "next": {"y": nxt.year, "m": nxt.month},
+            "nights": nights}
+
+
+def _month_args():
+    today = date.today()
+    try:
+        y, m = int(request.args.get("y", today.year)), int(request.args.get("m", today.month))
+        date(y, m, 1)
+        return y, m
+    except ValueError:
+        return today.year, today.month
+
+
 @bp.route("/")
 @login_required
 def calendar():
-    today = date.today()
-    try:
-        year = int(request.args.get("y", today.year))
-        month = int(request.args.get("m", today.month))
-        first = date(year, month, 1)
-    except ValueError:
-        first = date(today.year, today.month, 1)
-    prev_m = date(first.year - (first.month == 1), (first.month - 2) % 12 + 1, 1)
-    next_m = date(first.year + (first.month == 12), first.month % 12 + 1, 1)
-
+    y, m = _month_args()
     db = get_db()
-    rows = db.execute(
-        "SELECT * FROM nights WHERE date >= ? AND date < ? ORDER BY date",
-        (first.isoformat(), next_m.isoformat())).fetchall()
-    by_date = {r["date"]: r for r in rows}
+    today = date.today().isoformat()
+    upcoming = db.execute(
+        "SELECT * FROM nights WHERE status = 'open' AND date >= ? ORDER BY date LIMIT 8", (today,)).fetchall()
     upcoming_open = db.execute(
-        "SELECT COUNT(*) FROM nights WHERE status = 'open' AND date >= ?", (today.isoformat(),)).fetchone()[0]
-    return render_template("schedule/calendar.html", first=first, prev_m=prev_m, next_m=next_m, today=today,
-                           weeks=month_grid(first.year, first.month, by_date),
-                           upcoming_open=upcoming_open)
+        "SELECT COUNT(*) FROM nights WHERE status = 'open' AND date >= ?", (today,)).fetchone()[0]
+    return render_template("schedule/calendar.html", initial=month_data(y, m),
+                           upcoming=upcoming, upcoming_open=upcoming_open)
+
+
+@bp.route("/calendar.json")
+@login_required
+def calendar_json():
+    y, m = _month_args()
+    resp = jsonify(month_data(y, m))
+    resp.headers["Cache-Control"] = "private, max-age=30"
+    return resp
 
 
 @bp.route("/dashboard")
@@ -119,6 +150,8 @@ def new_proposal():
     form = {k: request.form.get(k, "").strip() for k in
             ("title", "summary", "science_case", "mode", "observers", "constraints", "min_nights", "notes")}
     targets, chosen = [], set()
+    if request.method == "GET" and request.args.get("night", "").isdigit():
+        chosen = {int(request.args["night"])} & open_ids
 
     if request.method == "POST":
         names, ras = request.form.getlist("t_name"), request.form.getlist("t_ra")
@@ -132,14 +165,10 @@ def new_proposal():
         errors = []
         if not form["title"]:
             errors.append("Give the proposal a title.")
-        if not form["summary"]:
-            errors.append("Add a one-paragraph summary.")
         if not form["science_case"]:
             errors.append("Describe the science or technical case.")
         if form["mode"] not in MODES:
             errors.append("Choose an observing mode.")
-        if not targets and not form["mode"].startswith("Engineering"):
-            errors.append("Add at least one target.")
         if any(not t["name"] for t in targets):
             errors.append("Every target row needs a name.")
         if not chosen:

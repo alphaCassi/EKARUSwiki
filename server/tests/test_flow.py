@@ -96,12 +96,15 @@ class Flow(unittest.TestCase):
         r = self.app.test_client().get("/")
         self.assertIn("/account/login", r.headers["Location"])
         html = user.get(f"/?y={d0.year}&m={d0.month}").get_data(as_text=True)
-        self.assertIn("night-open", html)
+        self.assertIn('"status": "open"', html)
+        data = user.get(f"/calendar.json?y={d0.year}&m={d0.month}").get_json()
+        self.assertTrue(any(n["status"] == "open" for n in data["nights"]))
+        self.assertEqual(self.app.test_client().get("/calendar.json").status_code, 302)   # signed in only
 
         # user submits a proposal for the first two nights
         n_before = len(self.outbox())
-        data = {"title": "Binary star imaging", "summary": "Resolve close binaries.",
-                "science_case": "Long case.", "mode": "VIS imaging (science camera)",
+        data = {"title": "Binary star imaging",
+                "science_case": "Long case.", "mode": "VIS imaging",
                 "t_name": ["HD 1234", "HD 5678"], "t_ra": ["01:00:00", "02:00:00"],
                 "t_dec": ["+45:00:00", "+50:00:00"], "t_mag": ["6.1", "7.2"],
                 "nights": [str(ids[0]), str(ids[1])], "min_nights": "1"}
@@ -137,18 +140,46 @@ class Flow(unittest.TestCase):
         other = self.register_and_verify("someone@example.org", "Someone")
         self.assertEqual(other.get("/proposals/1").status_code, 403)
 
-    def test_reject_needs_reason(self):
+    def test_reject_without_reason_then_accept_later(self):
+        admin = self.register_and_verify(ADMIN, "Oleksandra")
+        user = self.register_and_verify(USER, "Olga")
+        d0 = date.today() + timedelta(days=5)
+        self.post(admin, "/admin/schedule/nights", {"action": "add", "start": d0.isoformat(),
+                                                    "end": (d0 + timedelta(days=1)).isoformat()})
+        self.post(user, "/proposals/new", {"title": "T", "science_case": "C",
+                                           "mode": "Engineering / calibration", "nights": ["1"]})
+        r = self.post(admin, "/admin/schedule/proposals/1", {"decision": "reject", "message": ""})
+        self.assertIn("rejected and the PI notified", r.get_data(as_text=True))
+        self.assertIn("not accepted", self.outbox()[-1]["Subject"])
+        # later: accept it on another open night (the requested one may be gone)
+        r = self.post(admin, "/admin/schedule/proposals/1", {"decision": "reconsider", "allocate": ["2"]})
+        self.assertIn("accepted; 1 night(s) booked", r.get_data(as_text=True))
+        self.assertIn("accepted", self.outbox()[-1]["Subject"])
+        page = user.get("/proposals/1").get_data(as_text=True)
+        self.assertIn("Allocated", page)
+
+    def test_accept_fails_cleanly_when_night_taken(self):
         admin = self.register_and_verify(ADMIN, "Oleksandra")
         user = self.register_and_verify(USER, "Olga")
         d0 = date.today() + timedelta(days=5)
         self.post(admin, "/admin/schedule/nights", {"action": "add", "start": d0.isoformat(), "end": ""})
-        self.post(user, "/proposals/new", {"title": "T", "summary": "S", "science_case": "C",
-                                           "mode": "Engineering / calibration", "nights": ["1"]})
-        r = self.post(admin, "/admin/schedule/proposals/1", {"decision": "reject", "message": ""})
-        self.assertIn("Add a short reason", r.get_data(as_text=True))
-        r = self.post(admin, "/admin/schedule/proposals/1", {"decision": "reject", "message": "Weather season."})
-        self.assertIn("rejected and the PI notified", r.get_data(as_text=True))
-        self.assertIn("not accepted", self.outbox()[-1]["Subject"])
+        for t in ("A", "B"):
+            self.post(user, "/proposals/new", {"title": t, "science_case": "C", "mode": "Engineering / calibration", "nights": ["1"]})
+        self.post(admin, "/admin/schedule/proposals/1", {"decision": "accept", "allocate": ["1"]})
+        r = self.post(admin, "/admin/schedule/proposals/2", {"decision": "accept", "allocate": ["1"]})
+        self.assertIn("booked by someone else", r.get_data(as_text=True))
+
+    def test_remove_night_requested_only_by_rejected_proposal(self):
+        admin = self.register_and_verify(ADMIN, "Oleksandra")
+        user = self.register_and_verify(USER, "Olga")
+        d0 = date.today() + timedelta(days=5)
+        self.post(admin, "/admin/schedule/nights", {"action": "add", "start": d0.isoformat(), "end": ""})
+        self.post(user, "/proposals/new", {"title": "T", "science_case": "C", "mode": "Engineering / calibration", "nights": ["1"]})
+        r = self.post(admin, "/admin/schedule/nights", {"action": "remove", "night_id": "1"})
+        self.assertIn("waiting for review requested this night", r.get_data(as_text=True))
+        self.post(admin, "/admin/schedule/proposals/1", {"decision": "reject", "message": "no"})
+        r = self.post(admin, "/admin/schedule/nights", {"action": "remove", "night_id": "1"})
+        self.assertIn("removed from the calendar", r.get_data(as_text=True))
 
     def test_unverified_cannot_login_and_csrf_enforced(self):
         c = self.app.test_client()

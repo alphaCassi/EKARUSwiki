@@ -7,12 +7,26 @@
 {% if error %}
   <div class="card"><p class="flash flash-error">{{ error }}</p><p class="muted small">See "Connect the wiki" in the server README.</p></div>
 {% else %}
-<form method="post" class="form">
+<form method="post" class="form" enctype="multipart/form-data">
   {{ csrf() }}
   <section class="card">
     <h2>Banner</h2>
     <label class="field">Text under the logo on every page <span class="hint">e.g. "Upcoming: …"</span>
       <input name="banner" value="{{ site.banner }}" maxlength="200"></label>
+  </section>
+  <section class="card">
+    <h2>Main picture <span class="hint">optional, shown above the highlights</span></h2>
+    {% set img = site.image or {} %}
+    {% if img.src %}
+      <figure class="admin-thumb"><img src="{{ config.WIKI_URL.rstrip('/') }}/{{ img.src }}" alt=""><figcaption class="muted small">{{ img.src }}</figcaption></figure>
+      <label class="check"><input type="checkbox" name="main_remove" value="1"> Remove this picture</label>
+    {% endif %}
+    <label class="field">{{ 'Replace with' if img.src else 'Upload' }} a picture <span class="hint">JPEG, PNG or WebP, up to 3 MB; about 1600 px wide is plenty</span>
+      <input type="file" name="main_image" accept="image/jpeg,image/png,image/webp"></label>
+    <div class="row">
+      <label class="field grow">Description for screen readers <input name="main_alt" value="{{ img.alt }}" maxlength="200" placeholder="What the picture shows"></label>
+      <label class="field grow">Caption <span class="hint">optional</span><input name="main_caption" value="{{ img.caption }}" maxlength="300"></label>
+    </div>
   </section>
   <section class="card">
     <h2>Highlights</h2>
@@ -27,6 +41,18 @@
             <select name="h_done"><option value="">—</option><option value="yes" {% if h.done %}selected{% endif %}>Done</option></select></label>
         </div>
         <label class="field">Text <textarea name="h_text" rows="2" maxlength="1500">{{ h.text }}</textarea></label>
+        <input type="hidden" name="h_image_keep" value="{{ h.image.src if h.image else '' }}">
+        <div class="row">
+          <label class="field grow">Picture <span class="hint">optional</span>
+            <input type="file" name="h_image_{{ loop.index0 }}" accept="image/jpeg,image/png,image/webp"></label>
+          <label class="field grow">Picture description <input name="h_alt" value="{{ h.image.alt if h.image else '' }}" maxlength="200"></label>
+        </div>
+        {% if h.image and h.image.src %}
+          <div class="admin-thumb-row">
+            <img class="admin-thumb-small" src="{{ config.WIKI_URL.rstrip('/') }}/{{ h.image.src }}" alt="">
+            <label class="check"><input type="checkbox" name="h_image_remove" value="{{ loop.index0 }}"> Remove picture</label>
+          </div>
+        {% endif %}
       </fieldset>
     {% endfor %}
   </section>

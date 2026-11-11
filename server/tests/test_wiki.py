@@ -299,3 +299,32 @@ class BotProtection(Flow):
         r = self.app.test_client().get("/robots.txt")
         self.assertIn("Disallow: /", r.get_data(as_text=True))
         self.assertEqual(r.headers["X-Frame-Options"], "DENY")
+
+
+class AdminOnlyWithPassword(Flow):
+    def setUp(self):
+        super().setUp()
+        self.app.config["WIKI_URL"] = "https://alphacassi.github.io/EKARUSwiki/"
+        from ekaruswiki import team
+        import hashlib
+        team._cache.update(at=10**12, hashes={hashlib.sha256(b"wiki.only@x.org").hexdigest(),
+                                              hashlib.sha256(ADMIN.encode()).hexdigest()})
+
+    def test_admin_email_without_password_is_not_admin(self):
+        c = self.app.test_client()
+        self.post(c, "/account/team-signin", {"email": ADMIN, "next": "/"}, form_url="/account/login")
+        page = c.get("/").get_data(as_text=True)
+        self.assertNotIn('href="/admin/"', page)                     # no Admin link in the top bar
+        self.assertIn("/account/admin-signin", c.get("/admin/schedule/").headers["Location"])
+
+    def test_team_count_includes_admins_and_wiki_list(self):
+        with self.app.app_context():
+            from ekaruswiki.db import get_db, now
+            get_db().execute("INSERT INTO team (email, name, added_at) VALUES ('added@x.org', 'Added', ?)", (now(),))
+            get_db().commit()
+        admin, _ = self.admin_signin(ADMIN)
+        page = admin.get("/admin/").get_data(as_text=True)
+        # admin + added@x.org + wiki.only (the admin's own hash in the wiki list isn't counted twice)
+        self.assertIn('<span class="stat">3</span><strong>Team members</strong>', page)
+        members = admin.get("/admin/team").get_data(as_text=True)
+        self.assertIn("Hidden (stored as a hash)", members)
