@@ -50,8 +50,10 @@ def admin_required(view):
         if g.user is not None and g.user["email"] not in mail.admin_addresses():
             abort(403)
         if g.user is None or not session.get("admin_ok"):
-            return redirect(url_for("accounts.admin_signin", next=request.path,
-                                    email=g.user["email"] if g.user else ""))
+            args = {"next": request.path}
+            if g.user is not None:
+                args["email"] = g.user["email"]
+            return redirect(url_for("accounts.admin_signin", **args))
         return view(*args, **kwargs)
     return wrapped
 

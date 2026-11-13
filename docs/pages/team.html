@@ -9,8 +9,10 @@
   <link rel="icon" href="../assets/img/favicon.png" type="image/png">
   <link rel="preload" href="../assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/lang.js"></script>
   <script src="../assets/js/gate.js"></script>
   <script src="../assets/js/config.js" defer></script>
+  <script src="../assets/js/i18n.js" defer></script>
   <script src="../assets/js/main.js" defer></script>
 </head>
 <body>
@@ -34,6 +36,7 @@
     </nav>
 
     <main class="main" id="main">
+      <div data-lang-block="en" lang="en"><!-- lang:en -->
       <h1>Team</h1>
       <figure class="panel team-photo">
         <img src="../assets/img/ekarus-team.webp" width="1118" height="837" loading="lazy" alt="The EKARUS team in the Copernico telescope control room during the daytime calibrations for first light">
@@ -180,7 +183,307 @@
             </tbody>
           </table>
         </div>
-      </details>
+      </details><!-- /lang:en --></div>
+
+      <!-- ========== Italiano ========== -->
+      <div data-lang-block="it" lang="it"><!-- lang:it -->
+      <h1>Team</h1>
+      <figure class="panel team-photo">
+        <img src="../assets/img/ekarus-team.webp" width="1118" height="837" loading="lazy" alt="Il team di EKARUS nella sala controllo del telescopio Copernico durante le calibrazioni diurne per la prima luce">
+        <figcaption>Il team di EKARUS nella sala controllo del Copernico durante le calibrazioni per la prima luce. Crediti: Angelie Alagao/LAM, via Media INAF.</figcaption>
+      </figure>
+      <section class="panel org" aria-label="Organizzazione del progetto">
+        <!-- Photos: put a square-ish image in assets/img/team/ (e.g. benoit-neichel.webp, about 300 px wide)
+             and replace that person's <span class="photo" aria-hidden="true"></span> with
+             <img class="photo" src="../assets/img/team/benoit-neichel.webp" width="300" height="360" alt="">  -->
+        <ul class="org-row">
+        <li class="person">
+          <span class="photo" aria-hidden="true"></span>
+          <span class="name">Benoit Neichel</span>
+        </li>
+        <li class="person">
+          <span class="photo" aria-hidden="true"></span>
+          <span class="name">Lorenzo Busoni</span>
+        </li>
+        </ul>
+        <ul class="org-row">
+        <li class="person">
+          <span class="photo" aria-hidden="true"></span>
+          <span class="name">Taïssir Cedric Heritier</span><span class="role">Project manager</span>
+        </li>
+        <li class="person">
+          <span class="photo" aria-hidden="true"></span>
+          <span class="name">Davide Greggio</span><span class="role">Project manager</span>
+        </li>
+        </ul>
+        <ul class="wp-row">
+          <li class="wp">
+            <h3 class="wp-title"><span>WP1</span> Analisi AO</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Matteo Menessini</span><span class="role">Responsabile WP</span>
+              </li>
+            </ul>
+          </li>
+          <li class="wp">
+            <h3 class="wp-title"><span>WP2</span> Ingegneria di sistema</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Angelie Mary Alagao</span><span class="role">Responsabile WP</span>
+              </li>
+            </ul>
+          </li>
+          <li class="wp">
+            <h3 class="wp-title"><span>WP3</span> Simulatore di telescopio / CU</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Ivan Di Antonio</span><span class="role">Responsabile WP</span>
+              </li>
+            </ul>
+          </li>
+          <li class="wp">
+            <h3 class="wp-title"><span>WP4</span> Progetto optomeccanico</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Oleksandra Rebrysh</span><span class="role">Responsabile WP</span>
+              </li>
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Matteo D’Ambrogio</span><span class="role">Co-responsabile</span>
+              </li>
+            </ul>
+          </li>
+          <li class="wp">
+            <h3 class="wp-title"><span>WP5</span> Software</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Alessandro Ballone</span><span class="role">Responsabile WP</span>
+              </li>
+            </ul>
+          </li>
+          <li class="wp">
+            <h3 class="wp-title"><span>WP6</span> MAIT/V</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Elena Carolo</span><span class="role">Responsabile WP</span>
+              </li>
+            </ul>
+          </li>
+          <li class="wp">
+            <h3 class="wp-title"><span>WP7</span> Divulgazione e comunicazione</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Da assegnare</span><span class="role">Responsabile WP</span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <details class="panel members">
+        <summary>Membri <span class="count">36</span></summary>
+        <p class="muted small">Work package: WP0 Gestione e organizzazione, WP1 Analisi AO, WP2 Ingegneria di sistema, WP3 Simulatore di telescopio e calibrazione, WP4 Progetto optomeccanico, WP5 Software, WP6 Assemblaggio, integrazione e test, WP7 Divulgazione e comunicazione.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Nome</th><th scope="col">Istituto</th><th scope="col">Work package</th></tr></thead>
+            <tbody>
+              <tr><td>Carmelo Arcidiacono</td><td>INAF Padova</td><td>WP3, WP6</td></tr>
+              <tr><td>Mamoon Asghar</td><td>INAF Padova</td><td>WP4</td></tr>
+              <tr><td>Andrea Balestra</td><td>INAF Padova</td><td>WP2, WP5</td></tr>
+              <tr><td>Andrea Baruffolo</td><td>INAF Padova</td><td>WP5</td></tr>
+              <tr><td>Edoardo Bellone de Grecis</td><td>INAF Arcetri</td><td>—</td></tr>
+              <tr><td>Mohamed Yahia Bournane</td><td>INAF Padova</td><td>WP4, WP6</td></tr>
+              <tr><td>Paolo Cerpelloni</td><td>INAF</td><td>WP6</td></tr>
+              <tr><td>Vincent Chambouleyron</td><td>LAM</td><td>WP1, WP3</td></tr>
+              <tr><td>Luca Cortese</td><td>INAF Padova / UniPD</td><td>WP5</td></tr>
+              <tr><td>Elia Costa</td><td>INAF</td><td>WP5</td></tr>
+              <tr><td>Simone Di Filippo</td><td>INAF Padova</td><td>WP2, WP6</td></tr>
+              <tr><td>Gianluca Di Rico</td><td>INAF Abruzzo</td><td>WP3</td></tr>
+              <tr><td>Silvio Di Rosa</td><td>INAF Padova</td><td>WP3, WP4, WP6</td></tr>
+              <tr><td>Simone Esposito</td><td>INAF Arcetri</td><td>WP1</td></tr>
+              <tr><td>Jacopo Farinato</td><td>INAF Padova</td><td>WP6</td></tr>
+              <tr><td>Pietro Ferraiuolo</td><td>INAF Arcetri</td><td>WP1</td></tr>
+              <tr><td>Romain Fétick</td><td>ONERA / LAM</td><td>WP1</td></tr>
+              <tr><td>Thierry Fusco</td><td>ONERA</td><td>WP0, WP1, WP2, WP3, WP5, WP6, WP7</td></tr>
+              <tr><td>Tommaso Lapucci</td><td>INAF Arcetri</td><td>WP1, WP3</td></tr>
+              <tr><td>François Leroux</td><td>LAM</td><td>WP1, WP3, WP4, WP6</td></tr>
+              <tr><td>Simone Lombardi</td><td>INAF Arcetri</td><td>WP1, WP3</td></tr>
+              <tr><td>Tania Machado</td><td>INAF Padova</td><td>WP6</td></tr>
+              <tr><td>Aurélie Magniez</td><td>Durham University</td><td>WP3, WP4, WP5</td></tr>
+              <tr><td>Dheeraj Malik</td><td>INAF Arcetri</td><td>WP3</td></tr>
+              <tr><td>Lorenzo Merli</td><td>INAF Padova</td><td>WP1, WP5, WP6</td></tr>
+              <tr><td>Eduard Muslimov</td><td>Università di Oxford</td><td>WP2, WP3, WP4</td></tr>
+              <tr><td>Francisco Oyarzun</td><td>LAM</td><td>WP1, WP2, WP3, WP5, WP6</td></tr>
+              <tr><td>Matteo Pasinetti</td><td>INAF Arcetri</td><td>WP1, WP2, WP6</td></tr>
+              <tr><td>Kalyan Radhakrishnan</td><td>INAF Padova</td><td>WP2, WP3, WP7</td></tr>
+              <tr><td>Gabriele Rodeghiero</td><td>INAF Bologna</td><td>WP6</td></tr>
+              <tr><td>Simone Sacquegna</td><td>INAF Abruzzo</td><td>WP3, WP5</td></tr>
+              <tr><td>Jean-François Sauvage</td><td>ONERA</td><td>WP2, WP6</td></tr>
+              <tr><td>Gabriele Umbriaco</td><td>INAF Bologna</td><td>WP6</td></tr>
+              <tr><td>Remon van Gaalen</td><td>INAF Padova</td><td>WP6</td></tr>
+              <tr><td>Daniele Vassallo</td><td>INAF Padova</td><td>WP6</td></tr>
+              <tr><td>Valentina Viotto</td><td>INAF Padova</td><td>WP2</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details><!-- /lang:it --></div>
+
+      <!-- ========== Français ========== -->
+      <div data-lang-block="fr" lang="fr"><!-- lang:fr -->
+      <h1>Équipe</h1>
+      <figure class="panel team-photo">
+        <img src="../assets/img/ekarus-team.webp" width="1118" height="837" loading="lazy" alt="L’équipe EKARUS dans la salle de contrôle du télescope Copernico pendant les calibrations de jour pour la première lumière">
+        <figcaption>L’équipe EKARUS dans la salle de contrôle du Copernico pendant les calibrations de première lumière. Crédit : Angelie Alagao/LAM, via Media INAF.</figcaption>
+      </figure>
+      <section class="panel org" aria-label="Organisation du projet">
+        <!-- Photos: put a square-ish image in assets/img/team/ (e.g. benoit-neichel.webp, about 300 px wide)
+             and replace that person's <span class="photo" aria-hidden="true"></span> with
+             <img class="photo" src="../assets/img/team/benoit-neichel.webp" width="300" height="360" alt="">  -->
+        <ul class="org-row">
+        <li class="person">
+          <span class="photo" aria-hidden="true"></span>
+          <span class="name">Benoit Neichel</span>
+        </li>
+        <li class="person">
+          <span class="photo" aria-hidden="true"></span>
+          <span class="name">Lorenzo Busoni</span>
+        </li>
+        </ul>
+        <ul class="org-row">
+        <li class="person">
+          <span class="photo" aria-hidden="true"></span>
+          <span class="name">Taïssir Cedric Heritier</span><span class="role">Chef de projet</span>
+        </li>
+        <li class="person">
+          <span class="photo" aria-hidden="true"></span>
+          <span class="name">Davide Greggio</span><span class="role">Chef de projet</span>
+        </li>
+        </ul>
+        <ul class="wp-row">
+          <li class="wp">
+            <h3 class="wp-title"><span>WP1</span> Analyse OA</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Matteo Menessini</span><span class="role">Responsable WP</span>
+              </li>
+            </ul>
+          </li>
+          <li class="wp">
+            <h3 class="wp-title"><span>WP2</span> Ingénierie système</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Angelie Mary Alagao</span><span class="role">Responsable WP</span>
+              </li>
+            </ul>
+          </li>
+          <li class="wp">
+            <h3 class="wp-title"><span>WP3</span> Simulateur de télescope / CU</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Ivan Di Antonio</span><span class="role">Responsable WP</span>
+              </li>
+            </ul>
+          </li>
+          <li class="wp">
+            <h3 class="wp-title"><span>WP4</span> Conception opto-mécanique</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Oleksandra Rebrysh</span><span class="role">Responsable WP</span>
+              </li>
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Matteo D’Ambrogio</span><span class="role">Co-responsable</span>
+              </li>
+            </ul>
+          </li>
+          <li class="wp">
+            <h3 class="wp-title"><span>WP5</span> Logiciel</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Alessandro Ballone</span><span class="role">Responsable WP</span>
+              </li>
+            </ul>
+          </li>
+          <li class="wp">
+            <h3 class="wp-title"><span>WP6</span> MAIT/V</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">Elena Carolo</span><span class="role">Responsable WP</span>
+              </li>
+            </ul>
+          </li>
+          <li class="wp">
+            <h3 class="wp-title"><span>WP7</span> Diffusion et communication</h3>
+            <ul class="wp-people">
+              <li class="person">
+                <span class="photo" aria-hidden="true"></span>
+                <span class="name">À attribuer</span><span class="role">Responsable WP</span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+
+      <details class="panel members">
+        <summary>Membres <span class="count">36</span></summary>
+        <p class="muted small">Lots de travail : WP0 Gestion et organisation, WP1 Analyse OA, WP2 Ingénierie système, WP3 Simulateur de télescope et calibration, WP4 Conception opto-mécanique, WP5 Logiciel, WP6 Assemblage, intégration et tests, WP7 Diffusion et communication.</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Nom</th><th scope="col">Institut</th><th scope="col">Lots de travail</th></tr></thead>
+            <tbody>
+              <tr><td>Carmelo Arcidiacono</td><td>INAF Padova</td><td>WP3, WP6</td></tr>
+              <tr><td>Mamoon Asghar</td><td>INAF Padova</td><td>WP4</td></tr>
+              <tr><td>Andrea Balestra</td><td>INAF Padova</td><td>WP2, WP5</td></tr>
+              <tr><td>Andrea Baruffolo</td><td>INAF Padova</td><td>WP5</td></tr>
+              <tr><td>Edoardo Bellone de Grecis</td><td>INAF Arcetri</td><td>—</td></tr>
+              <tr><td>Mohamed Yahia Bournane</td><td>INAF Padova</td><td>WP4, WP6</td></tr>
+              <tr><td>Paolo Cerpelloni</td><td>INAF</td><td>WP6</td></tr>
+              <tr><td>Vincent Chambouleyron</td><td>LAM</td><td>WP1, WP3</td></tr>
+              <tr><td>Luca Cortese</td><td>INAF Padova / UniPD</td><td>WP5</td></tr>
+              <tr><td>Elia Costa</td><td>INAF</td><td>WP5</td></tr>
+              <tr><td>Simone Di Filippo</td><td>INAF Padova</td><td>WP2, WP6</td></tr>
+              <tr><td>Gianluca Di Rico</td><td>INAF Abruzzo</td><td>WP3</td></tr>
+              <tr><td>Silvio Di Rosa</td><td>INAF Padova</td><td>WP3, WP4, WP6</td></tr>
+              <tr><td>Simone Esposito</td><td>INAF Arcetri</td><td>WP1</td></tr>
+              <tr><td>Jacopo Farinato</td><td>INAF Padova</td><td>WP6</td></tr>
+              <tr><td>Pietro Ferraiuolo</td><td>INAF Arcetri</td><td>WP1</td></tr>
+              <tr><td>Romain Fétick</td><td>ONERA / LAM</td><td>WP1</td></tr>
+              <tr><td>Thierry Fusco</td><td>ONERA</td><td>WP0, WP1, WP2, WP3, WP5, WP6, WP7</td></tr>
+              <tr><td>Tommaso Lapucci</td><td>INAF Arcetri</td><td>WP1, WP3</td></tr>
+              <tr><td>François Leroux</td><td>LAM</td><td>WP1, WP3, WP4, WP6</td></tr>
+              <tr><td>Simone Lombardi</td><td>INAF Arcetri</td><td>WP1, WP3</td></tr>
+              <tr><td>Tania Machado</td><td>INAF Padova</td><td>WP6</td></tr>
+              <tr><td>Aurélie Magniez</td><td>Durham University</td><td>WP3, WP4, WP5</td></tr>
+              <tr><td>Dheeraj Malik</td><td>INAF Arcetri</td><td>WP3</td></tr>
+              <tr><td>Lorenzo Merli</td><td>INAF Padova</td><td>WP1, WP5, WP6</td></tr>
+              <tr><td>Eduard Muslimov</td><td>Université d’Oxford</td><td>WP2, WP3, WP4</td></tr>
+              <tr><td>Francisco Oyarzun</td><td>LAM</td><td>WP1, WP2, WP3, WP5, WP6</td></tr>
+              <tr><td>Matteo Pasinetti</td><td>INAF Arcetri</td><td>WP1, WP2, WP6</td></tr>
+              <tr><td>Kalyan Radhakrishnan</td><td>INAF Padova</td><td>WP2, WP3, WP7</td></tr>
+              <tr><td>Gabriele Rodeghiero</td><td>INAF Bologna</td><td>WP6</td></tr>
+              <tr><td>Simone Sacquegna</td><td>INAF Abruzzo</td><td>WP3, WP5</td></tr>
+              <tr><td>Jean-François Sauvage</td><td>ONERA</td><td>WP2, WP6</td></tr>
+              <tr><td>Gabriele Umbriaco</td><td>INAF Bologna</td><td>WP6</td></tr>
+              <tr><td>Remon van Gaalen</td><td>INAF Padova</td><td>WP6</td></tr>
+              <tr><td>Daniele Vassallo</td><td>INAF Padova</td><td>WP6</td></tr>
+              <tr><td>Valentina Viotto</td><td>INAF Padova</td><td>WP2</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details><!-- /lang:fr --></div>
     </main>
 
     <nav class="side-nav nav-right" aria-label="Activities">

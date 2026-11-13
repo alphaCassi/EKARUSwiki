@@ -9,8 +9,10 @@
   <link rel="icon" href="../assets/img/favicon.png" type="image/png">
   <link rel="preload" href="../assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/lang.js"></script>
   <script src="../assets/js/gate.js"></script>
   <script src="../assets/js/config.js" defer></script>
+  <script src="../assets/js/i18n.js" defer></script>
   <script src="../assets/js/main.js" defer></script>
 </head>
 <body>
@@ -34,6 +36,7 @@
     </nav>
 
     <main class="main" id="main">
+      <div data-lang-block="en" lang="en"><!-- lang:en -->
       <h1>Technical nights plan</h1>
       <section class="panel">
         <div class="table-wrap">
@@ -45,7 +48,37 @@
           </table>
         </div>
         <p class="empty mt">Tab completion is in progress.</p>
-      </section>
+      </section><!-- /lang:en --></div>
+
+      <!-- ========== Italiano ========== -->
+      <div data-lang-block="it" lang="it"><!-- lang:it -->
+      <h1>Piano delle notti tecniche</h1>
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Date</th><th scope="col">Attività</th><th scope="col">Stato</th></tr></thead>
+            <tbody>
+              <tr><td>31 ago – 1 set 2026</td><td>Prima luce ufficiale</td><td>Fatto</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="empty mt">La compilazione di questa pagina è in corso.</p>
+      </section><!-- /lang:it --></div>
+
+      <!-- ========== Français ========== -->
+      <div data-lang-block="fr" lang="fr"><!-- lang:fr -->
+      <h1>Plan des nuits techniques</h1>
+      <section class="panel">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th scope="col">Dates</th><th scope="col">Activité</th><th scope="col">Statut</th></tr></thead>
+            <tbody>
+              <tr><td>31 août – 1er sept. 2026</td><td>Première lumière officielle</td><td>Terminé</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="empty mt">Cette page est en cours de rédaction.</p>
+      </section><!-- /lang:fr --></div>
     </main>
 
     <nav class="side-nav nav-right" aria-label="Activities">

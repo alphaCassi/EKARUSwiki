@@ -401,3 +401,5 @@ a.st-open:hover { background: color-mix(in srgb, var(--st-open) 26%, var(--paper
 .admin-thumb-small { height: 3.5rem; width: auto; border-radius: var(--radius); border: 1px solid var(--line); }
 input[type="file"] { padding: 0.35rem; }
 .wiki-content .callout { border: 1px solid var(--line); border-left: 3px solid var(--cyan); border-radius: var(--radius); padding: 0.9rem 1.1rem; background: var(--paper); }
+.lang-fields { margin-top: 0.5rem; }
+.lang-fields > summary { cursor: pointer; color: var(--cyan); font-size: 0.9rem; }

@@ -6,7 +6,8 @@
   var form = document.getElementById("pub-filters");
   if (!list || !form) return;
 
-  var TYPES = { paper: "Refereed paper", proceedings: "Proceedings", poster: "Poster", talk: "Talk" };
+  var T = window.ekarusT || function (s, v) { if (v) Object.keys(v).forEach(function (k) { s = s.split("{" + k + "}").join(v[k]); }); return s; };
+  var TYPES = { paper: T("Refereed paper"), proceedings: T("Proceedings"), poster: T("Poster"), talk: T("Talk") };
   var SHOW_AUTHORS = 6;
 
   function surname(a) { return a.split(",")[0].trim(); }
@@ -42,7 +43,7 @@
     var head = el("div", "pub-head");
     head.appendChild(el("span", "pub-year", String(p.year)));
     head.appendChild(el("span", "pub-type", TYPES[p.type] || p.type));
-    if (p.related) head.appendChild(el("span", "pub-type pub-related", "Mentions EKARUS"));
+    if (p.related) head.appendChild(el("span", "pub-type pub-related", T("Mentions EKARUS")));
     li.appendChild(head);
 
     var title = el("h3", "pub-title");
@@ -68,7 +69,7 @@
     if (names.length > SHOW_AUTHORS) {
       addNames(names.slice(0, SHOW_AUTHORS), authorsEl);
       var more = el("details", "pub-more");
-      more.appendChild(el("summary", "", "\u00a0and " + (names.length - SHOW_AUTHORS) + " more"));
+      more.appendChild(el("summary", "", "\u00a0" + T("and {n} more", { n: names.length - SHOW_AUTHORS })));
       var rest = el("span");
       rest.appendChild(document.createTextNode(", "));
       addNames(names.slice(SHOW_AUTHORS), rest);
@@ -87,7 +88,7 @@
       d.href = "https://doi.org/" + p.doi; d.target = "_blank"; d.rel = "noopener";
       venue.appendChild(d);
     } else if (p.url && (p.type === "paper" || p.type === "proceedings")) {
-      venue.appendChild(document.createTextNode(", DOI not yet available"));
+      venue.appendChild(document.createTextNode(T(", DOI not yet available")));
     }
     li.appendChild(venue);
     return li;
@@ -118,8 +119,8 @@
     list.textContent = "";
     rows.forEach(function (p) { list.appendChild(item(p, author)); });
     document.getElementById("pub-count").textContent =
-      rows.length + (rows.length === 1 ? " publication" : " publications") +
-      (rows.length !== data.length ? " of " + data.length : "");
+      T(rows.length === 1 ? "{n} publication" : "{n} publications", { n: rows.length }) +
+      (rows.length !== data.length ? T(" of {m}", { m: data.length }) : "");
     document.getElementById("pub-empty").hidden = rows.length > 0;
   }
 

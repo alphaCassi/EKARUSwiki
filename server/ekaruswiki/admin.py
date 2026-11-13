@@ -233,12 +233,17 @@ def wiki_content():
 
             dates, titles = request.form.getlist("h_date"), request.form.getlist("h_title")
             texts, dones = request.form.getlist("h_text"), request.form.getlist("h_done")
+            other = {f"{k}_{l}": request.form.getlist(f"h_{k}_{l}") for k in ("title", "text") for l in ("it", "fr")}
             kept, alts = request.form.getlist("h_image_keep"), request.form.getlist("h_alt")
             removes = set(request.form.getlist("h_image_remove"))
             highlights = []
             for i in range(len(titles)):
                 row = {"date": dates[i].strip()[:60], "title": titles[i].strip()[:200],
                        "text": texts[i].strip()[:1500], "done": dones[i] == "yes"}
+                for key, values in other.items():              # Italian and French versions
+                    v = (values[i] if i < len(values) else "").strip()[:1500 if key.startswith("text") else 200]
+                    if v:
+                        row[key] = v
                 src = kept[i] if i < len(kept) else ""
                 if str(i) in removes:
                     src = ""
@@ -250,6 +255,10 @@ def wiki_content():
                 if row["title"] or row["text"]:
                     highlights.append(row)
             new = {"banner": request.form.get("banner", "").strip()[:200], "highlights": highlights}
+            for l in ("it", "fr"):
+                v = request.form.get(f"banner_{l}", "").strip()[:200]
+                if v:
+                    new[f"banner_{l}"] = v
             if image:
                 new["image"] = image
             github.write(SITE_PATH, json.dumps(new, ensure_ascii=False, indent=2) + "\n", sha,

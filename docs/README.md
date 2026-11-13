@@ -74,12 +74,15 @@ These need the EKARUSwiki server (`server/` folder) to be running and `serverUrl
 
 ## To-do list
 
-The spreadsheet lives in the repository at `resources/EKARUS_todo.xlsx`. The To-do page links to it
-once `githubRepo` (e.g. `"owner/ekarus"`) is set in `assets/js/config.js`.
+The To-do page reads its list live from the Google spreadsheet linked at the bottom of
+`pages/todo.html` (the link with `data-todo-file`). Edit the spreadsheet and the page shows the change
+the next time it's opened (and every 2 minutes while it stays open). To use another spreadsheet,
+change only that link.
 
-The rows shown on the page are written in `pages/todo.html`. Editing the spreadsheet does not change
-the page by itself: update the table in `todo.html` too. (Optional: if the list is moved to a Google
-Sheet published as CSV, set `todoSheetUrl` and the page reads it automatically.)
+The spreadsheet must be a Google Sheets file (not an uploaded .xlsx) shared as "Anyone with the
+link". The first sheet is read, or the one given by `gid=` in the link. Columns recognised: Task,
+Owner, Due, Status and, if filled in, Notes; "Done" in Status shows the row as done. The rows
+written in `todo.html` are shown only if the spreadsheet can't be read.
 
 ## Publishing on GitHub Pages
 
@@ -120,3 +123,22 @@ a host that checks identity before serving any page, for example GitLab Pages wi
 control (only project members can view) or Cloudflare Pages behind Cloudflare Access
 (login by one-time code sent to a registered e-mail). Then `gate.js`, `users.js` and the
 sign-in form can be dropped.
+
+## Languages (English, Italiano, Français)
+
+The EN / IT / FR buttons at the top right switch the language; the choice is kept in that
+browser. On a first visit the wiki follows the browser's language. French pages show a note that
+the French translation was made with AI, with a contact for corrections.
+
+- **Content pages** (Team, Telescope, Bench Architecture, Documentation, Technical nights plan,
+  DAO-EKARUS, Observation schedule) hold three blocks one after the other inside `<main>`:
+  `<div data-lang-block="en">`, `"it"` and `"fr"`, each between `<!-- lang:xx -->` comments.
+  Edit the text of each language in its own block. Inside the Italian and French blocks the `id`s
+  end in `-it` / `-fr`, so they stay unique; keep that when you add an `id` there.
+- **Menus, buttons, forms and messages**, and the text of the sign-in, home, Contact us, To do's
+  and Publications pages, are in `assets/js/i18n.js`: each English phrase with its Italian and
+  French version side by side. If you change an English phrase on one of those pages, change the
+  same phrase in `i18n.js`, otherwise the page shows English for it.
+- **Home page highlights and banner** come from the admin page, which has Italian and French
+  fields; empty ones show the English text.
+- The observation schedule site shows the English block of the Telescope, EKARUS and Team pages.

@@ -9,8 +9,10 @@
   <link rel="icon" href="../assets/img/favicon.png" type="image/png">
   <link rel="preload" href="../assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/lang.js"></script>
   <script src="../assets/js/gate.js"></script>
   <script src="../assets/js/config.js" defer></script>
+  <script src="../assets/js/i18n.js" defer></script>
   <script src="../assets/js/main.js" defer></script>
 </head>
 <body>
@@ -32,11 +34,28 @@
     </nav>
 
     <main class="main" id="main">
+      <div data-lang-block="en" lang="en"><!-- lang:en -->
       <h1>DAO-EKARUS</h1>
       <section class="panel">
         <p class="lede">How the DAO distributed AO software runs the EKARUS bench: processes, configuration and interfaces.</p>
         <p class="empty">Nothing here yet. Add an overview of the DAO components used on the bench.</p>
-      </section>
+      </section><!-- /lang:en --></div>
+
+      <!-- ========== Italiano ========== -->
+      <div data-lang-block="it" lang="it"><!-- lang:it -->
+      <h1>DAO-EKARUS</h1>
+      <section class="panel">
+        <p class="lede">Come il software AO distribuito DAO gestisce il banco EKARUS: processi, configurazione e interfacce.</p>
+        <p class="empty">Ancora niente qui. Aggiungere una panoramica dei componenti DAO usati sul banco.</p>
+      </section><!-- /lang:it --></div>
+
+      <!-- ========== Français ========== -->
+      <div data-lang-block="fr" lang="fr"><!-- lang:fr -->
+      <h1>DAO-EKARUS</h1>
+      <section class="panel">
+        <p class="lede">Comment le logiciel d’OA distribué DAO pilote le banc EKARUS : processus, configuration et interfaces.</p>
+        <p class="empty">Rien ici pour l’instant. Ajouter une vue d’ensemble des composants DAO utilisés sur le banc.</p>
+      </section><!-- /lang:fr --></div>
     </main>
 
     <nav class="side-nav nav-right" aria-label="Operations">

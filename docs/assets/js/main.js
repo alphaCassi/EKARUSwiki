@@ -190,7 +190,9 @@
     fetch(root + "data/site.json", { cache: "no-cache" })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (site) {
-        if (bannerEl && site.banner) bannerEl.textContent = site.banner;
+        var BL = window.ekarusLang || "en";
+        var banner = (BL !== "en" && site["banner_" + BL]) || site.banner;
+        if (bannerEl && banner) bannerEl.textContent = banner;
         var pic = document.querySelector("[data-site-image]");
         if (pic && site.image && site.image.src) {
           pic.querySelector("img").src = root + site.image.src;
@@ -213,8 +215,10 @@
       part.forEach(function (h) {
         var li = document.createElement("li");
         if (h.date) { var t = document.createElement("time"); t.textContent = h.date; li.appendChild(t); }
-        if (h.title) { var b = document.createElement("strong"); b.textContent = h.title; li.appendChild(b); }
-        if (h.text) li.appendChild(document.createTextNode(" " + h.text));
+        var L = window.ekarusLang || "en";
+        var title = (L !== "en" && h["title_" + L]) || h.title, text = (L !== "en" && h["text_" + L]) || h.text;
+        if (title) { var b = document.createElement("strong"); b.textContent = title; li.appendChild(b); }
+        if (text) li.appendChild(document.createTextNode(" " + text));
         if (h.image && h.image.src) {
           var img = document.createElement("img");
           img.className = "hl-picture";
@@ -241,80 +245,106 @@
     }
   }
 
-  /* ---------- Bench page: switch the detail panel by subsystem */
-  var picker = document.querySelector("[data-subsystems]");
-  if (picker) {
+  /* ---------- Bench page: switch the detail panel by subsystem.
+     Each language block has its own picker; panel ids carry the language ("vis-imager-it"),
+     the address keeps the plain name ("#vis-imager") so links work in every language. */
+  document.querySelectorAll("[data-subsystems]").forEach(function (picker) {
+    var block = picker.closest("[data-lang-block]") || document;
+    var lang = block.getAttribute ? (block.getAttribute("data-lang-block") || "en") : "en";
+    var suffix = lang === "en" ? "" : "-" + lang;
     var buttons = Array.prototype.slice.call(picker.querySelectorAll("button[data-target]"));
-    var panels = Array.prototype.slice.call(document.querySelectorAll(".subsystem-panel"));
+    var panels = Array.prototype.slice.call(block.querySelectorAll(".subsystem-panel"));
+    if (!panels.length) return;
+    function base(id) { return suffix && id.slice(-suffix.length) === suffix ? id.slice(0, -suffix.length) : id; }
 
-    function show(id, updateHash) {
-      var found = panels.some(function (p) { return p.id === id; });
-      if (!found) id = panels[0].id;
+    function show(name, updateHash) {
+      var id = name + suffix;
+      if (!panels.some(function (p) { return p.id === id; })) id = panels[0].id;
       panels.forEach(function (p) { p.hidden = p.id !== id; });
       buttons.forEach(function (b) {
         b.setAttribute("aria-pressed", b.getAttribute("data-target") === id ? "true" : "false");
       });
-      if (updateHash) history.replaceState(null, "", "#" + id);
+      if (updateHash) history.replaceState(null, "", "#" + base(id));
     }
-
     buttons.forEach(function (b) {
       b.addEventListener("click", function () {
         var id = b.getAttribute("data-target");
         // clicking the selected subsystem again returns to the specifications
         if (b.getAttribute("aria-pressed") === "true") id = panels[0].id;
-        show(id, true);
+        show(base(id), true);
       });
     });
     window.addEventListener("hashchange", function () { show(location.hash.slice(1), false); });
     show(location.hash.slice(1), false);
-  }
+  });
 
-  /* ---------- To-do page: link to the spreadsheet kept in the GitHub repository */
-  var todoFile = document.querySelector("[data-todo-file]");
-  if (todoFile) {
-    if (config.githubRepo) {
-      todoFile.href = "https://github.com/" + config.githubRepo + "/blob/" +
-        (config.githubBranch || "main") + "/resources/EKARUS_todo.xlsx";
-    } else {
-      // repository not configured yet: show plain text instead of a dead link
-      var span = document.createElement("span");
-      span.textContent = todoFile.textContent;
-      todoFile.replaceWith(span);
-    }
-  }
-
-  /* ---------- To-do page: load the list from the published Google Sheet (CSV) */
+  /* ---------- To-do page: the list comes live from the Google spreadsheet linked on the page.
+     The spreadsheet's address is only in that link (pages/todo.html, data-todo-file); the
+     first sheet is read, or the one given by "gid=" in the link. Read again every 2 minutes
+     while the page is open, and whenever the page comes back into view. */
+  var todoLink = document.querySelector("[data-todo-file]");
   var todoTable = document.querySelector("[data-todo-table]");
-  if (todoTable && config.todoSheetUrl && window.fetch) {
+  var sheetId = todoLink && (todoLink.getAttribute("href").match(/\/spreadsheets\/d\/([A-Za-z0-9_-]+)/) || [])[1];
+  if (todoTable && sheetId && window.fetch) {
+    var T = window.ekarusT || function (x, v) { if (v) Object.keys(v).forEach(function (k) { x = x.split("{" + k + "}").join(v[k]); }); return x; };
+    var gid = (todoLink.getAttribute("href").match(/[#?&]gid=(\d+)/) || [])[1];
+    var csvUrl = "https://docs.google.com/spreadsheets/d/" + sheetId + "/gviz/tq?tqx=out:csv" + (gid ? "&gid=" + gid : "");
     var todoNote = document.querySelector("[data-todo-source]");
-    fetch(config.todoSheetUrl, { cache: "no-store" })
-      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
-      .then(function (text) {
-        var rows = parseCSV(text).filter(function (r) { return r.some(function (c) { return c.trim(); }); });
-        var head = rows.shift().map(function (h) { return h.trim().toLowerCase(); });
-        var col = function (name) { return head.indexOf(name); };
-        var iTask = col("task"), iOwner = col("owner"), iDue = col("due"), iStatus = col("status");
-        if (iTask === -1) throw new Error("no Task column");
-        var body = todoTable.tBodies[0];
-        body.textContent = "";
-        rows.forEach(function (r) {
-          var task = (r[iTask] || "").trim();
-          if (!task) return;
-          var status = iStatus > -1 ? (r[iStatus] || "").trim() : "";
-          var tr = document.createElement("tr");
-          if (/^done$/i.test(status)) tr.className = "is-done";
-          [task, iOwner > -1 ? r[iOwner] : "", iDue > -1 ? r[iDue] : "", status].forEach(function (v) {
-            var td = document.createElement("td");
-            td.textContent = (v || "").trim() || "—";   // textContent: sheet text is never run as HTML
-            tr.appendChild(td);
+    var COLS = [                                  // column on the page: names accepted in the sheet
+      ["Task", ["task", "to do", "todo", "item", "action", "description"]],
+      ["Owner", ["owner", "who", "responsible", "assignee", "assigned to"]],
+      ["Due", ["due", "deadline", "due date", "date"]],
+      ["Status", ["status", "state"]],
+      ["Notes", ["notes", "note", "comments", "comment", "remarks"]]
+    ];
+
+    var loadTodo = function () {
+      fetch(csvUrl + "&t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+        .then(function (text) {
+          var rows = parseCSV(text).filter(function (r) { return r.some(function (c) { return c.trim(); }); });
+          if (!rows.length) throw new Error("empty");
+          var head = rows.shift().map(function (h) { return h.trim().toLowerCase(); });
+          var cols = COLS.map(function (c) {
+            var idx = -1;
+            c[1].some(function (name) { idx = head.indexOf(name); return idx > -1; });
+            return { label: c[0], idx: idx };
           });
-          body.appendChild(tr);
+          if (cols[0].idx === -1) cols[0].idx = 0;            // no "Task" header: use the first column
+          // show Notes only when the sheet has some
+          cols = cols.filter(function (c) {
+            return c.label !== "Notes" || (c.idx > -1 && rows.some(function (r) { return (r[c.idx] || "").trim(); }));
+          });
+          var thead = todoTable.tHead, tr0 = document.createElement("tr");
+          cols.forEach(function (c) {
+            var th = document.createElement("th"); th.scope = "col"; th.textContent = T(c.label); tr0.appendChild(th);
+          });
+          thead.textContent = ""; thead.appendChild(tr0);
+          var body = todoTable.tBodies[0];
+          body.textContent = "";
+          rows.forEach(function (r) {
+            if (!(r[cols[0].idx] || "").trim()) return;
+            var tr = document.createElement("tr");
+            cols.forEach(function (c) {
+              var v = c.idx > -1 ? (r[c.idx] || "").trim() : "";
+              if (c.label === "Status" && /^(done|completed|closed)$/i.test(v)) tr.className = "is-done";
+              var td = document.createElement("td");
+              td.textContent = v || "—";               // textContent: sheet text is never run as HTML
+              tr.appendChild(td);
+            });
+            body.appendChild(tr);
+          });
+          var now = new Date();
+          if (todoNote) todoNote.textContent = T("Live from the EKARUS To-do spreadsheet, updated at {time}.",
+            { time: now.toLocaleTimeString(document.documentElement.lang || undefined, { hour: "2-digit", minute: "2-digit" }) });
+        })
+        .catch(function () {
+          if (todoNote) todoNote.textContent = T("Couldn't read the spreadsheet; showing the last saved list.");
         });
-        if (todoNote) todoNote.textContent = "Live from the EKARUS To-do spreadsheet.";
-      })
-      .catch(function () {
-        if (todoNote) todoNote.textContent = "Couldn't load the spreadsheet; showing the last saved list.";
-      });
+    };
+    loadTodo();
+    setInterval(loadTodo, 2 * 60 * 1000);
+    document.addEventListener("visibilitychange", function () { if (!document.hidden) loadTodo(); });
   }
 
   /* ---------- helpers */

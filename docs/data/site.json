@@ -5,31 +5,51 @@
       "date": "31 August – 1 September 2026",
       "title": "Official first light.",
       "text": "EKARUS at the Copernico telescope.",
-      "done": true
+      "done": true,
+      "title_it": "Prima luce ufficiale.",
+      "title_fr": "Première lumière officielle.",
+      "text_it": "EKARUS al telescopio Copernico.",
+      "text_fr": "EKARUS au télescope Copernico."
     },
     {
       "date": "June 2026",
       "title": "Common path aligned in Padova.",
       "text": "Transmitted wavefront error about 55 nm RMS over the 33 mm DM pupil, mostly coma and secondary astigmatism, to be corrected by the DM. Fast tip-tilt mirror tested and integrated.",
-      "done": false
+      "done": false,
+      "title_it": "Cammino comune allineato a Padova.",
+      "title_fr": "Chemin commun aligné à Padoue.",
+      "text_it": "Errore di fronte d’onda trasmesso di circa 55 nm RMS sulla pupilla del DM da 33 mm, soprattutto coma e astigmatismo secondario, da correggere con il DM. Specchio tip-tilt veloce testato e integrato.",
+      "text_fr": "Erreur de front d’onde transmise d’environ 55 nm RMS sur la pupille du DM de 33 mm, surtout de la coma et de l’astigmatisme secondaire, à corriger par le DM. Miroir tip-tilt rapide testé et intégré."
     },
     {
       "date": "Spring 2026",
       "title": "DM468 characterized at Arcetri.",
       "text": "Best flat about 6 nm RMS wavefront, small actuator print-through, tip-tilt stroke about 15 µm surface.",
-      "done": false
+      "done": false,
+      "title_it": "DM468 caratterizzato ad Arcetri.",
+      "title_fr": "DM468 caractérisé à Arcetri.",
+      "text_it": "Miglior flat di circa 6 nm RMS sul fronte d’onda, leggero print-through degli attuatori, corsa tip-tilt di circa 15 µm di superficie.",
+      "text_fr": "Meilleur flat d’environ 6 nm RMS sur le front d’onde, léger print-through des actionneurs, course tip-tilt d’environ 15 µm en surface."
     },
     {
       "date": "April 2026",
       "title": "Coudé relay upgraded.",
       "text": "New L1 and L3 lenses installed to correct the chromatic focus of the old relay. First seeing-limited PSFs (about 1.8″ seeing) show no strong aberrations from the new relay.",
-      "done": false
+      "done": false,
+      "title_it": "Relay Coudé aggiornato.",
+      "title_fr": "Relais Coudé amélioré.",
+      "text_it": "Installate le nuove lenti L1 e L3 per correggere il fuoco cromatico del vecchio relay. Le prime PSF limitate dal seeing (seeing di circa 1,8″) non mostrano forti aberrazioni dovute al nuovo relay.",
+      "text_fr": "Nouvelles lentilles L1 et L3 installées pour corriger le focus chromatique de l’ancien relais. Les premières PSF limitées par le seeing (environ 1,8″) ne montrent pas de fortes aberrations dues au nouveau relais."
     },
     {
       "date": "April 2026",
       "title": "PAPYRUS decommissioned",
       "text": "after reaching almost 65% Strehl at 1450 nm on the T152. Its components were shipped from LAM to Asiago for EKARUS.",
-      "done": false
+      "done": false,
+      "title_it": "PAPYRUS dismesso",
+      "title_fr": "PAPYRUS démantelé",
+      "text_it": "dopo aver raggiunto quasi il 65% di Strehl a 1450 nm sul T152. I suoi componenti sono stati spediti dal LAM ad Asiago per EKARUS.",
+      "text_fr": "après avoir atteint près de 65 % de Strehl à 1450 nm sur le T152. Ses composants ont été envoyés du LAM à Asiago pour EKARUS."
     }
   ]
 }

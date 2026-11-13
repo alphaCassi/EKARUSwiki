@@ -25,6 +25,14 @@ def _default_database(instance_path):
     return old if os.path.exists(old) else os.path.join(instance_path, "ekaruswiki.sqlite3")
 
 
+def _clean_secret(value):
+    """A value from .env without accidental spaces or surrounding quotes ("..." or '...')."""
+    value = (value or "").strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+        value = value[1:-1]
+    return value
+
+
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     os.makedirs(app.instance_path, exist_ok=True)
@@ -34,7 +42,7 @@ def create_app(test_config=None):
         # Comma-separated list. These addresses become admins when they register or sign in.
         ADMIN_EMAILS=os.environ.get("ADMIN_EMAILS", "oleksandra.rebrysh@inaf.it"),
         # Password for the admin pages (asked at every admin sign-in).
-        ADMIN_PASSWORD=os.environ.get("ADMIN_PASSWORD", ""),
+        ADMIN_PASSWORD=_clean_secret(os.environ.get("ADMIN_PASSWORD", "")),
         # Public address of this server, used in e-mail links.
         BASE_URL=os.environ.get("BASE_URL", "http://localhost:5000").rstrip("/"),
         # Address of the published wiki (GitHub Pages).

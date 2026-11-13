@@ -328,3 +328,76 @@ class AdminOnlyWithPassword(Flow):
         self.assertIn('<span class="stat">3</span><strong>Team members</strong>', page)
         members = admin.get("/admin/team").get_data(as_text=True)
         self.assertIn("Hidden (stored as a hash)", members)
+
+
+class WikiLanguageBlocks(Flow):
+    def test_info_page_uses_english_block(self):
+        self.app.config["WIKI_URL"] = "https://alphacassi.github.io/EKARUSwiki/"
+        from ekaruswiki import wiki_pages
+        wiki_pages._cache.clear()
+        orig = wiki_pages._fetch
+        wiki_pages._fetch = lambda path: ("https://alphacassi.github.io/EKARUSwiki/" + path,
+            '<main class="main" id="main"><div data-lang-block="en"><!-- lang:en --><h1>Copernico telescope</h1><!-- /lang:en --></div>'
+            '<div data-lang-block="it"><!-- lang:it --><h1>Telescopio Copernico</h1><!-- /lang:it --></div>'
+            '<div data-lang-block="fr"><!-- lang:fr --><h1>Télescope Copernico</h1><!-- /lang:fr --></div></main>')
+        try:
+            user = self.register_and_verify(USER, "Olga")
+            page = user.get("/info/telescope").get_data(as_text=True)
+            self.assertIn("Copernico telescope", page)
+            self.assertNotIn("Telescopio Copernico", page)
+            self.assertNotIn("Télescope Copernico", page)
+        finally:
+            wiki_pages._fetch = orig
+
+
+class AdminLinkFromEmail(Flow):
+    def signin_from_link(self, path, password="admin-test-pass", email=ADMIN):
+        c = self.app.test_client()                     # a fresh browser, as when opening an e-mail
+        r = c.get(path)
+        self.assertIn("/account/admin-signin", r.headers["Location"])
+        page = c.get(r.headers["Location"]).get_data(as_text=True)
+        token = __import__("re").search(r'name="csrf_token" value="([^"]+)"', page).group(1)
+        nxt = __import__("re").search(r'name="next" value="([^"]*)"', page).group(1)
+        # submit to the same address the browser is on, query string included
+        return c, c.post(r.headers["Location"], data={"csrf_token": token, "email": email,
+                                                      "password": password, "next": nxt})
+
+    def test_link_in_access_request_email_works_and_signs_in(self):
+        self.app.config["BASE_URL"] = "https://srv.example.net/"          # trailing slash on purpose
+        self.app.test_client().post("/api/contact", json={"name": "A", "email": "a@x.org", "message": "hi",
+                                                          "topic": "Access request"})
+        body = self.outbox()[-1].get_payload(decode=True).decode()
+        link = __import__("re").search(r"https://srv\.example\.net(/\S+)", body).group(1)
+        self.assertTrue(link.startswith("/admin/messages/"), link)          # no double slash
+        c, r = self.signin_from_link(link)
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(c.get(r.headers["Location"]).status_code, 200)
+
+    def test_many_correct_signins_are_never_refused(self):
+        for _ in range(8):
+            c, r = self.signin_from_link("/admin/")
+            self.assertEqual(r.status_code, 302)
+
+    def test_wrong_passwords_by_someone_else_dont_block_you(self):
+        for _ in range(6):
+            self.signin_from_link("/admin/", password="wrong", email="intruder@x.org")
+        c, r = self.signin_from_link("/admin/")
+        self.assertEqual(r.status_code, 302)
+
+    def test_admin_password_from_env_with_quotes_or_spaces(self):
+        from ekaruswiki import _clean_secret
+        self.assertEqual(_clean_secret(' "s3cret$pw" '), "s3cret$pw")
+        self.assertEqual(_clean_secret("'abc'"), "abc")
+        self.assertEqual(_clean_secret("abc  "), "abc")
+
+
+class AdminSigninAddressBar(Flow):
+    def test_empty_email_in_address_bar_does_not_override_typed_email(self):
+        c = self.app.test_client()
+        url = "/account/admin-signin?next=/admin/messages/1&email="          # as old links had it
+        page = c.get(url).get_data(as_text=True)
+        token = __import__("re").search(r'name="csrf_token" value="([^"]+)"', page).group(1)
+        r = c.post(url, data={"csrf_token": token, "email": ADMIN, "password": "admin-test-pass",
+                              "next": "/admin/messages/1"})
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(r.headers["Location"].endswith("/admin/messages/1"))

@@ -9,8 +9,10 @@
   <link rel="icon" href="../assets/img/favicon.png" type="image/png">
   <link rel="preload" href="../assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/lang.js"></script>
   <script src="../assets/js/gate.js"></script>
   <script src="../assets/js/config.js" defer></script>
+  <script src="../assets/js/i18n.js" defer></script>
   <script src="../assets/js/main.js" defer></script>
 </head>
 <body>
@@ -34,6 +36,7 @@
     </nav>
 
     <main class="main" id="main">
+      <div data-lang-block="en" lang="en"><!-- lang:en -->
       <h1>Copernico telescope</h1>
       <div class="tel-intro panel">
         <figure class="tel-photo">
@@ -77,7 +80,101 @@
             </tbody>
           </table>
         </div>
+      </section><!-- /lang:en --></div>
+
+      <!-- ========== Italiano ========== -->
+      <div data-lang-block="it" lang="it"><!-- lang:it -->
+      <h1>Telescopio Copernico</h1>
+      <div class="tel-intro panel">
+        <figure class="tel-photo">
+          <img src="../assets/img/copernico.webp" width="450" height="600" alt="Il telescopio Copernico da 1,82 m nella sua cupola, visto dal basso, con la Luna visibile dalla fessura aperta">
+        </figure>
+        <div>
+          <p>Il Copernico da 1,82 m a Cima Ekar (Asiago) è il più grande telescopio ottico in Italia. È gestito dall’INAF – Osservatorio Astronomico di Padova ed è in uso dal 1973 per imaging, spettroscopia da bassa a medio-alta risoluzione e polarimetria.</p>
+          <p>I suoi due strumenti regolari, AFOSC (spettrografo e camera) e lo spettrografo Echelle ad alta risoluzione, vengono montati a turno seguendo il ciclo lunare; AFOSC di solito usa il tempo grigio e scuro. EKARUS si trova al fuoco Coudé.</p>
+          <p class="source">Fonte: <a href="https://www.oapd.inaf.it/sede-di-asiago/telescopes-and-instrumentations/copernico-182cm-telescope" target="_blank" rel="noopener" class="ext">INAF–OAPd, Copernico 1,82 m</a></p>
+        </div>
+      </div>
+      <section class="panel" aria-labelledby="tel-info-it">
+        <h2 id="tel-info-it">Sito e telescopio</h2>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">Posizione</th><td>Cima Ekar, Asiago (INAF – Osservatorio Astrofisico di Asiago)</td></tr>
+              <tr><th scope="row">Coordinate</th><td>45° 50′ 54,894″ N, 11° 34′ 08,397″ E, quota 1376,2 m</td></tr>
+              <tr><th scope="row">Disegno ottico</th><td>Cassegrain classico, f/9</td></tr>
+              <tr><th scope="row">Specchio primario (M1)</th><td>182 cm, Schott Duran 50; rialluminato periodicamente nella camera a vuoto di Cima Ekar</td></tr>
+              <tr><th scope="row">Specchio secondario (M2)</th><td>Si muove solo in fuoco (asse Z)</td></tr>
+              <tr><th scope="row">Fuoco Cassegrain</th><td>f/9, 12,6″/mm, a circa 20 cm dalla flangia posteriore; fuoco principale</td></tr>
+              <tr><th scope="row">Fuoco Nasmyth</th><td>Specchio terziario a 45°, lato est della forcella</td></tr>
+              <tr><th scope="row">Fuoco Coudé</th><td>Ospita EKARUS; fascio F/20,5 verso il banco. Relay aggiornato ad aprile 2026 con le nuove lenti L1 e L3</td></tr>
+              <tr><th scope="row">Puntamento</th><td>Migliore di 1′ su tutto il cielo; encoder assoluti con risoluzione ≈ 4″</td></tr>
+              <tr><th scope="row">Cupola</th><td>15 m di diametro, terzo piano; rotazione e apertura comandate da TPS, la cupola segue il telescopio automaticamente</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt"><a href="https://drive.google.com/file/d/1HzmjrbGtDefltRQDNybmxOK-sf40gIny/view?usp=sharing" target="_blank" rel="noopener" class="ext">Manuale del telescopio (PDF)</a> e <a href="https://drive.google.com/file/d/1xF5TrhGLqY7a51NERxkGRacoOGmUueg1/view?usp=drive_link" target="_blank" rel="noopener" class="ext">Breve tutorial del TPS (PDF)</a></p>
       </section>
+      <section class="panel" aria-labelledby="tel-limits-it">
+        <h2 id="tel-limits-it">Limiti operativi</h2>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">Altezza per EKARUS</th><td>30°–88°. Sotto i 30° la dispersione peggiora le prestazioni; sopra gli 80° fare attenzione, vincoli meccanici vicino allo zenit.</td></tr>
+              <tr><th scope="row">Limite fisso</th><td>Altezza minima 20°, impostata via software e da finecorsa; non portare mai il telescopio fin lì.</td></tr>
+              <tr><th scope="row">Umidità</th><td>90%: tenere la cupola chiusa. 95%: chiudere subito (allarme automatico).</td></tr>
+              <tr><th scope="row">Vento</th><td>10 m/s: tenere la cupola chiusa.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section><!-- /lang:it --></div>
+
+      <!-- ========== Français ========== -->
+      <div data-lang-block="fr" lang="fr"><!-- lang:fr -->
+      <h1>Télescope Copernico</h1>
+      <div class="tel-intro panel">
+        <figure class="tel-photo">
+          <img src="../assets/img/copernico.webp" width="450" height="600" alt="Le télescope Copernico de 1,82 m dans sa coupole, vu d’en bas, avec la Lune visible par la fente ouverte">
+        </figure>
+        <div>
+          <p>Le Copernico de 1,82 m sur le mont Ekar (Asiago) est le plus grand télescope optique d’Italie. Il est exploité par l’INAF – Observatoire astronomique de Padoue et est utilisé depuis 1973 pour l’imagerie, la spectroscopie de basse à moyenne-haute résolution et la polarimétrie.</p>
+          <p>Ses deux instruments réguliers, AFOSC (spectrographe et caméra) et le spectrographe Échelle à haute résolution, sont montés à tour de rôle selon le cycle lunaire ; AFOSC utilise en général le temps gris et sombre. EKARUS se trouve au foyer Coudé.</p>
+          <p class="source">Source : <a href="https://www.oapd.inaf.it/sede-di-asiago/telescopes-and-instrumentations/copernico-182cm-telescope" target="_blank" rel="noopener" class="ext">INAF–OAPd, Copernico 1,82 m</a></p>
+        </div>
+      </div>
+      <section class="panel" aria-labelledby="tel-info-fr">
+        <h2 id="tel-info-fr">Site et télescope</h2>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">Emplacement</th><td>Mont Ekar, Asiago (INAF – Observatoire astrophysique d’Asiago)</td></tr>
+              <tr><th scope="row">Coordonnées</th><td>45° 50′ 54,894″ N, 11° 34′ 08,397″ E, altitude 1376,2 m</td></tr>
+              <tr><th scope="row">Conception optique</th><td>Cassegrain classique, f/9</td></tr>
+              <tr><th scope="row">Miroir primaire (M1)</th><td>182 cm, Schott Duran 50 ; réaluminé périodiquement dans la chambre à vide du mont Ekar</td></tr>
+              <tr><th scope="row">Miroir secondaire (M2)</th><td>Se déplace uniquement en focus (axe Z)</td></tr>
+              <tr><th scope="row">Foyer Cassegrain</th><td>f/9, 12,6″/mm, à environ 20 cm de la bride arrière ; foyer principal</td></tr>
+              <tr><th scope="row">Foyer Nasmyth</th><td>Miroir tertiaire à 45°, côté est de la fourche</td></tr>
+              <tr><th scope="row">Foyer Coudé</th><td>Accueille EKARUS ; faisceau F/20,5 vers le banc. Relais amélioré en avril 2026 avec les nouvelles lentilles L1 et L3</td></tr>
+              <tr><th scope="row">Pointage</th><td>Meilleur que 1′ sur tout le ciel ; codeurs absolus de résolution ≈ 4″</td></tr>
+              <tr><th scope="row">Coupole</th><td>15 m de diamètre, troisième étage ; rotation et ouverture pilotées par le TPS, la coupole suit le télescope automatiquement</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt"><a href="https://drive.google.com/file/d/1HzmjrbGtDefltRQDNybmxOK-sf40gIny/view?usp=sharing" target="_blank" rel="noopener" class="ext">Manuel du télescope (PDF)</a> et <a href="https://drive.google.com/file/d/1xF5TrhGLqY7a51NERxkGRacoOGmUueg1/view?usp=drive_link" target="_blank" rel="noopener" class="ext">Court tutoriel du TPS (PDF)</a></p>
+      </section>
+      <section class="panel" aria-labelledby="tel-limits-fr">
+        <h2 id="tel-limits-fr">Limites d’utilisation</h2>
+        <div class="table-wrap">
+          <table>
+            <tbody>
+              <tr><th scope="row">Hauteur pour EKARUS</th><td>30°–88°. Sous 30°, la dispersion dégrade les performances ; au-dessus de 80°, attention aux contraintes mécaniques près du zénith.</td></tr>
+              <tr><th scope="row">Limite absolue</th><td>Hauteur minimale 20°, fixée par logiciel et par fin de course ; ne jamais y amener le télescope.</td></tr>
+              <tr><th scope="row">Humidité</th><td>90 % : garder la coupole fermée. 95 % : fermer immédiatement (alerte automatique).</td></tr>
+              <tr><th scope="row">Vent</th><td>10 m/s : garder la coupole fermée.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section><!-- /lang:fr --></div>
     </main>
 
     <nav class="side-nav nav-right" aria-label="Activities">

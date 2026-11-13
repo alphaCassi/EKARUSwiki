@@ -9,8 +9,10 @@
   <link rel="icon" href="../assets/img/favicon.png" type="image/png">
   <link rel="preload" href="../assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/lang.js"></script>
   <script src="../assets/js/gate.js"></script>
   <script src="../assets/js/config.js" defer></script>
+  <script src="../assets/js/i18n.js" defer></script>
   <script src="../assets/js/main.js" defer></script>
 </head>
 <body>
@@ -34,11 +36,28 @@
     </nav>
 
     <main class="main" id="main">
+      <div data-lang-block="en" lang="en"><!-- lang:en -->
       <h1>Observation schedule</h1>
       <section class="panel">
         <p class="lede">The observation schedule isn’t online yet.</p>
         <p>Once the EKARUSwiki server is connected, the Observation Schedule button opens it directly: register, see the open nights, submit a proposal and follow its review.</p>
-      </section>
+      </section><!-- /lang:en --></div>
+
+      <!-- ========== Italiano ========== -->
+      <div data-lang-block="it" lang="it"><!-- lang:it -->
+      <h1>Programma osservativo</h1>
+      <section class="panel">
+        <p class="lede">Il programma osservativo non è ancora online.</p>
+        <p>Quando il server EKARUSwiki sarà collegato, il pulsante Programma osservativo lo aprirà direttamente: registrazione, notti disponibili, invio di una proposta e stato della valutazione.</p>
+      </section><!-- /lang:it --></div>
+
+      <!-- ========== Français ========== -->
+      <div data-lang-block="fr" lang="fr"><!-- lang:fr -->
+      <h1>Programme d’observation</h1>
+      <section class="panel">
+        <p class="lede">Le programme d’observation n’est pas encore en ligne.</p>
+        <p>Une fois le serveur EKARUSwiki connecté, le bouton Programme d’observation l’ouvrira directement : inscription, nuits disponibles, envoi d’une proposition et suivi de son évaluation.</p>
+      </section><!-- /lang:fr --></div>
     </main>
 
     <nav class="side-nav nav-right" aria-label="Activities">

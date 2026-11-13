@@ -100,11 +100,12 @@ def login():
         email = request.form.get("email", "").strip().lower()
         db = get_db()
         user = db.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
-        if protect.is_bot(request.form.get("website")) or protect.too_many("login"):
+        if protect.is_bot(request.form.get("website")) or protect.blocked("login", email):
             protect.log_signin(email, "observer", False, "blocked")
             flash("Too many attempts from this connection. Please wait a few minutes and try again.", "error")
         elif user is None or user["password_hash"].startswith("!") or \
                 not check_password_hash(user["password_hash"], request.form.get("password", "")):
+            protect.failed("login", email)
             protect.log_signin(email, "observer", False, "wrong password")
             flash("E-mail or password is wrong.", "error")
         elif not user["verified"]:
@@ -119,6 +120,7 @@ def login():
             session.clear()
             session["user_id"] = user["id"]
             session.permanent = False
+            protect.succeeded("login", email)
             protect.log_signin(email, "observer", True)
             return redirect(_safe_next(request.args.get("next")))
     return render_template("accounts/login.html", email=email or request.args.get("email", ""))
@@ -233,11 +235,12 @@ def _start_session(user, admin_ok=False):
 def team_signin():
     email = request.form.get("email", "").strip().lower()
     nxt = request.form.get("next", "")
-    if protect.is_bot(request.form.get("website")) or protect.too_many("signin"):
+    if protect.is_bot(request.form.get("website")) or protect.blocked("signin"):
         protect.log_signin(email, "server", False, "blocked")
         flash("Too many attempts from this connection. Please wait a few minutes and try again.", "error")
         return redirect(url_for("accounts.login"))
     if not team.is_team(email):
+        protect.failed("signin")
         protect.log_signin(email, "server", False, "not on the team")
         flash("This address isn't on the EKARUS team list. Observers: sign in with your password below, "
               "or register.", "error")
@@ -252,13 +255,15 @@ def team_signin():
 @bp.route("/admin-signin", methods=["GET", "POST"])
 def admin_signin():
     """Admin pages: admin e-mail + admin password (ADMIN_PASSWORD), until the browser is closed."""
-    nxt = request.values.get("next", "")
-    email = request.values.get("email", "").strip().lower()
+    # what the person typed in the form wins over the address bar (?email=... may be empty there)
+    src = request.form if request.method == "POST" else request.args
+    nxt = src.get("next", "") or request.args.get("next", "")
+    email = src.get("email", "").strip().lower()
     configured = bool(current_app.config.get("ADMIN_PASSWORD"))
     if request.method == "GET" and g.user is not None and session.get("admin_ok") \
             and (not email or email == g.user["email"]):
         return redirect(_safe_next(nxt or url_for("admin.overview")))   # already remembered
-    if request.method == "POST" and protect.too_many("admin"):
+    if request.method == "POST" and protect.blocked("admin", email):
         protect.log_signin(email, "admin", False, "blocked")
         flash("Too many attempts from this connection. Please wait a few minutes and try again.", "error")
     elif request.method == "POST":
@@ -267,8 +272,10 @@ def admin_signin():
               and hmac.compare_digest(password.encode(), current_app.config["ADMIN_PASSWORD"].encode()))
         if ok:
             _start_session(team_user(email), admin_ok=True)
+            protect.succeeded("admin", email)
             protect.log_signin(email, "admin", True)
             return redirect(_safe_next(nxt or url_for("admin.overview")))
+        protect.failed("admin", email)
         protect.log_signin(email, "admin", False, "wrong password")
         time.sleep(1)                       # slow down guessing
         flash("Wrong e-mail or admin password.", "error")

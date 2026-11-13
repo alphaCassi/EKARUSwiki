@@ -9,8 +9,10 @@
   <link rel="icon" href="../assets/img/favicon.png" type="image/png">
   <link rel="preload" href="../assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/lang.js"></script>
   <script src="../assets/js/gate.js"></script>
   <script src="../assets/js/config.js" defer></script>
+  <script src="../assets/js/i18n.js" defer></script>
   <script src="../assets/js/main.js" defer></script>
 </head>
 <body>
@@ -34,20 +36,25 @@
     </nav>
 
     <main class="main" id="main">
+      <div data-lang-block="en" lang="en"><!-- lang:en -->
       <h1>Documentation</h1>
       <!-- To add a document: copy one <li> in the right section and replace the link and texts.
            Remove the "Link to add" placeholder once a section has real entries. -->
       <section class="panel doc-section" aria-labelledby="doc-results">
-        <h2 id="doc-results">EKARUS results</h2>
+        <h2 id="doc-results">Current performance and results</h2>
         <ul class="resource-list">
-          <li><span class="placeholder-link">Link to add</span><span>Title and short description</span></li>
+          <li><a href="https://docs.google.com/document/d/1aD06XQZAPxz-AV3NtNMBDBQ1-fMkdWoA4CRzNldiem0/edit?usp=sharing" target="_blank" rel="noopener" class="ext">WFS Channel/AO Performance</a><span>Key parameters and recent results on EKARUS AO performance, after the work done up to the AO school (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1hC3rQ3bsz0Y4ZMg1L2DX01pJjiGFzK-y_NshHTeh4bQ/edit?usp=sharing" target="_blank" rel="noopener" class="ext">RTC and ICS</a><span>Current performance of the RTC, current bottlenecks, and how the RTC and other components interface with the ICS (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1LlLkS359DC3-RF8ib1PejqZ8F90wwi1_Ff8FcGR1BLg/edit?usp=sharing" target="_blank" rel="noopener" class="ext">Throughput measurements</a><span>Throughput measurements of the bench (Google Doc).</span></li>
         </ul>
       </section>
       <section class="panel doc-section" aria-labelledby="doc-design">
         <h2 id="doc-design">Design description and analysis</h2>
         <ul class="resource-list">
-          <li><span class="placeholder-link">EKARUS VIS Design Description Document (link to add)</span><span>Final design of the VIS stage: common path, WFS channel, VIS port, beam splitters, pyramid.</span></li>
-          <li><span class="placeholder-link">Link to add</span><span>Title and short description</span></li>
+          <li><a href="https://docs.google.com/document/d/1kMIMNZK1XVFfc7NmclUcqaxEyTN7YMsiB59nScmksdA/edit?usp=sharing" target="_blank" rel="noopener" class="ext">EKARUS VIS Design Description</a><span>Final design of the VIS stage: common path, WFS channel, VIS port, beam splitters, pyramid (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1u2DKmeDyGkionl_zcSJ5GRGNQ7AUb8MDTbcdoXoML84/edit?usp=sharing" target="_blank" rel="noopener" class="ext">EKARUS Preliminary Design Analysis</a><span>Objectives of EKARUS, envisioned design and system definition, simplified first-light design and schedule, Coudé relay (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1bGxVPcG7O1dOVJVZhdmEjID5PEGw0qe0BopiIKq2eXs/edit?usp=sharing" target="_blank" rel="noopener" class="ext">EKARUS AO Analysis (draft)</a><span>SCAO simulations with ALPAO deformable mirrors and a pyramid WFS, turbulence as discrete moving layers, Karhunen-Loève mirror modes (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1G58FTW-E1T0vQMg0NJdkqfpLhbez1PC4lzqG6YtZiOo/edit?usp=sharing" target="_blank" rel="noopener" class="ext">Common Path Alignment Summary</a><span>Alignment of the common path in Padova and at Ekar: bench drawings, Zygo interferometer results, Shack-Hartmann results, alignment with the DM (Google Doc).</span></li>
         </ul>
       </section>
       <section class="panel doc-section" aria-labelledby="doc-logs">
@@ -62,8 +69,85 @@
         <h2 id="doc-guides">User guides</h2>
         <ul class="resource-list">
           <li><a href="https://docs.google.com/document/d/1H9ex08VD5dWY-KBoJTVmPBk46fKzJ3ucDNqSnA5eh1o/edit?usp=sharing" target="_blank" rel="noopener" class="ext">EKARUS User Guide</a><span>Remote connection, servers and operating procedures (Google Doc).</span></li>
+          <li><a href="https://drive.google.com/file/d/1Y3G7dmAwrk4-rTmJ_vKETFWeJ_5Opowm/view" target="_blank" rel="noopener" class="ext">EKARUS GUI guide</a><span>How to use the EKARUS graphical user interface (Google Drive file).</span></li>
+        </ul>
+      </section><!-- /lang:en --></div>
+
+      <!-- ========== Italiano ========== -->
+      <div data-lang-block="it" lang="it"><!-- lang:it -->
+      <h1>Documentazione</h1>
+      <!-- To add a document: copy one <li> in the right section and replace the link and texts.
+           Remove the "Link to add" placeholder once a section has real entries. -->
+      <section class="panel doc-section" aria-labelledby="doc-results-it">
+        <h2 id="doc-results-it">Prestazioni attuali e risultati</h2>
+        <ul class="resource-list">
+          <li><a href="https://docs.google.com/document/d/1aD06XQZAPxz-AV3NtNMBDBQ1-fMkdWoA4CRzNldiem0/edit?usp=sharing" target="_blank" rel="noopener" class="ext">WFS Channel/AO Performance</a><span>Parametri principali e risultati recenti sulle prestazioni AO di EKARUS, dopo il lavoro svolto fino alla scuola AO (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1hC3rQ3bsz0Y4ZMg1L2DX01pJjiGFzK-y_NshHTeh4bQ/edit?usp=sharing" target="_blank" rel="noopener" class="ext">RTC and ICS</a><span>Prestazioni attuali dell’RTC, colli di bottiglia attuali e interfaccia dell’RTC e degli altri componenti con l’ICS (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1LlLkS359DC3-RF8ib1PejqZ8F90wwi1_Ff8FcGR1BLg/edit?usp=sharing" target="_blank" rel="noopener" class="ext">Throughput measurements</a><span>Misure di trasmissione del banco (Google Doc).</span></li>
         </ul>
       </section>
+      <section class="panel doc-section" aria-labelledby="doc-design-it">
+        <h2 id="doc-design-it">Descrizione del progetto e analisi</h2>
+        <ul class="resource-list">
+          <li><a href="https://docs.google.com/document/d/1kMIMNZK1XVFfc7NmclUcqaxEyTN7YMsiB59nScmksdA/edit?usp=sharing" target="_blank" rel="noopener" class="ext">EKARUS VIS Design Description</a><span>Progetto finale dello stadio VIS: cammino comune, canale WFS, porta VIS, beam splitter, piramide (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1u2DKmeDyGkionl_zcSJ5GRGNQ7AUb8MDTbcdoXoML84/edit?usp=sharing" target="_blank" rel="noopener" class="ext">EKARUS Preliminary Design Analysis</a><span>Obiettivi di EKARUS, progetto previsto e definizione del sistema, progetto semplificato e programma della prima luce, relay Coudé (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1bGxVPcG7O1dOVJVZhdmEjID5PEGw0qe0BopiIKq2eXs/edit?usp=sharing" target="_blank" rel="noopener" class="ext">EKARUS AO Analysis (draft)</a><span>Simulazioni SCAO con specchi deformabili ALPAO e WFS a piramide, turbolenza come strati discreti in movimento, modi Karhunen-Loève dello specchio (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1G58FTW-E1T0vQMg0NJdkqfpLhbez1PC4lzqG6YtZiOo/edit?usp=sharing" target="_blank" rel="noopener" class="ext">Common Path Alignment Summary</a><span>Allineamento del cammino comune a Padova e a Ekar: disegni del banco, risultati dell’interferometro Zygo, risultati Shack-Hartmann, allineamento con il DM (Google Doc).</span></li>
+        </ul>
+      </section>
+      <section class="panel doc-section" aria-labelledby="doc-logs-it">
+        <h2 id="doc-logs-it">Registri</h2>
+        <ul class="resource-list">
+          <li><a href="https://docs.google.com/document/d/1Ubp4C5YQ-12_DxTC8BT6lQ8FYDL9XXZowGN5ggRi_ag/edit?usp=sharing" target="_blank" rel="noopener" class="ext">Logbook AIT – Cima Ekar – Prima luce di EKARUS</a><span>Registro dell’integrazione e della prima luce al telescopio (Google Doc).</span></li>
+          <li><a href="https://drive.google.com/drive/folders/1cGtpA7Er1R06fXfXAvy8--reHQ8Mr_3k?usp=sharing" target="_blank" rel="noopener" class="ext">Registri e piani osservativi</a><span>Registri osservativi e piani delle notti (cartella Google Drive).</span></li>
+          <li><a href="http://docs.google.com/document/d/1-VrgN3xVxW5k9SAMOnQDpDM2Jba-WhSM5BFiy24CCkY/edit?tab=t.0" target="_blank" rel="noopener" class="ext">Logbook AIT del cammino comune (Padova)</a><span>Allineamento del cammino comune a Padova, completato a giugno 2026 (Google Doc).</span></li>
+        </ul>
+      </section>
+      <section class="panel doc-section" aria-labelledby="doc-guides-it">
+        <h2 id="doc-guides-it">Guide utente</h2>
+        <ul class="resource-list">
+          <li><a href="https://docs.google.com/document/d/1H9ex08VD5dWY-KBoJTVmPBk46fKzJ3ucDNqSnA5eh1o/edit?usp=sharing" target="_blank" rel="noopener" class="ext">Guida utente di EKARUS</a><span>Connessione remota, server e procedure operative (Google Doc).</span></li>
+          <li><a href="https://drive.google.com/file/d/1Y3G7dmAwrk4-rTmJ_vKETFWeJ_5Opowm/view" target="_blank" rel="noopener" class="ext">Guida alla GUI di EKARUS</a><span>Come usare l’interfaccia grafica di EKARUS (file su Google Drive).</span></li>
+        </ul>
+      </section><!-- /lang:it --></div>
+
+      <!-- ========== Français ========== -->
+      <div data-lang-block="fr" lang="fr"><!-- lang:fr -->
+      <h1>Documentation</h1>
+      <!-- To add a document: copy one <li> in the right section and replace the link and texts.
+           Remove the "Link to add" placeholder once a section has real entries. -->
+      <section class="panel doc-section" aria-labelledby="doc-results-fr">
+        <h2 id="doc-results-fr">Performances actuelles et résultats</h2>
+        <ul class="resource-list">
+          <li><a href="https://docs.google.com/document/d/1aD06XQZAPxz-AV3NtNMBDBQ1-fMkdWoA4CRzNldiem0/edit?usp=sharing" target="_blank" rel="noopener" class="ext">WFS Channel/AO Performance</a><span>Paramètres principaux et résultats récents sur les performances OA d’EKARUS, après le travail mené jusqu’à l’école OA (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1hC3rQ3bsz0Y4ZMg1L2DX01pJjiGFzK-y_NshHTeh4bQ/edit?usp=sharing" target="_blank" rel="noopener" class="ext">RTC and ICS</a><span>Performances actuelles du RTC, goulets d’étranglement actuels et interfaçage du RTC et des autres composants avec l’ICS (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1LlLkS359DC3-RF8ib1PejqZ8F90wwi1_Ff8FcGR1BLg/edit?usp=sharing" target="_blank" rel="noopener" class="ext">Throughput measurements</a><span>Mesures de transmission du banc (Google Doc).</span></li>
+        </ul>
+      </section>
+      <section class="panel doc-section" aria-labelledby="doc-design-fr">
+        <h2 id="doc-design-fr">Description de la conception et analyses</h2>
+        <ul class="resource-list">
+          <li><a href="https://docs.google.com/document/d/1kMIMNZK1XVFfc7NmclUcqaxEyTN7YMsiB59nScmksdA/edit?usp=sharing" target="_blank" rel="noopener" class="ext">EKARUS VIS Design Description</a><span>Conception finale de l’étage VIS : chemin commun, voie WFS, port VIS, séparatrices, pyramide (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1u2DKmeDyGkionl_zcSJ5GRGNQ7AUb8MDTbcdoXoML84/edit?usp=sharing" target="_blank" rel="noopener" class="ext">EKARUS Preliminary Design Analysis</a><span>Objectifs d’EKARUS, conception envisagée et définition du système, conception simplifiée et calendrier de la première lumière, relais Coudé (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1bGxVPcG7O1dOVJVZhdmEjID5PEGw0qe0BopiIKq2eXs/edit?usp=sharing" target="_blank" rel="noopener" class="ext">EKARUS AO Analysis (draft)</a><span>Simulations SCAO avec miroirs déformables ALPAO et WFS à pyramide, turbulence modélisée par des couches discrètes en mouvement, modes de Karhunen-Loève du miroir (Google Doc).</span></li>
+          <li><a href="https://docs.google.com/document/d/1G58FTW-E1T0vQMg0NJdkqfpLhbez1PC4lzqG6YtZiOo/edit?usp=sharing" target="_blank" rel="noopener" class="ext">Common Path Alignment Summary</a><span>Alignement du chemin commun à Padoue et à Ekar : plans du banc, résultats de l’interféromètre Zygo, résultats Shack-Hartmann, alignement avec le DM (Google Doc).</span></li>
+        </ul>
+      </section>
+      <section class="panel doc-section" aria-labelledby="doc-logs-fr">
+        <h2 id="doc-logs-fr">Journaux</h2>
+        <ul class="resource-list">
+          <li><a href="https://docs.google.com/document/d/1Ubp4C5YQ-12_DxTC8BT6lQ8FYDL9XXZowGN5ggRi_ag/edit?usp=sharing" target="_blank" rel="noopener" class="ext">Journal AIT – Cima Ekar – Première lumière d’EKARUS</a><span>Journal de l’intégration et de la première lumière au télescope (Google Doc).</span></li>
+          <li><a href="https://drive.google.com/drive/folders/1cGtpA7Er1R06fXfXAvy8--reHQ8Mr_3k?usp=sharing" target="_blank" rel="noopener" class="ext">Journaux et plans d’observation</a><span>Journaux d’observation et plans de nuit (dossier Google Drive).</span></li>
+          <li><a href="http://docs.google.com/document/d/1-VrgN3xVxW5k9SAMOnQDpDM2Jba-WhSM5BFiy24CCkY/edit?tab=t.0" target="_blank" rel="noopener" class="ext">Journal AIT du chemin commun (Padoue)</a><span>Alignement du chemin commun à Padoue, terminé en juin 2026 (Google Doc).</span></li>
+        </ul>
+      </section>
+      <section class="panel doc-section" aria-labelledby="doc-guides-fr">
+        <h2 id="doc-guides-fr">Guides d’utilisation</h2>
+        <ul class="resource-list">
+          <li><a href="https://docs.google.com/document/d/1H9ex08VD5dWY-KBoJTVmPBk46fKzJ3ucDNqSnA5eh1o/edit?usp=sharing" target="_blank" rel="noopener" class="ext">Guide d’utilisation d’EKARUS</a><span>Connexion à distance, serveurs et procédures d’exploitation (Google Doc).</span></li>
+          <li><a href="https://drive.google.com/file/d/1Y3G7dmAwrk4-rTmJ_vKETFWeJ_5Opowm/view" target="_blank" rel="noopener" class="ext">Guide de la GUI d’EKARUS</a><span>Utilisation de l’interface graphique d’EKARUS (fichier Google Drive).</span></li>
+        </ul>
+      </section><!-- /lang:fr --></div>
     </main>
 
     <nav class="side-nav nav-right" aria-label="Activities">

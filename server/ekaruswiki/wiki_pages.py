@@ -28,9 +28,14 @@ def _fetch(path):
         return url, r.read().decode("utf-8", "replace")
 
 
-def _main_part(html):
+def _main_part(html, lang="en"):
     m = re.search(r'<main[^>]*>(.*?)</main>', html, re.S)
-    return m.group(1) if m else ""
+    main = m.group(1) if m else ""
+    # wiki pages keep one block per language: use the requested one (English by default)
+    b = re.search(r"<!-- lang:%s -->(.*?)<!-- /lang:%s -->" % (lang, lang), main, re.S)
+    if b is None and lang != "en":
+        b = re.search(r"<!-- lang:en -->(.*?)<!-- /lang:en -->", main, re.S)
+    return b.group(1) if b else main
 
 
 def _absolute(html, page_url):

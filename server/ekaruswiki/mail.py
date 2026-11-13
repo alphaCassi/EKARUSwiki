@@ -23,7 +23,7 @@ def send(to, subject, template, reply_to=None, **context):
     if isinstance(to, str):
         to = [to]
     cfg = current_app.config
-    context.setdefault("base_url", cfg["BASE_URL"])
+    context.setdefault("base_url", cfg["BASE_URL"].rstrip("/"))
     body = render_template(f"email/{template}.txt", **context)
 
     msg = EmailMessage()

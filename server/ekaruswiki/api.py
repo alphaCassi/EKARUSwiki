@@ -12,7 +12,7 @@ import re
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlsplit
 
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, current_app, jsonify, request, url_for
 
 from . import mail
 from .db import get_db, now
@@ -92,7 +92,7 @@ def contact():
     subject = (f"Wiki access request from {f['name']}" if kind == "access"
                else f"Wiki change request: {f['topic']}")
     mail.send(mail.admin_addresses(), subject, "message_admin", reply_to=f["email"], m=msg,
-              link=f"/admin/messages/{msg['id']}")
+              link=url_for("admin.message", mid=msg["id"]))
     return jsonify(ok=True)
 
 
@@ -109,12 +109,13 @@ def signin():
     if protect.is_bot(data.get("website")):
         protect.log_signin(email, "wiki", False, "bot trap")
         return fail("This address isn't on the team list. Request access below.", 403)
-    if protect.too_many("signin"):
+    if protect.blocked("signin"):
         protect.log_signin(email, "wiki", False, "blocked")
         return fail("Too many attempts from this connection. Please wait a few minutes and try again.", 429)
     if not EMAIL_RE.match(email):
         return fail("Enter a valid e-mail address.")
     if not team.is_team(email):
+        protect.failed("signin")
         protect.log_signin(email, "wiki", False, "not on the team")
         return fail("This address isn't on the team list. Request access below.", 403)
     user = team_user(email)

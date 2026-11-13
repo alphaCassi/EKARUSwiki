@@ -9,8 +9,10 @@
   <link rel="icon" href="../assets/img/favicon.png" type="image/png">
   <link rel="preload" href="../assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/lang.js"></script>
   <script src="../assets/js/gate.js"></script>
   <script src="../assets/js/config.js" defer></script>
+  <script src="../assets/js/i18n.js" defer></script>
   <script src="../assets/js/main.js" defer></script>
 </head>
 <body>
@@ -36,8 +38,9 @@
     <main class="main" id="main">
       <h1>To do’s</h1>
       <section class="panel">
-        <!-- When "todoSheetUrl" is set in assets/js/config.js, this table is replaced by the
-             live list from the Google Sheet. The rows below are shown otherwise. -->
+        <!-- The list below is replaced by the live list from the Google spreadsheet in the link
+             at the bottom (data-todo-file). To use another spreadsheet, change only that link.
+             The rows below are shown if the spreadsheet can't be read. -->
         <div class="table-wrap">
           <table data-todo-table>
             <thead><tr><th scope="col">Task</th><th scope="col">Owner</th><th scope="col">Due</th><th scope="col">Status</th></tr></thead>
@@ -50,8 +53,7 @@
           </table>
         </div>
         <p class="source" data-todo-source></p>
-        <p class="mt"><a class="ext" data-todo-file href="#" target="_blank" rel="noopener">EKARUS To-do spreadsheet</a>
-          <span class="muted small" data-todo-file-note>(resources/EKARUS_todo.xlsx in the EKARUSwiki GitHub repository)</span></p>
+        <p class="mt"><a class="ext" data-todo-file href="https://docs.google.com/spreadsheets/d/1VvPWcZKfvhgCKInqclsl2W2EcVLWb9vOytEDBfsnv6Q/edit?usp=sharing" target="_blank" rel="noopener">EKARUS To-do spreadsheet</a></p>
       </section>
     </main>
 

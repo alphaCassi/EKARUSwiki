@@ -13,6 +13,11 @@
     <h2>Banner</h2>
     <label class="field">Text under the logo on every page <span class="hint">e.g. "Upcoming: …"</span>
       <input name="banner" value="{{ site.banner }}" maxlength="200"></label>
+    <div class="row">
+      <label class="field grow" lang="it">Italiano <input name="banner_it" value="{{ site.banner_it }}" maxlength="200"></label>
+      <label class="field grow" lang="fr">Français <input name="banner_fr" value="{{ site.banner_fr }}" maxlength="200"></label>
+    </div>
+    <p class="muted small">Empty Italian or French fields show the English text.</p>
   </section>
   <section class="card">
     <h2>Main picture <span class="hint">optional, shown above the highlights</span></h2>
@@ -41,6 +46,18 @@
             <select name="h_done"><option value="">—</option><option value="yes" {% if h.done %}selected{% endif %}>Done</option></select></label>
         </div>
         <label class="field">Text <textarea name="h_text" rows="2" maxlength="1500">{{ h.text }}</textarea></label>
+        <details class="lang-fields">
+          <summary>Italiano e Français{% if h.title_it or h.title_fr or h.text_it or h.text_fr %} <span class="muted small">(filled in)</span>{% endif %}</summary>
+          <div class="row">
+            <label class="field grow" lang="it">Titolo <input name="h_title_it" value="{{ h.title_it }}" maxlength="200"></label>
+            <label class="field grow" lang="fr">Titre <input name="h_title_fr" value="{{ h.title_fr }}" maxlength="200"></label>
+          </div>
+          <div class="row">
+            <label class="field grow" lang="it">Testo <textarea name="h_text_it" rows="2" maxlength="1500">{{ h.text_it }}</textarea></label>
+            <label class="field grow" lang="fr">Texte <textarea name="h_text_fr" rows="2" maxlength="1500">{{ h.text_fr }}</textarea></label>
+          </div>
+          <p class="muted small">Empty fields show the English text.</p>
+        </details>
         <input type="hidden" name="h_image_keep" value="{{ h.image.src if h.image else '' }}">
         <div class="row">
           <label class="field grow">Picture <span class="hint">optional</span>

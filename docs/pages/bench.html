@@ -9,8 +9,10 @@
   <link rel="icon" href="../assets/img/favicon.png" type="image/png">
   <link rel="preload" href="../assets/fonts/barlow-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/main.css">
+  <script src="../assets/js/lang.js"></script>
   <script src="../assets/js/gate.js"></script>
   <script src="../assets/js/config.js" defer></script>
+  <script src="../assets/js/i18n.js" defer></script>
   <script src="../assets/js/main.js" defer></script>
 </head>
 <body>
@@ -34,6 +36,7 @@
     </nav>
 
     <main class="main" id="main">
+      <div data-lang-block="en" lang="en"><!-- lang:en -->
       <h1>Bench architecture</h1>
       <figure class="bench-overview figure-frame">
         <img src="../assets/img/bench-schematic.webp" width="1346" height="1051"
@@ -259,7 +262,465 @@
             </div>
           </section>
         </div>
-      </div>
+      </div><!-- /lang:en --></div>
+
+      <!-- ========== Italiano ========== -->
+      <div data-lang-block="it" lang="it"><!-- lang:it -->
+      <h1>Architettura del banco</h1>
+      <figure class="bench-overview figure-frame">
+        <img src="../assets/img/bench-schematic.webp" width="1346" height="1051"
+             alt="Schema del banco EKARUS: relay Coudé dal telescopio Copernico, cammino comune con specchio deformabile e tip-tilt veloce, cammino VIS (sensore WFS e imager), cammino IR, unità di calibrazione e simulatore di telescopio">
+        <figcaption>EKARUS è un banco di ottica adattiva a singola coniugazione (SCAO) al fuoco Coudé del telescopio Copernico. Scegli un sottosistema qui sotto per i dettagli.</figcaption>
+      </figure>
+      <figure class="bench-photo">
+        <img src="../assets/img/bench-photo.webp" width="1600" height="739" loading="lazy"
+             alt="Foto del banco ottico EKARUS: specchi, camere e montature su breadboard sul tavolo ottico">
+        <figcaption>Il banco EKARUS.</figcaption>
+      </figure>
+
+      <div class="bench-detail">
+        <nav class="subsystems" aria-labelledby="subs-title-it" data-subsystems>
+          <h2 id="subs-title-it">Sottosistemi</h2>
+          <ul>
+            <li><button type="button" data-target="common-path-it" aria-controls="common-path-it" aria-pressed="false">Cammino comune</button></li>
+            <li><button type="button" data-target="wfs-channel-it" aria-controls="wfs-channel-it" aria-pressed="false">Canale WFS</button></li>
+            <li><button type="button" data-target="vis-imager-it" aria-controls="vis-imager-it" aria-pressed="false">Imager VIS</button></li>
+            <li><button type="button" data-target="ir-channel-it" aria-controls="ir-channel-it" aria-pressed="false">Canale IR</button></li>
+            <li><button type="button" data-target="calibration-unit-it" aria-controls="calibration-unit-it" aria-pressed="false">Doppia unità di calibrazione</button></li>
+            <li><button type="button" data-target="rtc-ics-it" aria-controls="rtc-ics-it" aria-pressed="false">RTC e ICS</button></li>
+          </ul>
+        </nav>
+        <div class="subsystem-panels">
+          <section class="panel subsystem-panel" id="specifications-it" aria-labelledby="specs-title-it">
+            <h2 id="specs-title-it">Specifiche</h2>
+            <div class="table-wrap">
+              <table>
+                <caption>Specifiche ottiche</caption>
+                <tbody>
+                  <tr><th scope="row">Fascio d’ingresso</th><td>F/20,5 dal fuoco Coudé</td></tr>
+                  <tr><th scope="row">Separazione VIS / NIR</th><td>Dicroico passa-alto: &lt;900 nm riflesso verso il VIS, NIR trasmesso (tramite FM7)</td></tr>
+                  <tr><th scope="row">Porta scientifica VIS</th><td>Telecentrico F/20,5, campo di 1′ senza vignettatura, 5,53″/mm, ottimizzato per 600–900 nm</td></tr>
+                  <tr><th scope="row">Piano focale WFS e GSC</th><td>F/45</td></tr>
+                  <tr><th scope="row">Cammino comune</th><td>Dal selettore al dicroico su un’unica breadboard da 600 × 450 mm</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <caption>Specifiche AO</caption>
+                <tbody>
+                  <tr><th scope="row">Specchio deformabile</th><td>ALPAO DM468: 468 attuatori (24×24), apertura utile 33 mm</td></tr>
+                  <tr><th scope="row">Pupilla sul DM</th><td>31,6 mm non proiettata; 31,6 × 32,3 mm a 12° di incidenza (margine ±0,4 mm)</td></tr>
+                  <tr><th scope="row">Sensore di fronte d’onda</th><td>Doppia piramide (N-BK7, 3,05°), camera OCAM2K (pixel da 24 µm)</td></tr>
+                  <tr><th scope="row">Campionamento della pupilla</th><td>Pupille da 42 px, separazione 2,49 mm (104 px)</td></tr>
+                  <tr><th scope="row">Modulatore</th><td>Tip-tilt PI-E727, pupilla 7,3 mm, incidenza 14°</td></tr>
+                  <tr><th scope="row">Tip-tilt veloce</th><td>130 mm a monte del DM; 0,008° per arcosecondo in cielo</td></tr>
+                  <tr><th scope="row">Stabilizzatore di pupilla</th><td>Passo &lt;0,01° (obiettivo &lt;0,001°)</td></tr>
+                  <tr><th scope="row">Intervallo operativo</th><td>Stella guida mag 0–11,2</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <caption>Caratteristiche dello strumento</caption>
+                <tbody>
+                  <tr><th scope="row">Lunghezza d’onda</th><td>VIS 500–900 nm, NIR 1000–1700 nm</td></tr>
+                  <tr><th scope="row">Campo scientifico</th><td>1 arcominuto sia per il VIS sia per il NIR</td></tr>
+                  <tr><th scope="row">Campo del PWFS</th><td>8 arcosecondi</td></tr>
+                  <tr><th scope="row">Trasmissione</th><td>Scienza 4–8%, PWFS 6–12%</td></tr>
+                  <tr><th scope="row">Camere</th><td>ORCA per il VIS, CRED2 per il NIR</td></tr>
+                </tbody>
+              </table>
+            </div>
+              <p class="source">Fonti: Design Description Document (EKARUS VIS); tutorial OAO 2026.</p>
+          </section>
+          <section class="panel subsystem-panel" id="common-path-it" aria-labelledby="common-path-title-it">
+            <h2 id="common-path-title-it">Cammino comune</h2>
+            <p>Lo specchio selettore, subito dopo il piano focale Coudé, funziona anche da stabilizzatore di pupilla. OAP1 forma l’immagine della pupilla sul DM, con uno specchio tip-tilt veloce a monte per scaricare il tip-tilt dal DM. OAP2, identico a OAP1, forma un piano focale intermedio. FM5 e FM6 ripiegano il fascio così che tutto, da OAP1 al dicroico, stia su un’unica breadboard.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Componenti</caption>
+                <tbody>
+                  <tr><th scope="row">Stabilizzatore di pupilla</th><td>30 mm dopo il fuoco F/20,5. Inclinazione di 1°: spostamento della PSF 1,05 mm (5,8″ in cielo), spostamento della pupilla 73% del diametro. Massimo necessario ≈ 0,33° per una deriva di pupilla del 25% (deriva del campo ≈ 1,9″).</td></tr>
+                  <tr><th scope="row">Tip-tilt veloce</th><td>130 mm a monte del DM. 1″ in cielo = rotazione di 0,008° = spostamento della pupilla dello 0,11% sul DM.</td></tr>
+                  <tr><th scope="row">DM468</th><td>Pupilla 31,6 mm, incidenza 12° → 31,6 × 32,3 mm su un’apertura utile di 33 mm. Flat misurato ≈ 6 nm RMS, corsa TT ≈ 15 µm di superficie.</td></tr>
+                  <tr><th scope="row">Dicroico</th><td>Passa-alto, incidenza 15°. Componente su misura con cuneo di 0,1° sulla seconda faccia per ridurre astigmatismo e NCPA; preventivi in attesa.</td></tr>
+                  <tr><th scope="row">Stato</th><td>Allineato a Padova (giugno 2026), WFE trasmesso ≈ 55 nm RMS su 33 mm.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <h3 class="mt">Documenti</h3>
+            <ul class="doc-links">
+              <li>Design Description Document (EKARUS VIS): cammino comune, stabilizzatore di pupilla, tip-tilt, DM, dicroico (link da aggiungere)</li>
+              <li><a href="http://docs.google.com/document/d/1-VrgN3xVxW5k9SAMOnQDpDM2Jba-WhSM5BFiy24CCkY/edit?tab=t.0" target="_blank" rel="noopener" class="ext">Logbook AIT del cammino comune (Padova)</a></li>
+              <li><a href="#">Interferometria dell’allineamento del cammino comune (link da aggiungere)</a></li>
+            </ul>
+          </section>
+          <section class="panel subsystem-panel" id="wfs-channel-it" aria-labelledby="wfs-channel-title-it">
+            <h2 id="wfs-channel-title-it">Canale WFS</h2>
+            <figure class="figure-frame">
+              <img src="../assets/img/wfs-channel.webp" width="1466" height="833" loading="lazy"
+                   alt="Schema ottico del canale WFS: specchio deformabile, OAP2, dicroico, lente di focalizzazione, modulatore tip-tilt, doppia piramide e camera WFS, camera CBLUE">
+            </figure>
+            <p class="mt">BS1 invia circa il 30% della luce visibile alla porta VIS. Una lente di re-imaging porta la pupilla sul modulatore e forma un fuoco F/45. BS2 invia circa il 10% alla Gain Scheduling Camera (GSC) e il 90% alla piramide. Uno specchio di rinvio prima del fuoco della piramide può alimentare WFS ospiti.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Componenti</caption>
+                <tbody>
+                  <tr><th scope="row">BS1</th><td>Thorlabs BSS10 (30:70) o BSN10 (10:90), silice fusa UV, cuneo di 30′, usato a 20° di incidenza</td></tr>
+                  <tr><th scope="row">BS2</th><td>Stesse opzioni di BS1, 10:90 verso la GSC</td></tr>
+                  <tr><th scope="row">Modulatore (PI-E727)</th><td>Pupilla 7,3 mm (non proiettata), incidenza 14° (deflessione 28°). 1 λ/D a 800 nm = 0,003° su un asse, 0,003°/cos 14° sull’altro.</td></tr>
+                  <tr><th scope="row">Doppia piramide</th><td>Arcetri, due piramidi in N-BK7 incollate, angolo delle facce 3,05°, F/45. Angolo del cono 0,64°, deviazione 1,577°. WFE RMS medio al vertice 56 nm; 90% dell’EE entro ≈ 93 µm.</td></tr>
+                  <tr><th scope="row">Re-imager di pupilla</th><td>AC254-045-B: pupille da 42 px, separazione 2,49 mm (104 px). (AC254-060-B darebbe 55,5 px e 3,32 mm / 138 px.)</td></tr>
+                  <tr><th scope="row">Camera WFS</th><td>OCAM2K, pixel da 24 µm</td></tr>
+                  <tr><th scope="row">Camera GSC</th><td>C-Blue, F/45, campo di 30″, 2,52″/mm, pupilla d’uscita 330 mm prima del fuoco. Campo di 18,4 × 13,9″, 23 mas/px, λ/D a 600 nm = 68 mas (3 px).</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <caption>Rimozione di un beam splitter</caption>
+                <tbody>
+                  <tr><th scope="row">BS1 rimosso</th><td>Defocus 123 nm RMS (spostamento del fuoco 6,9 mm a F/45), astigmatismo 19 nm RMS. Deviazione di 4,4 mrad: spostamento della PSF ≈ 700 mas, della pupilla ≈ 10%.</td></tr>
+                  <tr><th scope="row">BS2 rimosso</th><td>Defocus 21 nm RMS (spostamento del fuoco 1,2 mm alla piramide), astigmatismo 10 nm RMS. Spostamento della PSF ≈ 380 mas, della pupilla ≈ 18%.</td></tr>
+                </tbody>
+              </table>
+            </div>
+              <p class="source">Fonte: Design Description Document (EKARUS VIS). Valori del progetto nominale, senza tolleranze di fabbricazione.</p>
+            <h3 class="mt">Documenti</h3>
+            <ul class="doc-links">
+              <li>Design Description Document (EKARUS VIS): BS1, BS2, modulatore, piramide, re-imager di pupilla (link da aggiungere)</li>
+              <li><a href="#">Caratterizzazione del WFS a piramide (link da aggiungere)</a></li>
+            </ul>
+          </section>
+          <section class="panel subsystem-panel" id="vis-imager-it" aria-labelledby="vis-imager-title-it">
+            <h2 id="vis-imager-title-it">Imager VIS</h2>
+            <p>La porta scientifica VIS riceve circa il 30% della luce visibile riflessa da BS1. La sua camera è una Hamamatsu ORCA-Flash4.0 LT3 (C11440-42U40), una camera CMOS scientifica.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Caratteristiche</caption>
+                <tbody>
+                  <tr><th scope="row">Fascio</th><td>Telecentrico F/20,5</td></tr>
+                  <tr><th scope="row">Campo di vista</th><td>1′ di diametro, senza vignettatura</td></tr>
+                  <tr><th scope="row">Scala di piatto</th><td>5,53″/mm</td></tr>
+                  <tr><th scope="row">Lunghezza d’onda</th><td>Ottimizzato per 600–900 nm; lunghezze d’onda più corte possibili con prestazioni ridotte (fuoco cromatico differenziale non corretto)</td></tr>
+                  <tr><th scope="row">Sulla ORCA-Flash4.0 LT3</th><td>35,9 mas/pixel; il sensore da 13,3 mm copre 73,6″ × 73,6″, quindi l’intero campo di 1′ è coperto. λ/D è campionato da 1,9 px a 600 nm e 2,5 px a 800 nm</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="source">Fonte: Design Description Document (EKARUS VIS). Spot diagram e WFE RMS in funzione del campo sono nel documento. Valori sulla ORCA calcolati dai suoi pixel da 6,5 µm e dalla scala di 5,53″/mm.</p>
+
+            <div class="table-wrap mt">
+              <table>
+                <caption>Camera ORCA-Flash4.0 LT3 (Hamamatsu C11440-42U40)</caption>
+                <tbody>
+                  <tr><th scope="row">Sensore</th><td>CMOS scientifico, 2048 × 2048 pixel, 6,5 µm × 6,5 µm; area efficace 13,312 mm × 13,312 mm</td></tr>
+                  <tr><th scope="row">Rumore di lettura</th><td>Standard scan: 0,9 e⁻ mediana, 1,5 e⁻ rms. Rapid rolling: 1,3 e⁻ mediana, 1,9 e⁻ rms</td></tr>
+                  <tr><th scope="row">Frame rate, quadro intero</th><td>30 fps (standard scan), 40 fps (rapid rolling); più veloce con sub-array, fino a 25 000 fps</td></tr>
+                  <tr><th scope="row">Tempo di esposizione</th><td>Da 3 ms a 10 s (standard scan), da 1 ms a 10 s (rapid rolling); più breve con sub-array</td></tr>
+                  <tr><th scope="row">Full well, conversione</th><td>30 000 e⁻; 0,46 e⁻/conteggio; uscita a 16 bit</td></tr>
+                  <tr><th scope="row">Corrente di buio</th><td>0,6 e⁻/pixel/s con il sensore a +10 °C</td></tr>
+                  <tr><th scope="row">Raffreddamento</th><td>Peltier e ventola, sensore a +10 °C; stabile circa 5 minuti dopo l’accensione. Temperatura ambiente consigliata 20–25 °C</td></tr>
+                  <tr><th scope="row">Efficienza quantica</th><td>Picco di circa 82% vicino a 550–600 nm; circa 70% a 700 nm, 50% a 800 nm, 23% a 900 nm</td></tr>
+                  <tr><th scope="row">Modalità di lettura</th><td>Quadro intero, binning 2 × 2 e 4 × 4, sub-array (rolling shutter, lettura dal centro verso l’esterno)</td></tr>
+                  <tr><th scope="row">Trigger</th><td>Free running, trigger esterno su fronte, su livello, synchronous readout e start trigger; global reset; uscite di temporizzazione programmabili (SMA)</td></tr>
+                  <tr><th scope="row">Interfaccia, attacco</th><td>USB 3.1 Gen 1; attacco C (non avvitare nulla oltre i 7 mm)</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="source">Fonte: manuale d’istruzioni ORCA-Flash4.0 LT3 C11440-42U40, Hamamatsu, ver. 1.1 (dic 2022). Valori di QE letti dalla curva di risposta spettrale tipica.</p>
+
+            <div class="callout mt">
+              <h3>Filtri davanti alla camera</h3>
+              <p>Di solito mettiamo un filtro a banda stretta o un filtro a densità neutra (ND) davanti alla ORCA. Un filtro di spessore <em>t</em> e indice <em>n</em> nel fascio convergente sposta indietro il fuoco di circa <em>t</em>(<em>n</em> − 1)/<em>n</em> (circa un terzo del suo spessore per il vetro). La ORCA è allineata tenendo conto di questo defocus: è a fuoco con un filtro montato. Togliere il filtro, o usarne uno di spessore diverso, richiede di rifocheggiare.</p>
+              <p>Non far arrivare luce intensa sul sensore senza un filtro ND: il manuale avverte che troppa luce, per esempio un laser ad alta energia, può danneggiare il sensore CMOS.</p>
+            </div>
+          </section>
+          <section class="panel subsystem-panel" id="ir-channel-it" aria-labelledby="ir-channel-title-it">
+            <h2 id="ir-channel-title-it">Canale IR</h2>
+            <p>La luce oltre i 900 nm attraversa il dicroico e viene deviata da FM7 verso il canale NIR.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Caratteristiche</caption>
+                <tbody>
+                  <tr><th scope="row">Lunghezza d’onda</th><td>1000–1700 nm</td></tr>
+                  <tr><th scope="row">Campo di vista</th><td>1 arcominuto</td></tr>
+                  <tr><th scope="row">Camera</th><td>CRED2</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="empty mt">Disegno ottico e documenti da aggiungere.</p>
+          </section>
+          <section class="panel subsystem-panel" id="calibration-unit-it" aria-labelledby="calibration-unit-title-it">
+            <h2 id="calibration-unit-title-it">Doppia unità di calibrazione</h2>
+            <p>L’unità di calibrazione e il simulatore di telescopio alimentano il banco con sorgenti artificiali e turbolenza, tramite uno specchio ribaltabile nel cammino comune.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Componenti</caption>
+                <tbody>
+                  <tr><th scope="row">Sorgenti</th><td>VIS 635 nm, IR 1550 nm, attraverso un pinhole</td></tr>
+                  <tr><th scope="row">Turbolenza</th><td>Schermi di fase</td></tr>
+                  <tr><th scope="row">Stato</th><td>Hardware ricevuto a Teramo; allineamento previsto per luglio 2026, poi trasporto ad Asiago e commissioning</td></tr>
+                </tbody>
+              </table>
+            </div>
+              <p class="source">Fonti: schema del banco; <a href="https://sites.google.com/inaf.it/adoni-coude/ekarus" target="_blank" rel="noopener" class="ext">Newsletter aprile–maggio 2026</a>.</p>
+          </section>
+          <section class="panel subsystem-panel" id="rtc-ics-it" aria-labelledby="rtc-ics-title-it">
+            <h2 id="rtc-ics-title-it">RTC e ICS</h2>
+            <!-- Replace the placeholders: description text, schematic image, latency values. -->
+            <p class="empty">Breve descrizione del computer real-time (RTC) e del software di controllo dello strumento (ICS): da aggiungere.</p>
+            <figure class="mt">
+              <!-- <img src="../assets/img/rtc-schematic.webp" width="..." height="..." alt="RTC and ICS architecture"> -->
+              <div class="placeholder-figure">Schema RTC / ICS (da aggiungere)</div>
+            </figure>
+            <div class="table-wrap mt">
+              <table>
+                <caption>Bilancio delle latenze</caption>
+                <thead><tr><th scope="col">Passo</th><th scope="col">Tempo</th></tr></thead>
+                <tbody>
+                  <tr><td>Esposizione e lettura della camera WFS</td><td>Da definire</td></tr>
+                  <tr><td>Trasferimento del frame all’RTC</td><td>Da definire</td></tr>
+                  <tr><td>Calcolo delle pendenze</td><td>Da definire</td></tr>
+                  <tr><td>Ricostruzione del fronte d’onda e controllo</td><td>Da definire</td></tr>
+                  <tr><td>Trasferimento dei comandi al DM</td><td>Da definire</td></tr>
+                  <tr><td>Risposta del DM</td><td>Da definire</td></tr>
+                  <tr><th scope="row">Ritardo totale dell’anello</th><td>Da definire</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div><!-- /lang:it --></div>
+
+      <!-- ========== Français ========== -->
+      <div data-lang-block="fr" lang="fr"><!-- lang:fr -->
+      <h1>Architecture du banc</h1>
+      <figure class="bench-overview figure-frame">
+        <img src="../assets/img/bench-schematic.webp" width="1346" height="1051"
+             alt="Schéma du banc EKARUS : relais Coudé depuis le télescope Copernico, chemin commun avec miroir déformable et tip-tilt rapide, voie VIS (WFS et imageur), voie IR, unité de calibration et simulateur de télescope">
+        <figcaption>EKARUS est un banc d’optique adaptative à conjugaison unique (SCAO) au foyer Coudé du télescope Copernico. Choisissez un sous-système ci-dessous pour les détails.</figcaption>
+      </figure>
+      <figure class="bench-photo">
+        <img src="../assets/img/bench-photo.webp" width="1600" height="739" loading="lazy"
+             alt="Photo du banc optique EKARUS : miroirs, caméras et montures sur des breadboards sur la table optique">
+        <figcaption>Le banc EKARUS.</figcaption>
+      </figure>
+
+      <div class="bench-detail">
+        <nav class="subsystems" aria-labelledby="subs-title-fr" data-subsystems>
+          <h2 id="subs-title-fr">Sous-systèmes</h2>
+          <ul>
+            <li><button type="button" data-target="common-path-fr" aria-controls="common-path-fr" aria-pressed="false">Chemin commun</button></li>
+            <li><button type="button" data-target="wfs-channel-fr" aria-controls="wfs-channel-fr" aria-pressed="false">Voie WFS</button></li>
+            <li><button type="button" data-target="vis-imager-fr" aria-controls="vis-imager-fr" aria-pressed="false">Imageur VIS</button></li>
+            <li><button type="button" data-target="ir-channel-fr" aria-controls="ir-channel-fr" aria-pressed="false">Voie IR</button></li>
+            <li><button type="button" data-target="calibration-unit-fr" aria-controls="calibration-unit-fr" aria-pressed="false">Double unité de calibration</button></li>
+            <li><button type="button" data-target="rtc-ics-fr" aria-controls="rtc-ics-fr" aria-pressed="false">RTC et ICS</button></li>
+          </ul>
+        </nav>
+        <div class="subsystem-panels">
+          <section class="panel subsystem-panel" id="specifications-fr" aria-labelledby="specs-title-fr">
+            <h2 id="specs-title-fr">Spécifications</h2>
+            <div class="table-wrap">
+              <table>
+                <caption>Spécifications optiques</caption>
+                <tbody>
+                  <tr><th scope="row">Faisceau d’entrée</th><td>F/20,5 depuis le foyer Coudé</td></tr>
+                  <tr><th scope="row">Séparation VIS / NIR</th><td>Dichroïque passe-haut : &lt;900 nm réfléchi vers le VIS, NIR transmis (via FM7)</td></tr>
+                  <tr><th scope="row">Port scientifique VIS</th><td>Télécentrique F/20,5, champ de 1′ sans vignettage, 5,53″/mm, optimisé pour 600–900 nm</td></tr>
+                  <tr><th scope="row">Plan focal WFS et GSC</th><td>F/45</td></tr>
+                  <tr><th scope="row">Chemin commun</th><td>Du sélecteur au dichroïque sur une seule breadboard de 600 × 450 mm</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <caption>Spécifications OA</caption>
+                <tbody>
+                  <tr><th scope="row">Miroir déformable</th><td>ALPAO DM468 : 468 actionneurs (24×24), ouverture utile 33 mm</td></tr>
+                  <tr><th scope="row">Pupille sur le DM</th><td>31,6 mm non projetée ; 31,6 × 32,3 mm à 12° d’incidence (marge ±0,4 mm)</td></tr>
+                  <tr><th scope="row">Analyseur de surface d’onde</th><td>Double pyramide (N-BK7, 3,05°), caméra OCAM2K (pixels de 24 µm)</td></tr>
+                  <tr><th scope="row">Échantillonnage de la pupille</th><td>Pupilles de 42 px, séparation 2,49 mm (104 px)</td></tr>
+                  <tr><th scope="row">Modulateur</th><td>Tip-tilt PI-E727, pupille de 7,3 mm, incidence 14°</td></tr>
+                  <tr><th scope="row">Tip-tilt rapide</th><td>130 mm en amont du DM ; 0,008° par seconde d’arc sur le ciel</td></tr>
+                  <tr><th scope="row">Stabilisateur de pupille</th><td>Pas &lt;0,01° (objectif &lt;0,001°)</td></tr>
+                  <tr><th scope="row">Domaine de fonctionnement</th><td>Étoile guide mag 0–11,2</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <caption>Caractéristiques de l’instrument</caption>
+                <tbody>
+                  <tr><th scope="row">Longueur d’onde</th><td>VIS 500–900 nm, NIR 1000–1700 nm</td></tr>
+                  <tr><th scope="row">Champ scientifique</th><td>1 minute d’arc pour le VIS et le NIR</td></tr>
+                  <tr><th scope="row">Champ du PWFS</th><td>8 secondes d’arc</td></tr>
+                  <tr><th scope="row">Transmission</th><td>Science 4–8 %, PWFS 6–12 %</td></tr>
+                  <tr><th scope="row">Caméras</th><td>ORCA pour le VIS, CRED2 pour le NIR</td></tr>
+                </tbody>
+              </table>
+            </div>
+              <p class="source">Sources : Design Description Document (EKARUS VIS) ; tutoriels OAO 2026.</p>
+          </section>
+          <section class="panel subsystem-panel" id="common-path-fr" aria-labelledby="common-path-title-fr">
+            <h2 id="common-path-title-fr">Chemin commun</h2>
+            <p>Le miroir sélecteur, juste après le plan focal Coudé, sert aussi de stabilisateur de pupille. OAP1 forme l’image de la pupille sur le DM, avec un miroir tip-tilt rapide en amont pour décharger le DM du tip-tilt. OAP2, identique à OAP1, forme un plan focal intermédiaire. FM5 et FM6 replient le faisceau pour que tout, d’OAP1 au dichroïque, tienne sur une seule breadboard.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Composants</caption>
+                <tbody>
+                  <tr><th scope="row">Stabilisateur de pupille</th><td>30 mm après le foyer F/20,5. Inclinaison de 1° : déplacement de la PSF 1,05 mm (5,8″ sur le ciel), déplacement de la pupille 73 % du diamètre. Maximum nécessaire ≈ 0,33° pour une dérive de pupille de 25 % (dérive du champ ≈ 1,9″).</td></tr>
+                  <tr><th scope="row">Tip-tilt rapide</th><td>130 mm en amont du DM. 1″ sur le ciel = rotation de 0,008° = déplacement de la pupille de 0,11 % sur le DM.</td></tr>
+                  <tr><th scope="row">DM468</th><td>Pupille 31,6 mm, incidence 12° → 31,6 × 32,3 mm sur une ouverture utile de 33 mm. Flat mesuré ≈ 6 nm RMS, course TT ≈ 15 µm en surface.</td></tr>
+                  <tr><th scope="row">Dichroïque</th><td>Passe-haut, incidence 15°. Pièce sur mesure avec un prisme de 0,1° sur la seconde face pour réduire l’astigmatisme et les NCPA ; devis en attente.</td></tr>
+                  <tr><th scope="row">Statut</th><td>Aligné à Padoue (juin 2026), WFE transmis ≈ 55 nm RMS sur 33 mm.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <h3 class="mt">Documents</h3>
+            <ul class="doc-links">
+              <li>Design Description Document (EKARUS VIS) : chemin commun, stabilisateur de pupille, tip-tilt, DM, dichroïque (lien à ajouter)</li>
+              <li><a href="http://docs.google.com/document/d/1-VrgN3xVxW5k9SAMOnQDpDM2Jba-WhSM5BFiy24CCkY/edit?tab=t.0" target="_blank" rel="noopener" class="ext">Journal AIT du chemin commun (Padoue)</a></li>
+              <li><a href="#">Interférométrie de l’alignement du chemin commun (lien à ajouter)</a></li>
+            </ul>
+          </section>
+          <section class="panel subsystem-panel" id="wfs-channel-fr" aria-labelledby="wfs-channel-title-fr">
+            <h2 id="wfs-channel-title-fr">Voie WFS</h2>
+            <figure class="figure-frame">
+              <img src="../assets/img/wfs-channel.webp" width="1466" height="833" loading="lazy"
+                   alt="Schéma optique de la voie WFS : miroir déformable, OAP2, dichroïque, lentille de focalisation, modulateur tip-tilt, double pyramide et caméra WFS, caméra CBLUE">
+            </figure>
+            <p class="mt">BS1 envoie environ 30 % de la lumière visible vers le port VIS. Une lentille de réimagerie forme l’image de la pupille sur le modulateur et un foyer F/45. BS2 envoie environ 10 % vers la Gain Scheduling Camera (GSC) et 90 % vers la pyramide. Un miroir de renvoi avant le foyer de la pyramide peut alimenter des WFS invités.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Composants</caption>
+                <tbody>
+                  <tr><th scope="row">BS1</th><td>Thorlabs BSS10 (30:70) ou BSN10 (10:90), silice fondue UV, prisme de 30′, utilisé à 20° d’incidence</td></tr>
+                  <tr><th scope="row">BS2</th><td>Mêmes options que BS1, 10:90 vers la GSC</td></tr>
+                  <tr><th scope="row">Modulateur (PI-E727)</th><td>Pupille 7,3 mm (non projetée), incidence 14° (déviation 28°). 1 λ/D à 800 nm = 0,003° sur un axe, 0,003°/cos 14° sur l’autre.</td></tr>
+                  <tr><th scope="row">Double pyramide</th><td>Arcetri, deux pyramides en N-BK7 collées, angle des faces 3,05°, F/45. Angle du cône 0,64°, déviation 1,577°. WFE RMS moyen au sommet 56 nm ; 90 % de l’EE dans ≈ 93 µm.</td></tr>
+                  <tr><th scope="row">Réimageur de pupille</th><td>AC254-045-B : pupilles de 42 px, séparation 2,49 mm (104 px). (AC254-060-B donnerait 55,5 px et 3,32 mm / 138 px.)</td></tr>
+                  <tr><th scope="row">Caméra WFS</th><td>OCAM2K, pixels de 24 µm</td></tr>
+                  <tr><th scope="row">Caméra GSC</th><td>C-Blue, F/45, champ de 30″, 2,52″/mm, pupille de sortie 330 mm avant le foyer. Champ de 18,4 × 13,9″, 23 mas/px, λ/D à 600 nm = 68 mas (3 px).</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <caption>Retrait d’une séparatrice</caption>
+                <tbody>
+                  <tr><th scope="row">BS1 retirée</th><td>Défocalisation 123 nm RMS (déplacement du foyer 6,9 mm à F/45), astigmatisme 19 nm RMS. Déviation de 4,4 mrad : déplacement de la PSF ≈ 700 mas, de la pupille ≈ 10 %.</td></tr>
+                  <tr><th scope="row">BS2 retirée</th><td>Défocalisation 21 nm RMS (déplacement du foyer 1,2 mm à la pyramide), astigmatisme 10 nm RMS. Déplacement de la PSF ≈ 380 mas, de la pupille ≈ 18 %.</td></tr>
+                </tbody>
+              </table>
+            </div>
+              <p class="source">Source : Design Description Document (EKARUS VIS). Valeurs de la conception nominale, sans tolérances de fabrication.</p>
+            <h3 class="mt">Documents</h3>
+            <ul class="doc-links">
+              <li>Design Description Document (EKARUS VIS) : BS1, BS2, modulateur, pyramide, réimageur de pupille (lien à ajouter)</li>
+              <li><a href="#">Caractérisation du WFS à pyramide (lien à ajouter)</a></li>
+            </ul>
+          </section>
+          <section class="panel subsystem-panel" id="vis-imager-fr" aria-labelledby="vis-imager-title-fr">
+            <h2 id="vis-imager-title-fr">Imageur VIS</h2>
+            <p>Le port scientifique VIS reçoit environ 30 % de la lumière visible réfléchie par BS1. Sa caméra est une Hamamatsu ORCA-Flash4.0 LT3 (C11440-42U40), une caméra CMOS scientifique.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Caractéristiques</caption>
+                <tbody>
+                  <tr><th scope="row">Faisceau</th><td>Télécentrique F/20,5</td></tr>
+                  <tr><th scope="row">Champ de vue</th><td>1′ de diamètre, sans vignettage</td></tr>
+                  <tr><th scope="row">Échelle</th><td>5,53″/mm</td></tr>
+                  <tr><th scope="row">Longueur d’onde</th><td>Optimisé pour 600–900 nm ; longueurs d’onde plus courtes possibles avec des performances réduites (focus chromatique différentiel non corrigé)</td></tr>
+                  <tr><th scope="row">Sur l’ORCA-Flash4.0 LT3</th><td>35,9 mas/pixel ; le capteur de 13,3 mm couvre 73,6″ × 73,6″, donc tout le champ de 1′ est couvert. λ/D est échantillonné par 1,9 px à 600 nm et 2,5 px à 800 nm</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="source">Source : Design Description Document (EKARUS VIS). Les spot diagrams et le WFE RMS selon le champ sont dans le document. Valeurs sur l’ORCA calculées à partir de ses pixels de 6,5 µm et de l’échelle de 5,53″/mm.</p>
+
+            <div class="table-wrap mt">
+              <table>
+                <caption>Caméra ORCA-Flash4.0 LT3 (Hamamatsu C11440-42U40)</caption>
+                <tbody>
+                  <tr><th scope="row">Capteur</th><td>CMOS scientifique, 2048 × 2048 pixels, 6,5 µm × 6,5 µm ; surface utile 13,312 mm × 13,312 mm</td></tr>
+                  <tr><th scope="row">Bruit de lecture</th><td>Standard scan : 0,9 e⁻ médiane, 1,5 e⁻ rms. Rapid rolling : 1,3 e⁻ médiane, 1,9 e⁻ rms</td></tr>
+                  <tr><th scope="row">Cadence, image complète</th><td>30 i/s (standard scan), 40 i/s (rapid rolling) ; plus rapide en sous-fenêtre, jusqu’à 25 000 i/s</td></tr>
+                  <tr><th scope="row">Temps de pose</th><td>De 3 ms à 10 s (standard scan), de 1 ms à 10 s (rapid rolling) ; plus court en sous-fenêtre</td></tr>
+                  <tr><th scope="row">Capacité, conversion</th><td>30 000 e⁻ ; 0,46 e⁻/ADU ; sortie 16 bits</td></tr>
+                  <tr><th scope="row">Courant d’obscurité</th><td>0,6 e⁻/pixel/s avec le capteur à +10 °C</td></tr>
+                  <tr><th scope="row">Refroidissement</th><td>Peltier et ventilateur, capteur à +10 °C ; stable environ 5 minutes après la mise sous tension. Température ambiante conseillée 20–25 °C</td></tr>
+                  <tr><th scope="row">Efficacité quantique</th><td>Pic d’environ 82 % vers 550–600 nm ; environ 70 % à 700 nm, 50 % à 800 nm, 23 % à 900 nm</td></tr>
+                  <tr><th scope="row">Modes de lecture</th><td>Image complète, binning 2 × 2 et 4 × 4, sous-fenêtre (obturateur déroulant, lecture du centre vers l’extérieur)</td></tr>
+                  <tr><th scope="row">Déclenchement</th><td>Free running, déclenchement externe sur front, sur niveau, synchronous readout et start trigger ; global reset ; sorties de synchronisation programmables (SMA)</td></tr>
+                  <tr><th scope="row">Interface, monture</th><td>USB 3.1 Gen 1 ; monture C (ne rien visser au-delà de 7 mm)</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="source">Source : manuel d’utilisation ORCA-Flash4.0 LT3 C11440-42U40, Hamamatsu, ver. 1.1 (déc. 2022). Valeurs d’EQ lues sur sa courbe de réponse spectrale typique.</p>
+
+            <div class="callout mt">
+              <h3>Filtres devant la caméra</h3>
+              <p>Nous plaçons généralement un filtre à bande étroite ou un filtre de densité neutre (ND) devant l’ORCA. Un filtre d’épaisseur <em>t</em> et d’indice <em>n</em> dans le faisceau convergent recule le foyer d’environ <em>t</em>(<em>n</em> − 1)/<em>n</em> (environ un tiers de son épaisseur pour du verre). L’ORCA est alignée en tenant compte de cette défocalisation : elle est au point avec un filtre en place. Retirer le filtre, ou en utiliser un d’une autre épaisseur, demande de refaire la mise au point.</p>
+              <p>Ne laissez pas une lumière intense atteindre le capteur sans filtre ND : le manuel avertit qu’un excès de lumière, par exemple un laser de forte énergie, peut endommager le capteur CMOS.</p>
+            </div>
+          </section>
+          <section class="panel subsystem-panel" id="ir-channel-fr" aria-labelledby="ir-channel-title-fr">
+            <h2 id="ir-channel-title-fr">Voie IR</h2>
+            <p>La lumière au-delà de 900 nm traverse le dichroïque et est renvoyée par FM7 vers la voie NIR.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Caractéristiques</caption>
+                <tbody>
+                  <tr><th scope="row">Longueur d’onde</th><td>1000–1700 nm</td></tr>
+                  <tr><th scope="row">Champ de vue</th><td>1 minute d’arc</td></tr>
+                  <tr><th scope="row">Caméra</th><td>CRED2</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="empty mt">Conception optique et documents à ajouter.</p>
+          </section>
+          <section class="panel subsystem-panel" id="calibration-unit-fr" aria-labelledby="calibration-unit-title-fr">
+            <h2 id="calibration-unit-title-fr">Double unité de calibration</h2>
+            <p>L’unité de calibration et le simulateur de télescope alimentent le banc en sources artificielles et en turbulence, via un miroir basculant dans le chemin commun.</p>
+            <div class="table-wrap">
+              <table>
+                <caption>Composants</caption>
+                <tbody>
+                  <tr><th scope="row">Sources</th><td>VIS 635 nm, IR 1550 nm, à travers un trou source</td></tr>
+                  <tr><th scope="row">Turbulence</th><td>Écrans de phase</td></tr>
+                  <tr><th scope="row">Statut</th><td>Matériel reçu à Teramo ; alignement prévu en juillet 2026, puis transport à Asiago et mise en service</td></tr>
+                </tbody>
+              </table>
+            </div>
+              <p class="source">Sources : schéma du banc ; <a href="https://sites.google.com/inaf.it/adoni-coude/ekarus" target="_blank" rel="noopener" class="ext">Newsletter avril–mai 2026</a>.</p>
+          </section>
+          <section class="panel subsystem-panel" id="rtc-ics-fr" aria-labelledby="rtc-ics-title-fr">
+            <h2 id="rtc-ics-title-fr">RTC et ICS</h2>
+            <!-- Replace the placeholders: description text, schematic image, latency values. -->
+            <p class="empty">Courte description du calculateur temps réel (RTC) et du logiciel de contrôle de l’instrument (ICS) : à ajouter.</p>
+            <figure class="mt">
+              <!-- <img src="../assets/img/rtc-schematic.webp" width="..." height="..." alt="RTC and ICS architecture"> -->
+              <div class="placeholder-figure">Schéma RTC / ICS (à ajouter)</div>
+            </figure>
+            <div class="table-wrap mt">
+              <table>
+                <caption>Budget de latence</caption>
+                <thead><tr><th scope="col">Étape</th><th scope="col">Durée</th></tr></thead>
+                <tbody>
+                  <tr><td>Pose et lecture de la caméra WFS</td><td>À définir</td></tr>
+                  <tr><td>Transfert de l’image vers le RTC</td><td>À définir</td></tr>
+                  <tr><td>Calcul des pentes</td><td>À définir</td></tr>
+                  <tr><td>Reconstruction du front d’onde et commande</td><td>À définir</td></tr>
+                  <tr><td>Transfert des commandes vers le DM</td><td>À définir</td></tr>
+                  <tr><td>Réponse du DM</td><td>À définir</td></tr>
+                  <tr><th scope="row">Retard total de la boucle</th><td>À définir</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div><!-- /lang:fr --></div>
     </main>
 
     <nav class="side-nav nav-right" aria-label="Activities">
