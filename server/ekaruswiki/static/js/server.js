@@ -165,12 +165,21 @@ document.addEventListener("click", function (ev) {
       var past = iso < data.today;
       var state = n ? (n.mine ? "mine" : n.status) : "none";
       var clickable = n && n.status === "open" && !past;
-      var cell = el(clickable ? "a" : "div",
+      var booked = n && n.status === "booked" && n.title;
+      var cell = el(clickable ? "a" : (booked ? "button" : "div"),
         "cal-cell st-" + state + (past ? " is-past" : "") + (iso === data.today ? " is-today" : "") +
         (weekday >= 5 ? " is-we" : ""));
       if (clickable) {
         cell.href = newUrl + "?night=" + n.id;
         cell.title = "Propose this night";
+      }
+      if (booked) {
+        cell.type = "button";
+        cell.title = "Show who observes this night";
+        cell.setAttribute("aria-haspopup", "dialog");
+        cell.addEventListener("click", (function (night) {
+          return function (ev) { ev.stopPropagation(); showNight(night, ev.currentTarget); };
+        })(n));
       }
       cell.setAttribute("role", "gridcell");
 
@@ -185,7 +194,7 @@ document.addEventListener("click", function (ev) {
       if (n) {
         var label = n.mine ? "Your night" : LABEL[n.status];
         cell.appendChild(el("span", "cal-pill", label));
-        if (n.code) cell.appendChild(el("span", "cal-code", n.code));
+        if (n.title) cell.appendChild(el("span", "cal-code", n.title));
         if (n.note) cell.appendChild(el("span", "cal-note", n.note));
         cell.setAttribute("aria-label", iso + ", " + label + (n.note ? ", " + n.note : ""));
       } else {
@@ -198,6 +207,7 @@ document.addEventListener("click", function (ev) {
 
     grid.textContent = "";
     grid.appendChild(frag);
+    if (typeof hideNight === "function") hideNight();
     var url = new URL(window.location.href);
     url.searchParams.set("y", data.year); url.searchParams.set("m", data.month);
     history.replaceState(null, "", url.pathname + url.search);
@@ -223,6 +233,42 @@ document.addEventListener("click", function (ev) {
       window.location.href = "?y=" + ym.y + "&m=" + ym.m;      // fall back to a normal page load
     }).then(function () { root.classList.remove("is-loading"); });
   }
+
+  // ---- booked night: project, PI and code in a small panel
+  var pop = el("div", "cal-pop");
+  pop.setAttribute("role", "dialog");
+  pop.setAttribute("aria-label", "Booked night");
+  pop.hidden = true;
+  root.appendChild(pop);
+  function hideNight() { pop.hidden = true; }
+  function showNight(n, cell) {
+    pop.textContent = "";
+    var d = new Date(n.date + "T12:00:00Z");
+    pop.appendChild(el("p", "cal-pop-date", d.toLocaleDateString(undefined,
+      { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })));
+    pop.appendChild(el("h3", "cal-pop-title", n.title));
+    var dl = el("dl", "cal-pop-facts");
+    [["PI", n.pi || "\u2014"], ["Proposal", n.code]].forEach(function (row) {
+      var w = el("div"); w.appendChild(el("dt", "", row[0])); w.appendChild(el("dd", "", row[1])); dl.appendChild(w);
+    });
+    pop.appendChild(dl);
+    if (n.link) {
+      var a = el("a", "cal-pop-link", n.mine ? "Open your proposal" : "Open the proposal");
+      a.href = n.link; pop.appendChild(a);
+    }
+    var x = el("button", "cal-pop-close", "\u00d7");
+    x.type = "button"; x.setAttribute("aria-label", "Close");
+    x.addEventListener("click", hideNight);
+    pop.appendChild(x);
+    pop.hidden = false;
+    var r = cell.getBoundingClientRect(), base = root.getBoundingClientRect();
+    var left = Math.min(Math.max(r.left - base.left, 8), base.width - pop.offsetWidth - 8);
+    pop.style.left = left + "px";
+    pop.style.top = (r.bottom - base.top + 6) + "px";
+    x.focus();
+  }
+  document.addEventListener("click", function (ev) { if (!pop.hidden && !pop.contains(ev.target)) hideNight(); });
+  document.addEventListener("keydown", function (ev) { if (ev.key === "Escape") hideNight(); });
 
   root.addEventListener("click", function (ev) {
     var b = ev.target.closest("[data-cal]");

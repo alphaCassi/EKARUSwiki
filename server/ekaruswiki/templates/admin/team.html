@@ -10,7 +10,10 @@
     {{ csrf() }}<input type="hidden" name="action" value="add">
     <h2>Add a team member</h2>
     <label class="field">E-mail <input name="email" type="email" required></label>
-    <label class="field">Name <input name="name" maxlength="120"></label>
+    <div class="row">
+      <label class="field grow">First name <input name="first_name" maxlength="60" required></label>
+      <label class="field grow">Surname <input name="last_name" maxlength="60" required></label>
+    </div>
     <button class="btn" type="submit">Add</button>
   </form>
   <form method="post" class="card form grow" data-confirm="Remove this person from the team?">
@@ -26,7 +29,18 @@
   <div class="table-wrap"><table>
     <thead><tr><th scope="col">Name</th><th scope="col">E-mail</th><th scope="col">From</th><th scope="col">Added</th><th scope="col">Signed in</th></tr></thead>
     <tbody>{% for m in members %}<tr>
-      <td>{{ m.name or '—' }}</td>
+      <td>{% if m.email %}
+        {{ m.name }}{% if not m.complete %} <span class="badge badge-withdrawn">Surname missing</span>{% endif %}
+        <details class="name-edit">
+          <summary>Edit name</summary>
+          <form method="post" class="form name-edit-form">
+            {{ csrf() }}<input type="hidden" name="action" value="rename"><input type="hidden" name="email" value="{{ m.email }}">
+            <input name="first_name" value="{{ m.split[0] }}" placeholder="First name" aria-label="First name" maxlength="60" required>
+            <input name="last_name" value="{{ m.split[1] }}" placeholder="Surname" aria-label="Surname" maxlength="60" required>
+            <button class="btn btn-small" type="submit">Save</button>
+          </form>
+        </details>
+      {% else %}—{% endif %}</td>
       <td>{{ m.email or 'Hidden (stored as a hash)' }}</td>
       <td>{{ {'admin': 'Admin', 'team list': 'Added here', 'wiki list': "Wiki's own list"}[m.source] }}</td>
       <td>{{ m.added[:10] if m.added else '—' }}</td>
@@ -34,7 +48,7 @@
     </tr>{% endfor %}</tbody>
   </table></div>
   {% else %}<p class="muted">No team members yet. Approved access requests appear here.</p>{% endif %}
-  <p class="muted small mt">Admins are always team members. People in the wiki's own list (users.js) also count; their address is stored only as a hash, so it can't be shown. To remove one of them, use "Remove" with their e-mail.
+  <p class="muted small mt">Admins are always team members. People in the wiki's own list (users.js) also count; their address is stored only as a hash, so neither it nor a name can be shown. To give one of them a name here, add them with "Add a team member": the row then shows their name instead. To remove one of them, use "Remove" with their e-mail.
   {% if not github_ok %}Without GITHUB_TOKEN, changes here aren't copied to that list, which the wiki uses only when this server is off.{% endif %}</p>
 </section>
 {% endblock %}

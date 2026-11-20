@@ -13,6 +13,10 @@ def init_app(app):
     app.before_request(check_csrf)
     app.jinja_env.globals["csrf_token"] = csrf_token
     app.jinja_env.globals["is_admin_session"] = is_admin_session
+    from .names import split_name
+    app.jinja_env.globals["split_name"] = split_name
+    from .schedule.files import expiry_date
+    app.jinja_env.globals["file_expiry"] = expiry_date
 
 
 def load_user():
@@ -24,10 +28,24 @@ def load_user():
             session.clear()
 
 
+def _admin_active():
+    """Admin access from the admin password, still within ADMIN_IDLE_MINUTES of the last admin page."""
+    import time
+    from flask import current_app
+    t = session.get("admin_ok")
+    if not isinstance(t, (int, float)) or isinstance(t, bool):
+        session.pop("admin_ok", None)
+        return False
+    if time.time() - t > current_app.config["ADMIN_IDLE_MINUTES"] * 60:
+        session.pop("admin_ok", None)
+        return False
+    return True
+
+
 def is_admin_session():
-    """True only for an admin address that entered the admin password in this browser session."""
+    """True only for an admin address that entered the admin password and is still active."""
     from . import mail
-    return (getattr(g, "user", None) is not None and session.get("admin_ok") is True
+    return (getattr(g, "user", None) is not None and _admin_active()
             and g.user["email"] in mail.admin_addresses())
 
 
@@ -43,17 +61,16 @@ def login_required(view):
 
 
 def admin_required(view):
-    """Admin pages: an address in ADMIN_EMAILS that entered the admin password in this browser."""
+    """Admin pages: an address in ADMIN_EMAILS that typed the admin password, still active."""
     @functools.wraps(view)
     def wrapped(*args, **kwargs):
+        import time
         from . import mail
         if g.user is not None and g.user["email"] not in mail.admin_addresses():
             abort(403)
-        if g.user is None or not session.get("admin_ok"):
-            args = {"next": request.path}
-            if g.user is not None:
-                args["email"] = g.user["email"]
-            return redirect(url_for("accounts.admin_signin", **args))
+        if g.user is None or not _admin_active():
+            return redirect(url_for("accounts.admin_signin", next=request.path))
+        session["admin_ok"] = time.time()           # still working in the admin pages
         return view(*args, **kwargs)
     return wrapped
 

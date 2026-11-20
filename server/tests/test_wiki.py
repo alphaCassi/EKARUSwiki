@@ -72,7 +72,7 @@ class Wiki(Flow):
 
     def test_access_request_approved_from_admin_page(self):
         admin = self.register_and_verify(ADMIN, "Oleksandra Rebrysh")
-        self.send({"kind": "access", "name": "Mario Rossi", "email": "Mario@x.org"})
+        self.send({"kind": "access", "first_name": "mario", "last_name": "rossi", "email": "Mario@x.org"})
         page = admin.get("/admin/messages").get_data(as_text=True)
         self.assertIn("Access request", page)
         r = self.post(admin, "/admin/messages/1", {"action": "approve"})
@@ -87,8 +87,8 @@ class Wiki(Flow):
         admin = self.register_and_verify(ADMIN, "Oleksandra")
         user = self.register_and_verify(USER, "Olga")
         self.assertEqual(user.get("/admin/team").status_code, 403)
-        self.post(admin, "/admin/team", {"action": "add", "email": "c@x.org", "name": "C X"})
-        self.post(admin, "/admin/team", {"action": "add", "email": "d@x.org", "name": ""})
+        self.post(admin, "/admin/team", {"action": "add", "email": "c@x.org", "first_name": "C", "last_name": "X"})
+        self.post(admin, "/admin/team", {"action": "add", "email": "d@x.org", "first_name": "D", "last_name": "Y"})
         r = self.post(admin, "/admin/team", {"action": "remove", "email": "c@x.org"})
         self.assertIn("removed", r.get_data(as_text=True))
         _, entries = wiki_users.parse(self.repo.files[wiki_users.PATH])
@@ -203,14 +203,6 @@ class TeamSignIn(Flow):
             self.assertEqual(self.app.test_client().get("/info/telescope").status_code, 302)
         finally:
             wiki_pages._fetch = orig
-
-
-class AdminRemembered(Flow):
-    def test_admin_signin_page_skipped_when_remembered(self):
-        c, _ = self.admin_signin(ADMIN)
-        r = c.get("/account/admin-signin?next=%2Fadmin%2F&email=" + ADMIN)
-        self.assertEqual(r.status_code, 302)
-        self.assertTrue(r.headers["Location"].endswith("/admin/"))
 
 
 class SignOut(Flow):
@@ -401,3 +393,235 @@ class AdminSigninAddressBar(Flow):
                               "next": "/admin/messages/1"})
         self.assertEqual(r.status_code, 302)
         self.assertTrue(r.headers["Location"].endswith("/admin/messages/1"))
+
+
+class NamesEverywhere(Flow):
+    def test_name_helpers(self):
+        from ekaruswiki import names
+        self.assertEqual(names.full_name(" oleksandra ", "REBRYSH"), "Oleksandra Rebrysh")
+        self.assertEqual(names.full_name("matteo", "d'ambrogio"), "Matteo D'Ambrogio")
+        self.assertEqual(names.full_name("Ivan", "Di Antonio"), "Ivan Di Antonio")
+        self.assertEqual(names.split_name("Ivan Di Antonio"), ("Ivan", "Di Antonio"))
+        self.assertEqual(names.split_name("Taïssir Cedric Heritier"), ("Taïssir Cedric", "Heritier"))
+        self.assertEqual(names.from_email("oleksandra.rebrysh@inaf.it"), "Oleksandra Rebrysh")
+
+    def test_access_request_needs_surname(self):
+        c = self.app.test_client()
+        r = c.post("/api/contact", json={"kind": "access", "first_name": "Lorenzo", "last_name": "", "email": "l@x.org"})
+        self.assertEqual(r.status_code, 400)
+
+    def test_admin_add_needs_surname_and_rename_works(self):
+        admin, _ = self.admin_signin(ADMIN)
+        r = self.post(admin, "/admin/team", {"action": "add", "email": "lorenzo@x.org", "first_name": "Lorenzo", "last_name": ""},
+                      form_url="/admin/team")
+        self.assertIn("first name and the surname", r.get_data(as_text=True))
+        self.post(admin, "/admin/team", {"action": "add", "email": "lorenzo@x.org", "first_name": "lorenzo", "last_name": "merli"},
+                  form_url="/admin/team")
+        page = admin.get("/admin/team").get_data(as_text=True)
+        self.assertIn("Lorenzo Merli", page)
+        self.post(admin, "/admin/team", {"action": "rename", "email": ADMIN, "first_name": "Oleksandra", "last_name": "Rebrysh"},
+                  form_url="/admin/team")
+        self.assertIn("Oleksandra Rebrysh", admin.get("/admin/team").get_data(as_text=True))
+
+    def test_old_names_are_tidied(self):
+        with self.app.app_context():
+            from ekaruswiki.db import get_db, init_db, now
+            db = get_db()
+            db.execute("INSERT INTO team (email, name, added_at) VALUES ('luca.cortese@x.org', 'luca.cortese', ?)", (now(),))
+            db.execute("INSERT INTO team (email, name, added_at) VALUES ('a@x.org', 'ANNA BIANCHI', ?)", (now(),))
+            db.commit()
+            init_db()
+            got = {r["email"]: r["name"] for r in db.execute("SELECT email, name FROM team")}
+        self.assertEqual(got["luca.cortese@x.org"], "Luca Cortese")
+        self.assertEqual(got["a@x.org"], "Anna Bianchi")
+
+
+class AdminPasswordEveryTime(Flow):
+    def form(self, c, url="/account/admin-signin"):
+        page = c.get(url).get_data(as_text=True)
+        token = __import__("re").search(r'name="csrf_token" value="([^"]+)"', page).group(1)
+        return page, token
+
+    def test_signin_page_never_skips_and_never_prefills(self):
+        c, _ = self.admin_signin(ADMIN)
+        self.assertEqual(c.get("/admin/").status_code, 200)
+        page, _ = self.form(c, "/account/admin-signin?next=/admin/&email=" + ADMIN)
+        self.assertIn('name="password"', page)                      # asks again
+        self.assertIn('name="email" type="email" value=""', page)   # empty e-mail
+        self.assertEqual(c.get("/admin/").status_code, 302)          # earlier admin access ended
+
+    def test_admin_access_ends_after_idle(self):
+        import time
+        c, _ = self.admin_signin(ADMIN)
+        with c.session_transaction() as s:
+            s["admin_ok"] = time.time() - (self.app.config["ADMIN_IDLE_MINUTES"] * 60 + 5)
+        self.assertIn("/account/admin-signin", c.get("/admin/").headers["Location"])
+
+
+class ProposalFilesAndMail(Flow):
+    def make_night(self):
+        from datetime import date, timedelta
+        admin, _ = self.admin_signin(ADMIN)
+        d0 = date.today() + timedelta(days=5)
+        self.post(admin, "/admin/schedule/nights", {"action": "add", "start": d0.isoformat(), "end": ""},
+                  form_url="/admin/schedule/nights")
+        return admin
+
+    def submit(self, user, files):
+        import io, re
+        page = user.get("/proposals/new").get_data(as_text=True)
+        token = re.search(r'name="csrf_token" value="([^"]+)"', page).group(1)
+        data = {"csrf_token": token, "title": "Binaries", "science_case": "Resolve close binaries.",
+                "mode": "VIS imaging", "nights": "1",
+                "attachments": [(io.BytesIO(b), n) for n, b in files]}
+        return user.post("/proposals/new", data=data, content_type="multipart/form-data", follow_redirects=True)
+
+    def test_attachments_and_summary_mail(self):
+        admin = self.make_night()
+        user = self.register_and_verify(USER, "Olga Tester")
+        r = self.submit(user, [("chart.pdf", b"%PDF-1.4 test")])
+        page = r.get_data(as_text=True)
+        self.assertIn("chart.pdf", page)
+        link = __import__("re").search(r'href="(/proposals/1/files/\d+)"', page).group(1)
+        dl = user.get(link)
+        self.assertEqual(dl.data, b"%PDF-1.4 test")
+        self.assertIn("attachment", dl.headers["Content-Disposition"])
+        self.assertEqual(admin.get(link).status_code, 200)                       # admin can download
+        other = self.register_and_verify("other@x.org", "Other Person")
+        self.assertEqual(other.get(link).status_code, 403)                       # others can't
+        to_user = [m for m in self.outbox() if m["To"] == USER][-1]
+        body = to_user.get_payload(decode=True).decode()
+        self.assertIn("Resolve close binaries.", body)
+        self.assertIn("chart.pdf", body)
+        self.assertIn("accepted or rejected", body)
+
+    def test_attachments_optional_and_checked(self):
+        self.make_night()
+        user = self.register_and_verify(USER, "Olga Tester")
+        r = self.submit(user, [("evil.exe", b"MZ")])
+        self.assertIn("can&#39;t be attached", r.get_data(as_text=True))
+        self.app.config["UPLOAD_MAX_MB"] = 1
+        r = self.submit(user, [("big.pdf", b"x" * (1024 * 1024 + 10))])
+        self.assertIn("larger than 1 MB", r.get_data(as_text=True))
+        r = self.submit(user, [])
+        self.assertIn("EK-", r.get_data(as_text=True))                           # no files: fine
+
+
+class AccessRequestReject(Flow):
+    def test_reject_with_optional_reason(self):
+        self.app.test_client().post("/api/contact", json={"kind": "access", "first_name": "Ann", "last_name": "Lee",
+                                                          "email": "ann@x.org"})
+        admin, _ = self.admin_signin(ADMIN)
+        page = admin.get("/admin/messages/1").get_data(as_text=True)
+        self.assertIn(">Add to the team<", page)
+        self.assertNotIn("tell them", page)
+        self.assertNotIn("Mark as done", page)
+        self.post(admin, "/admin/messages/1", {"action": "reject", "reason": "Only for the EKARUS team."},
+                  form_url="/admin/messages/1")
+        m = self.outbox()[-1]
+        self.assertEqual(m["To"], "ann@x.org")
+        self.assertIn("Only for the EKARUS team.", m.get_payload(decode=True).decode())
+        self.assertIn("Rejected", admin.get("/admin/messages?show=all").get_data(as_text=True))
+
+
+class ForgotPassword(Flow):
+    def ask(self, email):
+        c = self.app.test_client()
+        self.post(c, "/account/forgot", {"email": email}, form_url="/account/forgot")
+
+    def test_reset_end_to_end_from_email(self):
+        self.register_and_verify(USER, "Olga Tester")
+        self.ask(USER.upper())
+        body = [m for m in self.outbox() if m["To"] == USER][-1].get_payload(decode=True).decode()
+        link = __import__("re").search(r"https?://[^/\s]+(/account/reset/\S+)", body).group(1)
+        c = self.app.test_client()
+        r = self.post(c, link, {"password": "a-new-password", "password2": "a-new-password"}, form_url=link)
+        self.assertIn("Password changed", r.get_data(as_text=True))
+        r = self.post(c, "/account/login", {"email": USER, "password": "a-new-password"}, form_url="/account/login")
+        self.assertIn("Sign out", r.get_data(as_text=True))
+        r = self.app.test_client().get(link, follow_redirects=True)
+        self.assertIn("already used", r.get_data(as_text=True))
+
+    def test_team_member_without_password_gets_no_reset(self):
+        n = len(self.outbox())
+        c = self.app.test_client()
+        self.post(c, "/account/team-signin", {"email": ADMIN}, form_url="/account/login")
+        self.ask(ADMIN)
+        self.assertEqual(len(self.outbox()), n)
+
+
+class CodeFoldersAndBookedNights(Flow):
+    def setup_booked(self):
+        import io, re
+        from datetime import date, timedelta
+        admin, _ = self.admin_signin(ADMIN)
+        d0 = date.today() + timedelta(days=5)
+        self.post(admin, "/admin/schedule/nights", {"action": "add", "start": d0.isoformat(), "end": ""},
+                  form_url="/admin/schedule/nights")
+        user = self.register_and_verify(USER, "Olga Tester")
+        page = user.get("/proposals/new").get_data(as_text=True)
+        token = re.search(r'name="csrf_token" value="([^"]+)"', page).group(1)
+        user.post("/proposals/new", content_type="multipart/form-data", data={
+            "csrf_token": token, "title": "Binary stars", "science_case": "Secret case", "mode": "VIS imaging",
+            "nights": "1", "attachments": [(io.BytesIO(b"%PDF"), "chart.pdf")]})
+        self.post(admin, "/admin/schedule/proposals/1", {"decision": "accept", "allocate": ["1"]},
+                  form_url="/admin/schedule/proposals/1")
+        return admin, user, d0
+
+    def test_folder_named_by_code_and_private(self):
+        import os
+        admin, user, _ = self.setup_booked()
+        with self.app.app_context():
+            from ekaruswiki.db import get_db
+            code = get_db().execute("SELECT code FROM proposals WHERE id = 1").fetchone()["code"]
+        folder = os.path.join(self.app.instance_path, "uploads", code)
+        self.assertTrue(os.path.isdir(folder))
+        self.assertEqual(len(os.listdir(folder)), 1)
+        other = self.register_and_verify("other@x.org", "Other Person")
+        self.assertEqual(other.get("/proposals/1").status_code, 403)
+        self.assertEqual(other.get("/proposals/1/files/1").status_code, 403)
+
+    def test_booked_night_shows_title_and_pi_to_everyone_but_nothing_else(self):
+        admin, user, d0 = self.setup_booked()
+        other = self.register_and_verify("other@x.org", "Other Person")
+        n = [x for x in other.get(f"/calendar.json?y={d0.year}&m={d0.month}").get_json()["nights"] if x["status"] == "booked"][0]
+        self.assertEqual(n["title"], "Binary stars")
+        self.assertEqual(n["pi"], "Olga Tester")
+        self.assertTrue(n["code"].startswith("EK-"))
+        self.assertEqual(n["link"], "")                          # no link to someone else's proposal
+        self.assertNotIn("Secret case", str(n))
+        mine = [x for x in user.get(f"/calendar.json?y={d0.year}&m={d0.month}").get_json()["nights"] if x["status"] == "booked"][0]
+        self.assertTrue(mine["mine"] and mine["link"].endswith("/proposals/1"))
+
+    def test_old_numbered_folder_is_renamed(self):
+        import os
+        admin, user, _ = self.setup_booked()
+        base = os.path.join(self.app.instance_path, "uploads")
+        with self.app.app_context():
+            from ekaruswiki.db import get_db, init_db
+            code = get_db().execute("SELECT code FROM proposals WHERE id = 1").fetchone()["code"]
+            os.rename(os.path.join(base, code), os.path.join(base, "1"))
+            init_db()
+        self.assertTrue(os.path.isdir(os.path.join(base, code)))
+        self.assertFalse(os.path.exists(os.path.join(base, "1")))
+        self.assertEqual(user.get("/proposals/1/files/1").status_code, 200)
+
+
+class FileRetention(CodeFoldersAndBookedNights):
+    def test_files_deleted_after_retention(self):
+        import os
+        from datetime import date, timedelta
+        admin, user, d0 = self.setup_booked()
+        with self.app.app_context():
+            from ekaruswiki.db import get_db
+            from ekaruswiki.schedule import files
+            db = get_db()
+            code = db.execute("SELECT code FROM proposals WHERE id = 1").fetchone()["code"]
+            self.assertEqual(files.delete_expired(force=True), 0)          # night still ahead: kept
+            past = (date.today() - timedelta(days=self.app.config["RETENTION_DAYS"] + 1)).isoformat()
+            db.execute("UPDATE nights SET date = ?", (past,))
+            db.commit()
+            self.assertEqual(files.delete_expired(force=True), 1)
+        self.assertFalse(os.path.exists(os.path.join(self.app.instance_path, "uploads", code)))
+        self.assertEqual(user.get("/proposals/1/files/1").status_code, 404)
+        self.assertIn("Binary stars", user.get("/proposals/1").get_data(as_text=True))   # proposal itself stays

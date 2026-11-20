@@ -19,7 +19,7 @@
         <td>{{ 'Access request' if m.kind == 'access' else 'Change request' }}</td>
         <td>{{ m.name }}<br><small class="muted">{{ m.email }}</small></td>
         <td><a href="{{ url_for('admin.message', mid=m.id) }}">{{ m.topic or ('Wants to sign in to the wiki' if m.kind == 'access' else '(no topic)') }}</a></td>
-        <td>{% if m.status == 'new' %}<span class="badge badge-submitted">New</span>{% elif m.status == 'read' %}<span class="badge badge-withdrawn">Read</span>{% else %}<span class="badge badge-accepted">Done</span>{% endif %}</td>
+        <td>{% if m.status == 'new' %}<span class="badge badge-submitted">New</span>{% elif m.status == 'read' %}<span class="badge badge-withdrawn">Read</span>{% elif m.outcome == 'rejected' %}<span class="badge badge-rejected">Rejected</span>{% else %}<span class="badge badge-accepted">Done</span>{% endif %}</td>
       </tr>
     {% endfor %}
     </tbody>

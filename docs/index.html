@@ -41,8 +41,12 @@
       <summary>Not registered? Request access</summary>
       <form id="request-form" novalidate>
         <div class="field">
-          <label for="req-name">Name</label>
-          <input id="req-name" name="name" type="text" autocomplete="name" required>
+          <label for="req-first">First name</label>
+          <input id="req-first" name="first_name" type="text" autocomplete="given-name" maxlength="60" required>
+        </div>
+        <div class="field">
+          <label for="req-last">Surname</label>
+          <input id="req-last" name="last_name" type="text" autocomplete="family-name" maxlength="60" required>
         </div>
         <div class="field">
           <label for="req-email">E-mail address</label>

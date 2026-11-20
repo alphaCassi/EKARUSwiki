@@ -13,7 +13,7 @@ import time
 from flask import Blueprint, current_app, flash, g, redirect, render_template, request, session, url_for
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from . import mail, protect, team
+from . import mail, names, protect, team
 from .db import get_db, now
 from .security import login_required, make_token, read_token
 
@@ -40,10 +40,11 @@ def _send_verification(user):
 
 @bp.route("/register", methods=["GET", "POST"])
 def register():
-    form = {"name": "", "email": "", "institute": ""}
+    form = {"first_name": "", "last_name": "", "email": "", "institute": ""}
     if request.method == "POST":
         form = {k: request.form.get(k, "").strip() for k in form}
         form["email"] = form["email"].lower()
+        form["name"] = names.full_name(form["first_name"], form["last_name"])
         password = request.form.get("password", "")
         errors = []
         if protect.is_bot(request.form.get("website")):
@@ -54,8 +55,8 @@ def register():
         if form["email"] and team.is_team(form["email"]):
             flash("You're on the EKARUS team, so you don't need to register: just sign in with your e-mail.", "info")
             return redirect(url_for("accounts.login", email=form["email"]))
-        if not form["name"]:
-            errors.append("Enter your name.")
+        if not form["first_name"] or not form["last_name"]:
+            errors.append("Enter your first name and surname.")
         if not EMAIL_RE.match(form["email"]):
             errors.append("Enter a valid e-mail address.")
         if len(password) < 10:
@@ -154,10 +155,11 @@ def forgot():
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         user = get_db().execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
-        if protect.too_many("forgot"):
+        if protect.blocked("forgot", email):
             flash("Too many attempts from this connection. Please wait a few minutes and try again.", "error")
             return redirect(url_for("accounts.forgot"))
-        if user:
+        protect.failed("forgot", email)                 # every request counts (5 per hour per address)
+        if user and not user["password_hash"].startswith("!"):     # team members have no password
             # the token includes part of the current hash, so it stops working once used
             token = make_token("reset", [user["id"], user["password_hash"][-12:]])
             mail.send(user["email"], "Reset your password", "reset",
@@ -195,10 +197,10 @@ def reset(token):
 @login_required
 def profile():
     if request.method == "POST":
-        name = request.form.get("name", "").strip()
+        name = names.full_name(request.form.get("first_name", ""), request.form.get("last_name", ""))
         institute = request.form.get("institute", "").strip()
-        if not name:
-            flash("Enter your name.", "error")
+        if not names.has_surname(name):
+            flash("Enter your first name and surname.", "error")
         else:
             db = get_db()
             db.execute("UPDATE users SET name = ?, institute = ? WHERE id = ?", (name, institute, g.user["id"]))
@@ -227,7 +229,8 @@ def team_user(email):
 def _start_session(user, admin_ok=False):
     session.clear()
     session["user_id"] = user["id"]
-    session["admin_ok"] = bool(admin_ok)
+    if admin_ok:
+        session["admin_ok"] = time.time()   # admin access: until idle too long, see security.py
     session.permanent = False
 
 
@@ -254,15 +257,15 @@ def team_signin():
 # ---------------------------------------------------------------- admin password
 @bp.route("/admin-signin", methods=["GET", "POST"])
 def admin_signin():
-    """Admin pages: admin e-mail + admin password (ADMIN_PASSWORD), until the browser is closed."""
+    """Admin pages: admin e-mail + admin password (ADMIN_PASSWORD), typed every time.
+    Opening this page ends any earlier admin access in this browser."""
     # what the person typed in the form wins over the address bar (?email=... may be empty there)
     src = request.form if request.method == "POST" else request.args
     nxt = src.get("next", "") or request.args.get("next", "")
     email = src.get("email", "").strip().lower()
     configured = bool(current_app.config.get("ADMIN_PASSWORD"))
-    if request.method == "GET" and g.user is not None and session.get("admin_ok") \
-            and (not email or email == g.user["email"]):
-        return redirect(_safe_next(nxt or url_for("admin.overview")))   # already remembered
+    if request.method == "GET":
+        session.pop("admin_ok", None)          # never skip the password
     if request.method == "POST" and protect.blocked("admin", email):
         protect.log_signin(email, "admin", False, "blocked")
         flash("Too many attempts from this connection. Please wait a few minutes and try again.", "error")
@@ -279,5 +282,4 @@ def admin_signin():
         protect.log_signin(email, "admin", False, "wrong password")
         time.sleep(1)                       # slow down guessing
         flash("Wrong e-mail or admin password.", "error")
-    return render_template("accounts/admin_signin.html", email=email or (g.user["email"] if g.user else ""),
-                           next=nxt, configured=configured)
+    return render_template("accounts/admin_signin.html", next=nxt, configured=configured)

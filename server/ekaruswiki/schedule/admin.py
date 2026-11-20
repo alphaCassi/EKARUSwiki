@@ -110,7 +110,9 @@ def review(pid):
         p, targets, nights, events = load_proposal(pid)
 
     requested_open, others = _open_nights_for(pid, nights)
+    from .files import list_for
     return render_template("schedule/admin/review.html", p=p, targets=targets, nights=nights, events=events,
+                           files=list_for(pid),
                            requested_open=requested_open, other_open=others)
 
 

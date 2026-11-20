@@ -6,7 +6,11 @@
   <h1>Your profile</h1>
   <form method="post" class="form card">
     {{ csrf() }}
-    <label class="field">Name <input name="name" value="{{ g.user.name }}" autocomplete="name" required></label>
+    {% set nm = split_name(g.user.name) %}
+    <div class="row">
+      <label class="field grow">First name <input name="first_name" value="{{ nm[0] }}" autocomplete="given-name" maxlength="60" required></label>
+      <label class="field grow">Surname <input name="last_name" value="{{ nm[1] }}" autocomplete="family-name" maxlength="60" required></label>
+    </div>
     <label class="field">E-mail <input value="{{ g.user.email }}" disabled></label>
     <label class="field">Institute <input name="institute" value="{{ g.user.institute }}" autocomplete="organization"></label>
     <button class="btn" type="submit">Save profile</button>

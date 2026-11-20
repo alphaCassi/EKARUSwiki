@@ -1,10 +1,13 @@
 """Observation schedule module: night calendar and proposals for observers."""
 import calendar as pycal
+import os
 from datetime import date
 
-from flask import Blueprint, abort, flash, g, jsonify, redirect, render_template, request, url_for
+from flask import (Blueprint, abort, flash, g, jsonify, redirect, render_template, request,
+                   send_from_directory, url_for)
 
 from .. import mail, wiki_pages
+from . import files
 from ..db import get_db, now
 from ..security import login_required
 
@@ -63,15 +66,21 @@ def month_data(year, month):
     prev = date(year - (month == 1), (month - 2) % 12 + 1, 1)
     db = get_db()
     rows = db.execute(
-        "SELECT n.*, p.user_id AS owner, p.code AS code FROM nights n"
-        " LEFT JOIN proposals p ON p.id = n.proposal_id WHERE n.date >= ? AND n.date < ? ORDER BY n.date",
+        "SELECT n.*, p.user_id AS owner, p.code AS code, p.title AS title, u.name AS pi FROM nights n"
+        " LEFT JOIN proposals p ON p.id = n.proposal_id LEFT JOIN users u ON u.id = p.user_id"
+        " WHERE n.date >= ? AND n.date < ? ORDER BY n.date",
         (first.isoformat(), nxt.isoformat())).fetchall()
     admin = is_admin_session()
     nights = []
     for r in rows:
         mine = r["status"] == "booked" and r["owner"] == g.user["id"]
+        booked = r["status"] == "booked" and r["code"]
+        # booked nights: project title, PI and code are shown to every signed-in user;
+        # the rest of a proposal stays visible only to its PI and the admins
         nights.append({"id": r["id"], "date": r["date"], "status": r["status"], "note": r["note"],
-                       "mine": mine, "code": r["code"] if (mine or admin) else ""})
+                       "mine": mine, "code": r["code"] if booked else "",
+                       "title": r["title"] if booked else "", "pi": r["pi"] if booked else "",
+                       "link": url_for("schedule.view_proposal", pid=r["proposal_id"]) if booked and (mine or admin) else ""})
     return {"year": year, "month": month, "title": first.strftime("%B %Y"), "today": date.today().isoformat(),
             "prev": {"y": prev.year, "m": prev.month}, "next": {"y": nxt.year, "m": nxt.month},
             "nights": nights}
@@ -182,6 +191,10 @@ def new_proposal():
             min_n = 1
         if chosen and min_n > len(chosen):
             errors.append("The minimum number of useful nights can't exceed the nights you selected.")
+        uploads, file_errors = files.check(request.files.getlist("attachments"))
+        errors += file_errors
+        if errors and uploads:
+            errors.append("Please choose the attachments again: files can't be kept when the form has an error.")
 
         if not errors:
             year = date.today().year
@@ -199,13 +212,17 @@ def new_proposal():
                            [(pid, t["name"], t["ra"], t["dec"], t["mag"]) for t in targets])
             db.executemany("INSERT INTO proposal_nights (proposal_id, night_id) VALUES (?, ?)",
                            [(pid, nid) for nid in sorted(chosen)])
+            os.makedirs(files.folder(pid), exist_ok=True)       # the proposal's own folder, by code
+            files.save(pid, uploads)
             add_event(pid, "submitted")
             db.commit()
 
             p, tg, ng, _ = load_proposal(pid)
-            mail.send(g.user["email"], f"{code} received", "submitted_user", p=p, nights=ng)
+            att = files.list_for(pid)
+            mail.send(g.user["email"], f"{code} received: {p['title']}", "submitted_user", p=p, nights=ng,
+                      targets=tg, files=att, link=url_for("schedule.view_proposal", pid=pid))
             mail.send(mail.admin_addresses(), f"New proposal {code}: {p['title']}", "submitted_admin",
-                      p=p, nights=ng, targets=tg, link=url_for("schedule_admin.review", pid=pid))
+                      p=p, nights=ng, targets=tg, files=att, link=url_for("schedule_admin.review", pid=pid))
             flash(f"Proposal {code} submitted. You'll get an e-mail when it's reviewed.", "ok")
             return redirect(url_for("schedule.view_proposal", pid=pid))
         for e in errors:
@@ -227,7 +244,18 @@ def _get(values, i):
 @login_required
 def view_proposal(pid):
     p, targets, nights, events = load_proposal(pid)
-    return render_template("schedule/proposals/view.html", p=p, targets=targets, nights=nights, events=events)
+    return render_template("schedule/proposals/view.html", p=p, targets=targets, nights=nights, events=events,
+                           files=files.list_for(pid))
+
+
+@bp.route("/proposals/<int:pid>/files/<int:fid>")
+@login_required
+def proposal_file(pid, fid):
+    load_proposal(pid)                     # only the proposer and admins get past this
+    f = get_db().execute("SELECT * FROM proposal_files WHERE id = ? AND proposal_id = ?", (fid, pid)).fetchone()
+    if f is None:
+        abort(404)
+    return send_from_directory(files.folder(pid), f["stored"], as_attachment=True, download_name=f["filename"])
 
 
 @bp.route("/proposals/<int:pid>/withdraw", methods=["POST"])

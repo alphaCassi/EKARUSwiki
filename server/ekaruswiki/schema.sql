@@ -113,3 +113,14 @@ CREATE TABLE IF NOT EXISTS signin_log (
     ip_hash TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_signin_log_at ON signin_log(at);
+
+-- Files attached to a proposal (optional). Stored under instance/uploads/<proposal id>/.
+CREATE TABLE IF NOT EXISTS proposal_files (
+    id          INTEGER PRIMARY KEY,
+    proposal_id INTEGER NOT NULL REFERENCES proposals(id) ON DELETE CASCADE,
+    filename    TEXT NOT NULL,      -- name as uploaded, for display and download
+    stored      TEXT NOT NULL,      -- random name on disk
+    size        INTEGER NOT NULL,
+    uploaded_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_proposal_files ON proposal_files(proposal_id);

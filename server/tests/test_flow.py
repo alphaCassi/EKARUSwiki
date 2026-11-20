@@ -65,7 +65,9 @@ class Flow(unittest.TestCase):
             self.assertIn("Sign out", c.get("/").get_data(as_text=True))
             return c
         c = self.app.test_client()
-        self.post(c, "/account/register", {"name": name, "email": mail, "institute": "INAF",
+        first, _, last = (name + " Test").partition(" ")
+        self.post(c, "/account/register", {"first_name": first, "last_name": last.split(" Test")[0] or "Test",
+                                           "email": mail, "institute": "INAF",
                                            "password": PW, "password2": PW})
         msg = [m for m in self.outbox() if m["To"] == mail][-1]
         link = re.search(r"https://sched\.test(/account/verify/\S+)", msg.get_payload(decode=True).decode()).group(1)
@@ -183,7 +185,7 @@ class Flow(unittest.TestCase):
 
     def test_unverified_cannot_login_and_csrf_enforced(self):
         c = self.app.test_client()
-        self.post(c, "/account/register", {"name": "X", "email": USER, "password": PW, "password2": PW})
+        self.post(c, "/account/register", {"first_name": "X", "last_name": "Y", "email": USER, "password": PW, "password2": PW})
         r = self.post(c, "/account/login", {"email": USER, "password": PW})
         self.assertIn("Confirm your e-mail first", r.get_data(as_text=True))
         r = c.post("/account/login", data={"email": USER, "password": PW})   # no token

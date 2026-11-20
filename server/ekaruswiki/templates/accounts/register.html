@@ -9,7 +9,10 @@
   <form method="post" class="form card">
     {{ csrf() }}
     <div class="trap" aria-hidden="true"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>
-    <label class="field">Name <input name="name" value="{{ form.name }}" autocomplete="name" required></label>
+    <div class="row">
+      <label class="field grow">First name <input name="first_name" value="{{ form.first_name }}" autocomplete="given-name" maxlength="60" required></label>
+      <label class="field grow">Surname <input name="last_name" value="{{ form.last_name }}" autocomplete="family-name" maxlength="60" required></label>
+    </div>
     <label class="field">E-mail <input name="email" type="email" value="{{ form.email }}" autocomplete="email" required></label>
     <label class="field">Institute <input name="institute" value="{{ form.institute }}" autocomplete="organization"></label>
     <label class="field">Password <span class="hint">At least 10 characters</span>

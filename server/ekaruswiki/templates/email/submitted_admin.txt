@@ -7,7 +7,8 @@ Targets: {{ targets|length }}
 Nights requested ({{ nights|length }}, minimum useful {{ p.min_nights }}):
 {% for n in nights %}  - {{ n.date|nicedate }}
 {% endfor %}
-{% if p.summary %}Summary:
+{% if files %}Attachments: {% for f in files %}{{ f.filename }}{% if not loop.last %}, {% endif %}{% endfor %}
+{% endif %}{% if p.summary %}Summary:
 {{ p.summary }}
 {% endif %}Science or technical case:
 {{ p.science_case[:600] }}{% if p.science_case|length > 600 %}…{% endif %}

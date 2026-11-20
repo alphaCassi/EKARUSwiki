@@ -352,7 +352,7 @@ h2 .hint { font-family: var(--font-body); font-size: 0.85rem; font-weight: 400; 
   background: var(--paper); border: 1px solid var(--line); color: var(--ink);
   display: flex; flex-direction: column; gap: 0.2rem; text-decoration: none; overflow: hidden;
 }
-.cal-cell.is-we { background: color-mix(in srgb, var(--paper) 85%, var(--panel-2)); }
+.cal-cell.is-we.st-none { background: color-mix(in srgb, var(--paper) 85%, var(--panel-2)); }
 .cal-pad { background: transparent; border: 0; }
 .cal-top { display: flex; justify-content: space-between; align-items: baseline; gap: 0.2rem; }
 .cal-day { font-weight: 600; font-size: 0.95rem; }
@@ -403,3 +403,32 @@ input[type="file"] { padding: 0.35rem; }
 .wiki-content .callout { border: 1px solid var(--line); border-left: 3px solid var(--cyan); border-radius: var(--radius); padding: 0.9rem 1.1rem; background: var(--paper); }
 .lang-fields { margin-top: 0.5rem; }
 .lang-fields > summary { cursor: pointer; color: var(--cyan); font-size: 0.9rem; }
+
+/* Team members: edit a name in place */
+.name-edit { margin-top: 0.25rem; }
+.name-edit > summary { cursor: pointer; color: var(--cyan); font-size: 0.85rem; }
+.name-edit-form { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
+.name-edit-form input { flex: 1 1 7rem; min-width: 0; }
+.btn-small { padding: 0.35rem 0.8rem; font-size: 0.85rem; }
+
+.file-list { margin: 0; padding-left: 1.2rem; display: grid; gap: 0.3rem; }
+
+/* Calendar: booked nights open a panel with project, PI and code */
+.cal { position: relative; }
+button.cal-cell { font: inherit; text-align: left; cursor: pointer; width: 100%; }
+button.st-booked:hover, button.st-mine:hover { filter: brightness(1.15); }
+button.cal-cell:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.cal-pop {
+  position: absolute; z-index: 30; width: min(20rem, calc(100% - 16px));
+  background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--st-booked);
+  border-radius: var(--radius); padding: 0.9rem 1rem; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+.cal-pop-date { margin: 0 0 0.2rem; font-size: 0.8rem; color: var(--muted); }
+.cal-pop-title { margin: 0 1.5rem 0.5rem 0; font-size: 1.05rem; line-height: 1.3; }
+.cal-pop-facts { margin: 0; display: grid; gap: 0.2rem; font-size: 0.9rem; }
+.cal-pop-facts div { display: flex; gap: 0.5rem; }
+.cal-pop-facts dt { color: var(--muted); min-width: 4.5rem; }
+.cal-pop-facts dd { margin: 0; }
+.cal-pop-link { display: inline-block; margin-top: 0.6rem; font-size: 0.9rem; }
+.cal-pop-close { position: absolute; top: 0.4rem; right: 0.5rem; background: none; border: 0; color: var(--muted); font-size: 1.3rem; cursor: pointer; line-height: 1; }
+.cal-pop-close:hover { color: var(--ink); }

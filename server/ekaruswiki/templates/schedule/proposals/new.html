@@ -3,14 +3,14 @@
 {% block title %}New proposal{% endblock %}
 {% block content %}
 <h1>New observing proposal</h1>
-<p class="lede">Three parts: what you want to do, what you'll observe, and when. Fields marked * are required.</p>
+<p class="lede">Fields marked * are required.</p>
 
 {% if not by_month %}
   <div class="card empty">
     <p>No nights are open for proposals right now. Check the <a href="{{ url_for('schedule.calendar') }}">calendar</a> later.</p>
   </div>
 {% else %}
-<form method="post" class="form proposal-form" data-proposal-form>
+<form method="post" class="form proposal-form" data-proposal-form enctype="multipart/form-data">
   {{ csrf() }}
 
   <section class="card" data-step-section>
@@ -72,6 +72,14 @@
       <input name="constraints" value="{{ form.constraints }}" maxlength="500"></label>
     <label class="field">Notes for the admin <span class="hint">optional</span>
       <textarea name="notes" rows="3" maxlength="2000">{{ form.notes }}</textarea></label>
+  </section>
+
+  <section class="card" data-step-section data-optional>
+    <h2><span class="step">4</span>Attachments <span class="hint">optional</span></h2>
+    <p class="muted small">Finding charts, a technical description, previous results… Up to {{ config.UPLOAD_MAX_FILES }} files, {{ config.UPLOAD_MAX_MB }} MB each: PDF, images, text, CSV, FITS, office documents or ZIP.
+      Only you and the EKARUS admins can see them. They're deleted {{ config.RETENTION_DAYS }} days after your last observing night, so keep your own copies.</p>
+    <label class="field">Files <input type="file" name="attachments" multiple
+      accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.csv,.fits,.fit,.fz,.doc,.docx,.odt,.xls,.xlsx,.ods,.ppt,.pptx,.odp,.zip"></label>
   </section>
 
   <div class="form-actions">

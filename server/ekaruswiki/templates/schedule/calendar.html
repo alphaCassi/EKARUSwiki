@@ -4,7 +4,7 @@
 <div class="page-head">
   <div>
     <h1>Observing nights</h1>
-    <p class="lede">{{ upcoming_open }} night{{ 's' if upcoming_open != 1 }} available for proposals. Click an available night to propose it.</p>
+    <p class="lede">{{ upcoming_open }} night{{ 's' if upcoming_open != 1 }} available for proposals. Click an available night to propose it, or a booked night to see who observes.</p>
   </div>
   <a class="btn" href="{{ url_for('schedule.new_proposal') }}">New proposal</a>
 </div>

@@ -16,16 +16,30 @@
   </dl>
   {% if m.body %}<p class="prewrap mt">{{ m.body }}</p>{% endif %}
 </section>
+{% if m.kind == 'access' and m.status != 'done' %}
+<form method="post" class="card form">
+  {{ csrf() }}
+  <h2>Decision</h2>
+  <label class="field">Message to the person if you reject <span class="hint">Optional, e.g. why; sent by e-mail</span>
+    <textarea name="reason" rows="3" maxlength="2000"></textarea></label>
+  <div class="form-actions">
+    <button class="btn" name="action" value="approve">Add to the team</button>
+    <button class="btn btn-danger" name="action" value="reject" data-confirm="Reject this request? The person will be told by e-mail.">Reject</button>
+    <a href="mailto:{{ m.email }}?subject=Re:%20EKARUS%20wiki">Reply by e-mail</a>
+  </div>
+  <p class="muted small">Either way, the person gets an e-mail.</p>
+</form>
+{% else %}
 <form method="post" class="form-actions">
   {{ csrf() }}
-  {% if m.kind == 'access' and m.status != 'done' %}
-    <button class="btn" name="action" value="approve">Add to the team and tell them</button>
-  {% endif %}
-  {% if m.status != 'done' %}
+  {% if m.outcome == 'rejected' %}
+    <span class="badge badge-rejected">Rejected</span>
+  {% elif m.status != 'done' %}
     <button class="btn btn-secondary" name="action" value="done">Mark as done</button>
   {% else %}
     <button class="btn btn-secondary" name="action" value="new">Reopen</button>
   {% endif %}
   <a href="mailto:{{ m.email }}?subject=Re:%20EKARUS%20wiki">Reply by e-mail</a>
 </form>
+{% endif %}
 {% endblock %}

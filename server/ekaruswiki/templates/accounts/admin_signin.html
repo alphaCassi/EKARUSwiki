@@ -7,12 +7,12 @@
   {% if not configured %}
     <p class="flash flash-error">No admin password is set on this server yet: add ADMIN_PASSWORD to server/.env and restart the server.</p>
   {% endif %}
-  <p class="lede">The admin pages need the admin password. You stay signed in until you close the browser.</p>
+  <p class="lede">Enter your e-mail and the admin password. Admin access ends when you sign out, close the browser, or leave the admin pages unused for {{ config.ADMIN_IDLE_MINUTES }} minutes.</p>
   <form method="post" class="form card">
     {{ csrf() }}
     <input type="hidden" name="next" value="{{ next }}">
-    <label class="field">Your e-mail <input name="email" type="email" value="{{ email }}" autocomplete="username" required></label>
-    <label class="field">Admin password <input name="password" type="password" autocomplete="current-password" required autofocus></label>
+    <label class="field">Your e-mail <input name="email" type="email" value="" autocomplete="off" required autofocus></label>
+    <label class="field">Admin password <input name="password" type="password" value="" autocomplete="off" required></label>
     <button class="btn" type="submit">Open the admin pages</button>
   </form>
 </div>

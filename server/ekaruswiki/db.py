@@ -29,7 +29,29 @@ def init_db():
     for col, decl in (("magic_nonce", "TEXT NOT NULL DEFAULT ''"), ("magic_sent_at", "TEXT NOT NULL DEFAULT ''")):
         if col not in cols:
             conn.execute(f"ALTER TABLE users ADD COLUMN {col} {decl}")
+    mcols = {r["name"] for r in conn.execute("PRAGMA table_info(messages)")}
+    if "outcome" not in mcols:                       # access requests: approved / rejected
+        conn.execute("ALTER TABLE messages ADD COLUMN outcome TEXT NOT NULL DEFAULT ''")
+    _tidy_names(conn)
+    from .schedule.files import rename_old_folders
+    rename_old_folders()
+    from .schedule.files import delete_expired
+    delete_expired(force=True)
     conn.commit()
+
+
+def _tidy_names(conn):
+    """Names stored by earlier versions: "oleksandra.rebrysh" or "" become "Oleksandra Rebrysh",
+    all-lower or all-upper names get capitals. A name without a surname is left for the admin
+    to complete on the Team members page."""
+    from .names import clean, from_email
+    for table in ("team", "users"):
+        for r in conn.execute(f"SELECT email, name FROM {table}").fetchall():
+            local = r["email"].split("@")[0].lower()
+            name = r["name"] or ""
+            new = from_email(r["email"]) if (not name.strip() or name.strip().lower() == local) else clean(name)
+            if new != name:
+                conn.execute(f"UPDATE {table} SET name = ? WHERE email = ?", (new, r["email"]))
 
 
 def now():

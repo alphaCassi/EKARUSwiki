@@ -21,7 +21,7 @@ Old links to `/schedule/…` are redirected. All sign-ins end when the browser i
 | Who | How |
 |---|---|
 | **EKARUS team** (Admin → Team members, approved access requests, the wiki's `users.js`, and all `ADMIN_EMAILS`) | **E-mail only, no password**, on the wiki's sign-in page or this server's. |
-| **Admins** (`ADMIN_EMAILS`) | Tick **Sign in as admin** on the wiki's sign-in page: e-mail, then the **admin password** (`ADMIN_PASSWORD` in `.env`). |
+| **Admins** (`ADMIN_EMAILS`) | Tick **Sign in as admin** on the wiki's sign-in page, then type the e-mail and the **admin password** (`ADMIN_PASSWORD` in `.env`), every time. Admin access ends at sign-out, when the browser closes, or after `ADMIN_IDLE_MINUTES` (default 15) without opening an admin page. |
 | **External observers** | **Register** on the schedule site with a password, confirm their e-mail, then use the calendar, dashboard, proposals and the Telescope / Bench / Team pages. |
 
 Approving a wiki **access request** (Admin → Messages) adds the person to the team list and
@@ -140,3 +140,28 @@ sign-in attempts.
 - **Admin rights** on this site count only after the admin password, in that browser session.
 - **Calendar:** shown only to signed-in users; months load in the page (`/calendar.json`) without a
   reload. Clicking an available night opens a new proposal with that night ticked.
+
+## Names
+
+Every way of joining (added by an admin, approved access request, observer registration) asks for
+the first name and the surname and stores "First Surname". Names saved by earlier versions are
+tidied when the server starts (e.g. "oleksandra.rebrysh" becomes "Oleksandra Rebrysh"); a name
+without a surname is marked on Team members, where admins can edit any name.
+
+## Proposal attachments
+
+Observers can attach up to `UPLOAD_MAX_FILES` files (default 5) of `UPLOAD_MAX_MB` each (default
+10 MB) to a proposal: PDF, images, text, CSV, FITS, office documents or ZIP. Each proposal gets its
+own folder named after its code, `instance/uploads/EK-2026-001/`, created when it's submitted (kept
+by Docker with the database). Only the proposer and admins can download the files; other observers
+can't see another observer's proposal or files.
+
+**Retention:** the folder and its files are deleted `RETENTION_DAYS` (default 14) days after the
+proposal's last observing night (the last allocated night, or the last requested one if none was
+allocated). The proposal record itself stays. The check runs at start-up and hourly while the
+server is used. Observers are told on the form, on the proposal page and in the confirmation e-mail.
+
+## Calendar
+
+Signed-in users see all nights. Clicking a booked night shows the project title, the PI and the
+proposal code; only the PI and admins also get a link to the proposal itself.

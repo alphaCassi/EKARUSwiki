@@ -148,7 +148,8 @@
     "Software updates": { it: "Aggiornamenti software", fr: "Mises à jour logicielles" },
     "EKARUS To-do spreadsheet": { it: "Foglio di calcolo delle cose da fare di EKARUS", fr: "Tableur des tâches EKARUS" },
     "Notes": { it: "Note", fr: "Notes" },
-    "Live from the EKARUS To-do spreadsheet, updated at {time}.": { it: "In diretta dal foglio di calcolo delle cose da fare, aggiornato alle {time}.", fr: "En direct depuis le tableur des tâches, mis à jour à {time}." },
+    "Read from the EKARUS To-do spreadsheet at {time}; checked again every minute.": { it: "Letto dal foglio di calcolo delle cose da fare alle {time}; ricontrollato ogni minuto.", fr: "Lu depuis le tableur des tâches à {time}" + NB + "; vérifié à nouveau chaque minute." },
+    "Refresh now": { it: "Aggiorna ora", fr: "Actualiser" },
     "Couldn't read the spreadsheet; showing the last saved list.": { it: "Impossibile leggere il foglio di calcolo; viene mostrato l’ultimo elenco salvato.", fr: "Impossible de lire le tableur" + NB + "; affichage de la dernière liste enregistrée." },
 
     // ---------- publications
@@ -198,7 +199,10 @@
     "Enter a valid e-mail address.": { it: "Inserisci un indirizzo e-mail valido.", fr: "Saisissez une adresse e-mail valide." },
     "Sending isn't available yet: the EKARUSwiki server isn't connected.": { it: "L’invio non è ancora disponibile: il server EKARUSwiki non è collegato.", fr: "L’envoi n’est pas encore disponible" + NB + ": le serveur EKARUSwiki n’est pas connecté." },
     "The server can't be reached. Please try again later.": { it: "Il server non è raggiungibile. Riprova più tardi.", fr: "Le serveur est injoignable. Veuillez réessayer plus tard." },
-    "Enter your name and e-mail address.": { it: "Inserisci nome e indirizzo e-mail.", fr: "Saisissez votre nom et votre adresse e-mail." },
+    "Enter your first name, surname and e-mail address.": { it: "Inserisci nome, cognome e indirizzo e-mail.", fr: "Saisissez votre prénom, votre nom et votre adresse e-mail." },
+    "Enter your first name and surname.": { it: "Inserisci nome e cognome.", fr: "Saisissez votre prénom et votre nom." },
+    "First name": { it: "Nome", fr: "Prénom" },
+    "Surname": { it: "Cognome", fr: "Nom" },
     "Request sent. You'll get an e-mail when you're registered.": { it: "Richiesta inviata. Riceverai un’e-mail quando sarai registrato.", fr: "Demande envoyée. Vous recevrez un e-mail une fois inscrit." },
     "Fill in your name, e-mail and request.": { it: "Compila nome, e-mail e richiesta.", fr: "Indiquez votre nom, votre e-mail et votre demande." },
     "Thank you! Your request has been sent to the wiki admins.": { it: "Grazie! La tua richiesta è stata inviata agli admin del wiki.", fr: "Merci" + NB + "! Votre demande a été envoyée aux admins du wiki." },

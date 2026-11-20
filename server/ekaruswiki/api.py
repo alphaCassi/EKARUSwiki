@@ -1,7 +1,8 @@
 """Endpoints called from the wiki (a different site), so they answer with CORS headers.
 
 POST /api/signin  {email}   wiki sign-in: is this a team member (and an admin)?
-POST /api/contact   {kind: "contact"|"access", name, email, topic, page, message, website}
+POST /api/contact   {kind: "contact"|"access", name (contact) or first_name + last_name (access),
+                     email, topic, page, message, website}
   - "contact": a change request for the wiki
   - "access":  a request to be registered on the wiki
   - "website" is a hidden field people never fill in; bots do (spam trap)
@@ -65,6 +66,13 @@ def contact():
         return fail("Unknown request type.")
     f = {k: str(data.get(k, "")).strip()[:n] for k, n in LIMITS.items()}
     f["email"] = f["email"].lower()
+    from . import names
+    if kind == "access":                         # access requests: first name and surname
+        f["name"] = names.full_name(str(data.get("first_name", ""))[:60], str(data.get("last_name", ""))[:60])
+        if not names.has_surname(f["name"]):
+            return fail("Enter your first name and surname.")
+    else:
+        f["name"] = names.clean(f["name"])
     if not f["name"]:
         return fail("Enter your name.")
     if not EMAIL_RE.match(f["email"]):

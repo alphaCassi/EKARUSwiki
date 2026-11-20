@@ -7,7 +7,7 @@
   <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 {%- endmacro %}
 
-{% macro proposal_body(p, targets, nights, events, show_pi=false) %}
+{% macro proposal_body(p, targets, nights, events, show_pi=false, files=[]) %}
   <section class="card">
     <h2>Overview</h2>
     {% if p.summary %}<p>{{ p.summary }}</p>{% endif %}
@@ -32,6 +32,16 @@
       </table></div>
     {% else %}<p class="muted">No targets given.</p>{% endif %}
   </section>
+  {% if files %}
+  <section class="card">
+    <h2>Attachments</h2>
+    <ul class="file-list">
+      {% for f in files %}<li><a href="{{ url_for('schedule.proposal_file', pid=p.id, fid=f.id) }}">{{ f.filename }}</a> <span class="muted small">{{ (f.size / 1024)|round(0)|int }} kB</span></li>{% endfor %}
+    </ul>
+    {% set until = file_expiry(p.id) %}
+    <p class="muted small">Visible only to the PI and the EKARUS admins. Deleted {{ config.RETENTION_DAYS }} days after the last observing night{% if until %}, on {{ until.isoformat()|nicedate }}{% endif %}.</p>
+  </section>
+  {% endif %}
   {% if p.notes %}
   <section class="card"><h2>Notes</h2><p class="prewrap">{{ p.notes }}</p></section>
   {% endif %}

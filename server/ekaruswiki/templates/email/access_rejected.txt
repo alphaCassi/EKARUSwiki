@@ -1,0 +1,8 @@
+Hello {{ name }},
+
+Thank you for your interest in EKARUS. Your request for access to the EKARUS wiki
+was not approved.
+{% if reason %}
+{{ reason }}
+{% endif %}
+EKARUS team

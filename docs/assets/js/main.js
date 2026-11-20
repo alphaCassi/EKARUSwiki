@@ -98,7 +98,7 @@
           if (asAdmin && !res.admin) { setMessage(msg, "error", "This address isn't an admin. Untick “Sign in as admin” to enter the wiki."); return; }
           if (asAdmin) {
             // signed in to the wiki too, then the admin password on the server
-            target = server + "/account/admin-signin?next=%2Fadmin%2F&email=" + encodeURIComponent(email);
+            target = server + "/account/admin-signin?next=%2Fadmin%2F";
           }
           enter(email, res.name, res.admin);
         })
@@ -141,11 +141,11 @@
     requestForm.addEventListener("submit", function (ev) {
       ev.preventDefault();
       var f = requestForm.elements;
-      var name = f.name.value.trim();
+      var first = f.first_name.value.trim(), last = f.last_name.value.trim();
       var email = f.email.value.trim().toLowerCase();
-      if (!name || !email) { setMessage(rmsg, "error", "Enter your name and e-mail address."); return; }
+      if (!first || !last || !email) { setMessage(rmsg, "error", "Enter your first name, surname and e-mail address."); return; }
       sendToAdmins({
-        kind: "access", name: name, email: email,
+        kind: "access", first_name: first, last_name: last, email: email,
         message: "Institute: " + f.institute.value.trim() + "\nRole on EKARUS: " + f.role.value.trim(),
         website: f.website ? f.website.value : ""
       }, requestForm.querySelector("button"), rmsg, function () {
@@ -334,16 +334,27 @@
             });
             body.appendChild(tr);
           });
-          var now = new Date();
-          if (todoNote) todoNote.textContent = T("Live from the EKARUS To-do spreadsheet, updated at {time}.",
-            { time: now.toLocaleTimeString(document.documentElement.lang || undefined, { hour: "2-digit", minute: "2-digit" }) });
+          showNote(T("Read from the EKARUS To-do spreadsheet at {time}; checked again every minute.",
+            { time: new Date().toLocaleTimeString(document.documentElement.lang || undefined,
+                                                    { hour: "2-digit", minute: "2-digit", second: "2-digit" }) }));
         })
         .catch(function () {
-          if (todoNote) todoNote.textContent = T("Couldn't read the spreadsheet; showing the last saved list.");
+          showNote(T("Couldn't read the spreadsheet; showing the last saved list."));
         });
     };
+    // note under the table, with a button to read the spreadsheet again right away
+    var showNote = function (text) {
+      if (!todoNote) return;
+      todoNote.textContent = text + " ";
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "linklike";
+      b.textContent = T("Refresh now");
+      b.addEventListener("click", loadTodo);
+      todoNote.appendChild(b);
+    };
     loadTodo();
-    setInterval(loadTodo, 2 * 60 * 1000);
+    setInterval(loadTodo, 60 * 1000);
     document.addEventListener("visibilitychange", function () { if (!document.hidden) loadTodo(); });
   }
 

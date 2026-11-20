@@ -43,6 +43,13 @@ def create_app(test_config=None):
         ADMIN_EMAILS=os.environ.get("ADMIN_EMAILS", "oleksandra.rebrysh@inaf.it"),
         # Password for the admin pages (asked at every admin sign-in).
         ADMIN_PASSWORD=_clean_secret(os.environ.get("ADMIN_PASSWORD", "")),
+        # Admin access ends after this many minutes without opening an admin page.
+        # Proposal attachments: number of files and size of each (MB)
+        UPLOAD_MAX_FILES=int(os.environ.get("UPLOAD_MAX_FILES", "5") or 5),
+        UPLOAD_MAX_MB=int(os.environ.get("UPLOAD_MAX_MB", "10") or 10),
+        # Attached files are deleted this many days after the proposal's last observing night.
+        RETENTION_DAYS=int(os.environ.get("RETENTION_DAYS", "14") or 14),
+        ADMIN_IDLE_MINUTES=int(os.environ.get("ADMIN_IDLE_MINUTES", "15") or 15),
         # Public address of this server, used in e-mail links.
         BASE_URL=os.environ.get("BASE_URL", "http://localhost:5000").rstrip("/"),
         # Address of the published wiki (GitHub Pages).
@@ -67,6 +74,8 @@ def create_app(test_config=None):
         SESSION_COOKIE_SAMESITE="Lax",
         SESSION_COOKIE_SECURE=os.environ.get("SESSION_COOKIE_SECURE", "1") == "1",
     )
+    # whole request limit (Flask's default is "no limit"): all attachments plus the form
+    app.config["MAX_CONTENT_LENGTH"] = (app.config["UPLOAD_MAX_FILES"] * app.config["UPLOAD_MAX_MB"] + 2) * 1024 * 1024
     if test_config:
         app.config.update(test_config)
 
@@ -84,6 +93,18 @@ def create_app(test_config=None):
     app.register_blueprint(api.bp)
     app.register_blueprint(schedule_views.bp)
     app.register_blueprint(schedule_admin.bp)
+
+    @app.before_request
+    def _cleanup_old_files():
+        from .schedule.files import delete_expired
+        delete_expired()
+
+    @app.errorhandler(413)
+    def too_large(e):
+        from flask import flash, redirect, request
+        flash(f"The attachments are too large: at most {app.config['UPLOAD_MAX_FILES']} files of "
+              f"{app.config['UPLOAD_MAX_MB']} MB each.", "error")
+        return redirect(request.path)
 
     @app.route("/robots.txt")
     def robots():

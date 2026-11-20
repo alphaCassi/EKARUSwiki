@@ -11,7 +11,7 @@ from datetime import date, datetime
 
 from flask import Blueprint, abort, current_app, flash, g, redirect, render_template, request, url_for
 
-from . import github, mail, team, wiki_users
+from . import github, mail, names, team, wiki_users
 from .db import get_db, now
 from .security import admin_required
 
@@ -99,12 +99,20 @@ def message(mid):
         action = request.form.get("action")
         if action == "approve" and m["kind"] == "access":
             added, sync_note = add_team_member(m["email"], m["name"])
-            db.execute("UPDATE messages SET status = 'done' WHERE id = ?", (mid,))
+            db.execute("UPDATE messages SET status = 'done', outcome = 'approved' WHERE id = ?", (mid,))
             db.commit()
             mail.send(m["email"], "You now have access to the EKARUS wiki", "access_approved",
                       name=m["name"], wiki_url=current_app.config["WIKI_URL"])
             flash(("Added to the team" if added else "Already on the team") +
                   f"; {m['email']} has been told by e-mail. {sync_note}", "ok")
+            return redirect(url_for("admin.messages"))
+        if action == "reject" and m["kind"] == "access":
+            reason = request.form.get("reason", "").strip()[:2000]
+            db.execute("UPDATE messages SET status = 'done', outcome = 'rejected' WHERE id = ?", (mid,))
+            db.commit()
+            mail.send(m["email"], "Your request for access to the EKARUS wiki", "access_rejected",
+                      name=m["name"], reason=reason)
+            flash(f"Request rejected; {m['email']} has been told by e-mail.", "ok")
             return redirect(url_for("admin.messages"))
         if action in ("done", "new"):
             db.execute("UPDATE messages SET status = ? WHERE id = ?", (action, mid))
@@ -147,9 +155,20 @@ def add_team_member(email, name=""):
     db = get_db()
     if db.execute("SELECT 1 FROM team WHERE email = ?", (email,)).fetchone():
         return False, ""
-    db.execute("INSERT INTO team (email, name, added_at) VALUES (?, ?, ?)", (email, name.strip()[:120], now()))
+    db.execute("INSERT INTO team (email, name, added_at) VALUES (?, ?, ?)", (email, names.clean(name)[:120], now()))
     db.commit()
     return True, _sync_wiki_list(email, True)
+
+
+def set_member_name(email, name):
+    """Save a team member's name (the admins too) and use it on their account."""
+    db = get_db()
+    if db.execute("SELECT 1 FROM team WHERE email = ?", (email,)).fetchone():
+        db.execute("UPDATE team SET name = ? WHERE email = ?", (name, email))
+    else:
+        db.execute("INSERT INTO team (email, name, added_at) VALUES (?, ?, ?)", (email, name, now()))
+    db.execute("UPDATE users SET name = ? WHERE email = ?", (name, email))
+    db.commit()
 
 
 @bp.route("/team", methods=["GET", "POST"])
@@ -161,8 +180,19 @@ def team_members():
         if "@" not in email:
             flash("Enter an e-mail address.", "error")
         elif request.form.get("action") == "add":
-            added, note = add_team_member(email, request.form.get("name", ""))
-            flash((f"{email} added to the team. " if added else f"{email} is already on the team. ") + note, "ok")
+            name = names.full_name(request.form.get("first_name", ""), request.form.get("last_name", ""))
+            if not names.has_surname(name):
+                flash("Enter the first name and the surname.", "error")
+            else:
+                added, note = add_team_member(email, name)
+                flash((f"{name} added to the team. " if added else f"{email} is already on the team. ") + note, "ok")
+        elif request.form.get("action") == "rename":
+            name = names.full_name(request.form.get("first_name", ""), request.form.get("last_name", ""))
+            if not names.has_surname(name):
+                flash("Enter the first name and the surname.", "error")
+            else:
+                set_member_name(email, name)
+                flash(f"Name saved: {name}.", "ok")
         elif request.form.get("action") == "remove":
             cur = db.execute("DELETE FROM team WHERE email = ?", (email,))
             db.commit()
@@ -174,7 +204,8 @@ def team_members():
     signed = {r["email"] for r in db.execute("SELECT email FROM users WHERE password_hash LIKE '!%' OR is_admin = 1")}
     added = {r["email"]: r["added_at"] for r in db.execute("SELECT email, added_at FROM team")}
     members = [{"email": e, "name": n, "source": src, "added": added.get(e, ""),
-                "signed_in": bool(e and e in signed)} for e, n, src in team.all_members()]
+                "signed_in": bool(e and e in signed), "split": names.split_name(n),
+                "complete": names.has_surname(n)} for e, n, src in team.all_members()]
     return render_template("admin/team.html", members=members, admins=mail.admin_addresses(),
                            github_ok=github.configured())
 

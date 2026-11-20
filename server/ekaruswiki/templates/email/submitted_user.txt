@@ -1,11 +1,31 @@
 Hello {{ p.pi_name }},
 
-We received your proposal {{ p.code }}: "{{ p.title }}".
+Thank you, we received your observing proposal {{ p.code }}. Here is a summary.
+
+Title: {{ p.title }}
+Observing mode: {{ p.mode }}
+
+Science or technical case:
+{{ p.science_case }}
 
 Nights requested:
 {% for n in nights %}  - {{ n.date|nicedate }}
-{% endfor %}
-You'll receive another e-mail when it has been reviewed. You can follow its status here:
-{{ base_url }}/schedule/proposals/{{ p.id }}
+{% endfor %}Minimum number of useful nights: {{ p.min_nights }}
+{% if p.observers %}Observers on site: {{ p.observers }}
+{% endif %}{% if p.constraints %}Constraints: {{ p.constraints }}
+{% endif %}{% if targets %}
+Targets (J2000):
+{% for t in targets %}  - {{ t.name }}{% if t.ra or t.dec %}, RA {{ t.ra }}, Dec {{ t.dec }}{% endif %}{% if t.mag %}, mag {{ t.mag }}{% endif %}
+{% endfor %}{% endif %}{% if files %}
+Attachments (visible only to you and the EKARUS admins; deleted {{ config.RETENTION_DAYS }} days
+after your last observing night, so keep your own copies):
+{% for f in files %}  - {{ f.filename }}
+{% endfor %}{% endif %}{% if p.notes %}
+Notes for the admin:
+{{ p.notes }}
+{% endif %}
+You will receive an e-mail when your proposal is accepted or rejected.
+You can follow its status here:
+{{ base_url }}{{ link }}
 
-EKARUSwiki
+EKARUS team

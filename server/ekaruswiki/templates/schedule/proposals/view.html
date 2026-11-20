@@ -36,7 +36,7 @@
   </ul>
 </section>
 
-{{ proposal_body(p, targets, nights, events) }}
+{{ proposal_body(p, targets, nights, events, files=files) }}
 
 {% if p.status == 'submitted' and p.user_id == g.user.id %}
 <form method="post" action="{{ url_for('schedule.withdraw', pid=p.id) }}" class="danger-zone" data-confirm="Withdraw {{ p.code }}? This can't be undone.">

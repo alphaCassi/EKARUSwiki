@@ -48,7 +48,8 @@ def is_team(email):
 
 def team_name(email):
     row = get_db().execute("SELECT name FROM team WHERE email = ?", (email.lower(),)).fetchone()
-    return (row["name"] if row and row["name"] else email.split("@")[0])
+    from .names import from_email
+    return (row["name"] if row and row["name"] else from_email(email))
 
 
 def all_members():
@@ -64,7 +65,7 @@ def all_members():
         h = hashlib.sha256(r["email"].encode()).hexdigest()
         if h not in seen:
             seen.add(h)
-            out.append((r["email"], r["name"] or r["email"].split("@")[0], "team list"))
+            out.append((r["email"], r["name"] or team_name(r["email"]), "team list"))
     for h in sorted(_wiki_hashes() - seen):
         seen.add(h)
         out.append((None, "", "wiki list"))
